@@ -1,0 +1,10 @@
+#+TITLE: Hebi Li, the Homepage
+#+OPTIONS: toc:nil
+
+#+ATTR_HTML: :width 300px
+[[./assets/hebi.png]]
+
+* Links
+- [[file:assets/cv.pdf][CV(pdf)]]
+- [[https://github.com/lihebi][GitHub@lihebi]]
+- [[https://wiki.lihebi.com][Wiki]]
