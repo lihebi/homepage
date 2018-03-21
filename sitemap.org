@@ -1,7 +1,10 @@
-#+TITLE: Sitemap for project homepage
+#+TITLE: Sitemap for project homepage-org
 
+- [[file:hebi.org][Extra Index]]
 - [[file:index.org][Hebi Li, the Homepage]]
 - [[file:README.org][Homepage Source Repository]]
 - art
   - [[file:art/README.org][Art]]
+  - [[file:art/index.org][Art index]]
   - [[file:art/reading.org][Reading]]
+  - [[file:art/poem.org][诗词曲]]
