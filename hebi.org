@@ -1,3 +1,9 @@
 #+TITLE: Extra Index
 
 - [[file:art/index.org][Art Index]]
+
+
+* What the future looks like, and what we should do
+
+** Language is the future
+
