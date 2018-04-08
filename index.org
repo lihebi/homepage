@@ -4,6 +4,11 @@
 #+ATTR_HTML: :width 300px
 [[./assets/hebi.png]]
 
+#+begin_quote
+Life is short, I don't have time for things that don't bring me joy.
+#+end_quote
+
+
 * Links
 - [[file:assets/cv.pdf][CV(pdf)]]
 - [[https://github.com/lihebi][GitHub@lihebi]]
