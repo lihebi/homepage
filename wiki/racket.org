@@ -1,0 +1,1806 @@
+#+TITLE: Racket
+
+* Basic
+** Local binding
+The local binding is established by =let= family. Apart from normal
+=let=, racket has a second form, known as *named let*.
+
+#+begin_example
+(let proc-id ([id init-expr] ...) body ...+)
+#+end_example
+
+It first evaluates the init-exprs, the resulting values become
+arguments to *an application of a procedure*.
+
+#+begin_example
+(lambda (id ...) body ...+)
+#+end_example
+
+Within the body, =proc-id= is bound to the procedure itself.
+
+#+begin_src racket
+  (let fac ([n 10])
+    (if (zero? n) 1
+        (* n (fac (sub1 n)))))
+#+end_src
+
+** require
+=require= introduces bindings. It can only be used in two context, the
+top-level context, or the module context (in which it introduce module
+bindings).
+
+To require a installed module, use =(lib "rel-string")=, and its
+widely used shorthand =(require id)= where id is the unquoted string.
+
+When requiring a local file, use plain relative (to current directory)
+path in a string. The path should NOT start or end with a slash. It
+seems that the suffix is optional.
+
+To use a absolute path, you have to use =(file string)=, and
+=expand-user-path= is called, so you can use:
+- relative path
+- tide home directory
+- absolute path
+
+The =#lang= is a shorthand.
+#+begin_src racket
+#lang racket
+decl ...
+;; equivalent to
+(module name racket
+  decl ...)
+#+end_src
+
+Where name is the file name.
+
+
+* Black Magic
+http://www.greghendershott.com/2015/07/keyword-structs-revisited.html
+#+BEGIN_SRC racket
+  (begin-for-syntax
+    (define syntax->keyword (compose1
+                             string->keyword
+                             symbol->string
+                             syntax->datum)))
+#+END_SRC
+
+* Pattern Matching (racket/match)
+The syntax:
+
+#+BEGIN_SRC racket
+  (match val-expr clause ...)
+
+  clause = [pat [#:when cond-expr] body ...+]
+#+END_SRC
+cond-expr is in teh scope of pat (to have the bind or not??).
+
+The clauses are checked one-by-one, and the body of first match will
+be in the tail position.
+
+Pattern can be
+- =_= to match anything and abandon it.
+- a single id which matches anything and bind to it. An ID can appear
+  more than once, in which case the pattern is considered matching
+  only if all of the bindings of ID are same.
+  - e.g. =(list a b a)= will not match ='(1 2 3)=, but will match ='(1
+    2 1)=
+- a list which binds to the destruction. 
+- The quote can not be used to construct list of symbols, it will
+  match verbatically instead. For that, use quasiquote, which supports
+  the evaluation and splice-eval.
+  - e.g. =`(1 ,a ,b)= will match ='(1 2 3)= with =a= and =b= bound.
+- hash-table can be used to match the key and values, Using =...= in
+  it means collect into a list.
+  - e.g. =(hash-table ("key1" a) ("key2" b))=.
+  - e.g. =(hash-table (key val) ...)= will match =#hash(("a" . 1) ("b"
+    . 2))=, and key will be ='("b" "a")=
+- cons can be used to match pairs
+- =struct-id= can be used to match fields by position. Use =(struct
+  struct-id _)= to match an instance of structure itself. E.g.
+  - for structure =(struct tree (val left right))=
+  - pattern =(tree a (tree b  _ _) _)= will match
+  - =(tree 0 (tree 1 #f #f) #f)=
+  - with =a= bound to 0, =b= bound to 1
+- =(and pat ...)= is used to combine a list of patterns. The typical usage is
+  =(and id pat)= where you can bind =id= and still check the =pat=
+  against the entire value. =or= is also available but not that
+  useful.
+- =(? expr pat ...)=: combine a predicate and the =and=
+  pattern. I.e. first, apply =expr= on the value to match, if =#t=,
+  the additional =pat= are matched using the above =and= pattern.
+
+There are some syntax sugar for matching:
+- =(match-lambda clause ...)=: equivalent to =(lambda (id) (match id
+  clause ...))=
+
+* Macros
+Matthias Felleisen boils down macros into three main categories:
+1. Binding form
+2. Change order of evaluation
+3. Make DSLs
+
+Different from common lisp where you have compile time and runtime,
+racket has the concept called /level/. The level 0 is roughly runtime,
+and level 1 is compile time. But there're also level -1 and level 2,
+3, ..., thus it is more general. But typically the first two levels
+are used.
+
+When using racket syntax, you typically need to require the base
+library for it, by =(require (for-syntax racket/base))=.
+
+Everything boils down to =define-syntax= and =syntax-case=.
+=define-syntax= is nothing fancy. It just define a binding, same as
+define, but the binding is in effect at level 1. Thus actually we
+typically still define it as a lambda expression, thus it has the
+shorthand to write argument (stx) in the same line. =syntax-rules=
+itself is a lambda expression surounding =syntax-case=. Thus second
+form does not use syntax-rules, but use syntax-case directly.
+
+#+BEGIN_SRC racket
+  (define-syntax foo
+    (syntax-rules ()
+      ((_ a ...) (printf "~a\n" (list a ...)))))
+  ;; <=>
+  (define-syntax (foo stx)
+    (syntax-case stx ()
+      (_ a ...)
+      #'(printf "~a\n" (list a ...))))
+#+END_SRC
+
+=syntax-case= match a given syntax object against patterns, and return
+another syntax object. It is doing the transformation. You can
+actually do the transformation yourself, using =sytax->datum=,
+operates on it, and use =datum->syntax= to convert it back. So
+=syntax-case= just provides an easier way to do that, in the sense
+that you don't need to convert explicitly. Instead, you specify by
+position the argument, to match the datum, and construct a syntax
+object as a result.
+
+#+BEGIN_SRC racket
+  (syntax-case stx-expr (literal-id ...)
+    [pattern result-expr] ...)
+#+END_SRC
+
+Note the result is =result-expr=, that means the expr is going to be
+executed, and the return value should be a syntax object.
+
+#+BEGIN_SRC racket
+  (define-syntax (foo stx)
+    (syntax-case stx ()
+      [(_ a b c)
+       #'(if a b c)]))
+#+END_SRC
+
+See, stx is matched against the pattern =(_ a b c)=, and
+destructed. =a b c= can then be used to construct the returned syntax
+object. Note, the return must be a syntax object, it replaces the (foo
+xxx) and be evaluated. The first is =_= because we don't care about
+the leading identifier =#'foo=.
+
+=syntax-rules= is a lambda expression, that calls =syntax-case= to
+return a syntax object. It is used to define multiple patterns and
+templates at one time. Note that the result is a "template" instead of
+"expr", meaning it is restricted: cannot run any code, merely return
+the template as if quoted. Thus when using syntax-rules, the result
+need not be quoted by =syntax=.
+
+#+BEGIN_SRC racket
+  (syntax-rules (literal-id ...)
+    [(id . pattern) template] ...)
+  ;; <=>
+  (lambda (stx)
+    (syntax-case stx (literal-id ...)
+      [(generated-id . pattern) (syntax-protect #'template)] ...))
+#+END_SRC
+
+=define-syntax-rule= is shorthand for =define-syntax= and
+=syntax-rules=. The pattern is a list, the first is an identifier, the
+following are pattern variables that matches anything. The template is
+the constructed form to replace the old form. It is not quoted,
+because it uses syntax-rules to construct. All pattern variables will
+be replaced by the actual form.
+
+#+BEGIN_SRC racket
+  (define-syntax-rule (id . pattern) template)
+  ;; <=>
+  (define-syntax id
+    (syntax-rules ()
+      [(id . pattern) template]))
+#+END_SRC
+This is so constrained. The following is equivalent to the above:
+#+BEGIN_SRC racket
+  (define-syntax-rule (foo a b c)
+    (if a b c))
+#+END_SRC
+
+=with-syntax= is often used to nest syntax. It is like =let= but is
+able to bind pattern variables.
+#+BEGIN_SRC racket
+(syntax-case <syntax> () [<pattern> <body>] ...)
+(syntax-case (list stx-expr ...) () [(pattern ...) (let () body ...+)])
+;; <=>
+(with-syntax ([<pattern> <stx-expr>] ...) <body> ...+)
+#+END_SRC
+
+** Reader
+To understand how macro works, we need to know how the reader handles
+the program.
+
+A datum is the basic output of a read. Datum can be compound, in which
+case the reader is recursively read the components. Some datums are
+interned by the reader, i.e. their values are always =eq?= when they
+are =equal?=. Such datums includes: symbols, keywords, strings, byte
+strings, regexps, characters, numbers.
+
+Some special read notation:
+- =#(1 2 3)= for vectors
+- =#s(struct-id 1 2 3)= for prefab structure types. note that for
+  complex structure, the print format is not intuitive.
+- =#hash(("a" . 5) ("b" b))= for hash tables
+** Syntax Model
+A /syntax object/ is a simple racket value + scope set + phase level.
+
+When require something, those functions are not visible in
+level 1. Thus if you want to use those when macro expands, you need
+=(reqire (for-syntax racket/base))=.  Similarly, =for-meta= can be
+used to specify any number as shift level.
+
+Similaryly, a top-level =begin= is not visible in macro, we need
+=begin-for-syntax= to bind variables to use at level 1.
+
+Use these to expand a macro:
+- =(expand top-level-form)=: fully expand
+- =(expand-once top-level-form)=: expand only once
+
+Here's an example from Racket Guide that implements call-by-reference
+
+Should generate
+#+begin_src racket
+(define (do-f get-a get-b put-a! put-b!)
+  (define-get/put-id a get-a put-a!)
+  (define-get/put-id b get-b put-b!)
+  (swap a b))
+(do-f (lambda () x)
+      (lambda () y)
+      (lambda (v) (set! x v))
+      (lambda (v) (set! y v)))
+#+end_src
+
+The test code:
+#+begin_src racket
+  (define-cbr (f a b)
+    (swap a b))
+
+  (let ([x 1] [y 2])
+    (f x y)
+    (list x y))
+#+end_src
+
+The actual implementation:
+#+begin_src racket
+  (define-syntax-rule (define-get/put-id id get put!)
+    (define-syntax id
+      (make-set!-transformer
+       (lambda (stx)
+         (syntax-case stx (set!)
+           [id (identifier? (syntax id)) (syntax (get))]
+           [(set! id e) (syntax (put! e))])))))
+
+  (define-syntax-rule (define-cbr (id arg ...) body)
+    (begin
+      (define-syntax id
+        (syntax-rules ()
+          [(id actual (... ...))
+           (do-f (lambda () actual)
+                 (... ...)
+                 (lambda (v)
+                   (set! actual v))
+                 (... ...))]))
+      (define-for-cbr do-f (arg ...)
+        () ; explained below...
+        body)))
+
+  (define-syntax define-for-cbr
+    (syntax-rules ()
+      [(define-for-cbr do-f (id0 id ...)
+         (gens ...) body)
+       (define-for-cbr do-f (id ...)
+         (gens ... (id0 get put)) body)]
+      [(define-for-cbr do-f ()
+         ((id get put) ...) body)
+       (define (do-f get ... put ...)
+         (define-get/put-id id get put) ...
+         body)]))
+#+end_src
+
+The define-for-cbr is pretty tricky, the following =with-syntax= is
+better:
+#+begin_src racket
+  (define-syntax (define-for-cbr stx)
+    (syntax-case stx ()
+      [(_ do-f (id ...) body)
+       (with-syntax ([(get ...) (generate-temporaries #'(id ...))]
+                     [(put ...) (generate-temporaries #'(id ...))])
+         #'(define (do-f get ... put ...)
+             (define-get/put-id id get put) ...
+             body))]))
+#+end_src
+
+
+** Hygienic
+A very good writing about syntax-case, and how to (NOT) write
+non-hygienic macros.
+http://blog.racket-lang.org/2011/04/writing-syntax-case-macros.html
+
+
+- a syntax object is a plain datum with some lexical context
+  information
+- =syntax->datum= accepts one syntax object, and return the raw list
+- =datum->syntax= accepts one context syntax object to donor its
+  context, and a plain datum to be converted.
+- scheme macro is hygienic, i.e.
+  1. if it inserts a binding, it will be renamed through its lexical
+     scope
+  2. if it refers a free variable, it refers to the one in scope in
+     which *the definition of the macro* happens.
+
+Thus, to break the hygienic
+
+#+begin_src racket
+(define-syntax (while stx)
+  (syntax-case stx ()
+    [(_ test body ...)
+     (syntax-case (datum->syntax stx 'it) ()
+       [it #'(let loop ()
+               (let ([it test])
+                 (when it
+                   body ...
+                   (loop))))])]))
+
+#+end_src
+
+or using =with-syntax= to bind pattern variable:
+#+begin_src racket
+(define-syntax (while stx)
+  (syntax-case stx ()
+    [(_ test body ...)
+     (with-syntax ([it (datum->syntax stx 'it)])
+       #'(let loop ()
+           (let ([it test])
+             (when it
+               body ...
+               (loop)))))]))
+#+end_src
+
+This is primarily used to introduce a binding that is visible to the
+outside world. It seems that /syntax parameters/ can do that better.
+
+     
+
+
+* Rackunit
+Since racket has the =test= module concept, there needs no unit test
+framework. However, it seems that =rackunit= provides some
+predicate functions.
+
+In racket, each file is a module with the file name as the module
+name. You can define a submodule using =module*= and =module+=. The
+former can only appear exactly once for each module, while the latter
+can appear multiple times, all of them concatenated into a single
+module as if using =module*=.
+
+Thus, folks typically use =module*= to define a =main= module, which
+will be run by racket after the enclosing module by
+=racket=. =module+= is used to define =test= modules, and will be
+executed by =raco test= command.
+
+=rackunit= provides check APIs and also organize tests into cases and
+suites.  A check is a simple check, like equality. A test case is a
+group of checks. If one of them fails, the following will not be
+executed, and the test case fails. A suite is a group of test cases,
+and has a name.
+
+Check APIs (all of them accepts an optional message at the end):
+- =check-eq?=
+- =check-not-eq?=
+- =check-equal?=
+- =check-not-equal?=
+- =check-pred pred v=: check if apply pred on v will produce
+  other than #f
+- ~check-= v1 v2 epsilon~: |v1-v2| <= epsilon
+- =check-true v=: #t
+- =check-false v=: #f
+- =check-not-flase v=: not #f
+- =check op v1 v2=: generic form, op is =(-> any any any)=
+- =fail=: fail unconditionally, useful when developing to mark some tests
+
+The following does not accept message, because they are straightforward:
+- =check-match v pattern=: check if v match pattern
+
+=test-begin expr ...= is used to group exprs, while =test-case name
+body ...+= accept a name for them, and get reported if test fails.
+
+Test suites are not going to run by default. This allows you to
+specify which tests to run. There're text (=run-tests= in
+=rackunit/text-ui=) and gui (=test/gui= in =rackunit/gui=) interfaces
+to select tests. Create a suite using =(test-suite name-expr test
+...)=. The tests can be single check or a test case.
+
+* Numbers
+- =/=: provide the fraction if given two numbers, not to round it.
+- =quotient n m=: =(truncate (/ n m))=
+- =remainder n m=: seems that the result has the same sign with n
+- =modulo n m=: seems that the result has the same sign with m
+- =add1=
+- =sub1=
+- =abs=
+- =max=
+- =min=
+- =gcd=
+- =lcm=: least common multiple
+- =round=
+- =floor=
+- =ceiling=
+- =truncate=: towards 0
+- =numerator=
+- =denominator=
+
+Computation
+- =sqrt=
+- =expt e p=: e to the power of p
+- =exp z=
+- =log z [b (exp 1)]=
+
+Random
+- =random k=: =[0,k)=
+- =random min max=: =[min,max)=
+- =random-seed k=
+
+With =racket/random=:
+- =random-sample seq n=
+
+* Procedure
+The =define= keyword can be used to bind a id to a variable, but most
+likely you are binding a procedure. So the syntax for arguments
+matters.
+
+#+begin_example
+  (define (head args) body ...+)
+  args = arg ... | arg ... . rest-id
+  arg = arg-id
+      | [arg-id default-expr]
+      | keyword arg-id
+      | keyword [arg-id default-expr]
+#+end_example
+
+Note how the rest-id are used to implement the =...= by using one dot.
+
+The context matters. In an internal-definition context, a =define=
+binds a local binding. At top level, it introduces /top-level
+binding/.
+
+In application of procedures, =apply= will apply the procedure with
+content of the list as argument, thus the procedure must accept *as
+many parameters as* the length of list. The list is actually more
+flexible, i.e. collected using =list*=.
+
+=compose= accepts one or more procedures, and composes them by
+applying one by one, and fold result into parameter to the next. The
+last procedure is applied first. There're two versions, =compose=
+allow arbitrary number of values to be passed between procedure calls,
+as long as the number of results and parameters match. =compose1=
+restricts this to exactly one value.
+
+
+* Control Structure
+- =if=
+- =(cond [test-expr then-body ...+] ...)=
+
+#+begin_example
+  (cond cond-clause ...)
+  cond-clause = [test-expr then-body ...+]
+              | [else then-body ...+]
+              | [test-expr => proc-expr]
+              | [test-expr]
+#+end_example
+
+- =and=: A typically trick: =(and (some expr) #t)= to return a boolean
+  value
+  - if no expr, return =#t=
+  - one expr, return its value in tail position.
+  - Multiple exprs
+    - if first eval to =#f=, return #f
+    - *otherwise* recursive call with the rest of exprs in tail
+      position.
+
+- =test-expr => proc-expr=: =proc-expr= must *produce* a procedure
+  that accept exactly *one* argument, the result of =test-expr= is
+  that argument. The value is returned.
+- =test-expr= without a body will return the result of
+  =test-expr=. Not in tail position.
+
+- =(case val-expr [(datum ...) then-body ...+] ...)=: if val-expr
+  matches one of datum, execute the body
+- =when=
+- =unless=
+- =(for ([id seq-expr] #:when guard-expr #:unless guard-expr) body)=
+- =for/list=, =for/vector=, =for/hash=
+- =for/and=, =for/or=
+- =for/sum=, =for/product=
+- =for/first=, =for/last=
+- =for/fold=
+- =for*=: like for, but with implicit #:when #t between each
+  pair. Thus all clauses are nested. =for*= also has the form of
+  different return values.
+
+* String
+The reading syntax of characters starts with =#\=, with following
+forms
+
+| ASCII | name                   | desc                                       |
+|-------+------------------------+--------------------------------------------|
+|     0 | #\null                 |                                            |
+|     8 | #\backspace            |                                            |
+|     9 | #\tab                  | \t                                         |
+|    10 | #\newline #\linefeed   | linefeed (\n), move cursor to next line    |
+|    11 | #\vtab                 |                                            |
+|    12 | #\page                 | page break                                 |
+|    13 | #\return               | carriage return (\r), move cursor to begin |
+|    32 | #\space                |                                            |
+|   127 | #\rubout               |                                            |
+|       | #\<digit_8>^{{3}}      | Unicode for octal number                   |
+|       | #\<digit_{16}>^{{1,4}} | Unicode for Hex                            |
+|       | #\<c>                  | the single character                       |
+
+As a side note, windows use =\r\n=, Unix use =\n=, Mac OS use =\r=
+
+APIs
+- =make-string k [char]=
+- =string-length=
+- =string-ref=
+- =substring str start [end]=
+- =string-copy=
+- =string-append=
+- =string->list=
+- =list->string=
+- ~string=?~, ~string<?~, ..
+- ~string-ci=?~, ...
+- =string-upcase=, =string-downcase=, =string-titlecase=,
+  =string-foldcase= (normalize for different locale)
+
+With =racket/string=:
+- =string-join=
+- =string-replace=
+- =string-split=
+- =string-trim=
+- =string-contains?= s contained
+- =string-prefix?= s prefix
+- =string-suffix?= s suffix
+
+With =racket/format=:
+- =~a=: accept a value, using =display=. It accepts several keyword
+  arguments:
+  - =#:separator ""=: the function actually accepts multiple values, each
+    of them is connected with separator
+  - =#:width=
+  - =#:max-width=
+  - =#:min-width=
+  - =#:limit-marker ""=: if the string is longer than the width, use this
+    as indication of "more".
+  - =#:align=: ~(or/c 'left 'center 'right) = 'left~
+  - =#:pad-string " "=: when width is less than the specified width, this
+    is used to pad
+- =~v=: use =print= instead of =display=. Default separator is " ",
+  default limit-marker is "..."
+- =~s=: use =write=. Default separator is " ", default limit-marker is
+  "..."
+
+Byte string
+- =make-bytes k [b]=
+- =bytes-length=
+- =bytes-ref=
+- =subbytes bstr start [end]=
+- =bytes-copy=
+- =bytes-append=
+- =bytes->list=
+- =list->bytes=
+- ~bytes=?~, ...
+- =bytes->string/utf-8=
+- =bytes->string/locale=
+- =bytes->string/latin-1=
+- =string->bytes/utf-8=
+- =string->bytes/locale=
+- =string->bytes/latin-1=
+
+* Regular Expression
+- =#rx"xxx"=: regular expression
+- =#px"xxx"=: perl regular expression
+
+Functions:
+- =regexp-quote=: generate a regular expression string that match the
+  string literally
+- =regexp-match= pattern input [start-pos end-pos]: find the pattern in
+  the input. and return a list containing the result (only one). If no
+  match, return #f. If has capture group, return the match and all
+  captured group.
+- =regexp-match*=: match multiple times, return list of
+  results. =#:match-select= accepts a procedure (defaults to
+  =car=). Examples: values (all), cadr
+- =regexp-match-position=: like =regexp-match=, but return list of number
+  pairs, each is a range of [start, end).
+- =regexp-match?=: return #t or #f
+- =regexp-match-exact?=: return #t only if entire content matches.
+
+- =regexp-split pattern input=: complement of =regexp-match*=
+- =regexp-replace pattern input insert=: replace the first
+  match. Match can be referenced by using =&= (whole match), =\0=
+  (whole match), =\n= captured.
+- =regexp-replace*=: replace all
+- =regexp-replaces input ([pat rep] ...)=: do =regexp-replace*= for
+  each replacement in order, chained. Which means latter can operate
+  on former.
+- =regexp-replace-quote=: produce string suitable to use as
+  replacement (unquoting =\= and =&=)
+
+Input port specific:
+- =regexp-try-match=: like =regexp-match=, but if the input is a port,
+  don't read the input on failure.
+- =regexp-match-peek=: do not read input ports on both failure and
+  success
+- =regexp-match-peek-positions=: return positions
+- =regexp-match-peek-immediate=: non-blocking on input port
+
+#+BEGIN_SRC racket
+(regexp-match #rx"x(.)" "12x4x6")
+;; '("x4" "4")
+(regexp-match* #rx"x(.)" "12x4x6" #:match-select var) ; default
+;; '("x4" "x6")
+(regexp-match* #rx"x(.)" "12x4x6" #:match-select values) ; all
+;; '(("x4" "4") ("x6" "6"))
+(regexp-match* #rx"x(.)" "12x4x6" #:match-select cadr)
+;; '("4" "6")
+#+END_SRC
+
+* Pair, List, Vector
+The variants tradition:
+- v: use eqv?
+- q: use eq?
+- f: accept and use a procedure
+
+The APIs:
+- =length=
+- =list-ref=
+- =list-tail=
+- =append=
+- =reverse=
+- =map=, =andmap=, =ormap=
+- =for-each=
+- =foldl=, =foldr=
+- =filter pred lst=: return list with items that makes =pred= =#t=.
+- =remove=
+- =sort=
+- =member=, =memf= (using function): if found, *return the tail* list
+  starting from the match
+- =findf=: like memf, but return just the matched element.
+- =assoc v lst=: the first element of lst whose car equal to
+  v. E.g. =(assoc 1 '((1 2) (3 4)))= returns ='(1 2)=. variants:
+  =assv=, =assq=, =assf=
+
+from =racket/list=
+- =empty?=
+- =first=
+- =rest=
+- =second=
+- =last=
+- =list-update= lst pos updater: the pos index is updated with
+  =(updater (list-ref lst pos))=
+- =list-set lst pos value=
+- =index-of lst v=: return the index of the first v
+- =index-where lst proc=: use function
+- =indexes-of=, =indexes-where=: return all matches
+- =take lst pos=: take only the first pos elements
+- =drop lst pos=: same as list-tail
+- =split-at lst pos=: same as =(values (take lst pos) (drop lst pos))=
+- =takef=, =dropf=, =splitf-at=: take all the elements satisfying the
+  function.
+- =take-right=, =drop-right=, =split-at-right=, and their f-version
+- =list-prefix? l r=: whether l is prefix of r
+- =take-common-prefix l r=
+- =drop-common-prefix l r=
+- =split-common-prefix l r=
+- =flatten v=
+- =check-duplicates lst=
+- =remove-duplicates lst=
+- =partition prod lst=: return two lists, with items that =prod=
+  evaluates to =#t= and =#f= respectively. It is the same as
+#+begin_src racket
+  (values (filter pred lst)
+          (filter (negate pred) lst))
+#+end_src
+
+- =range end=: [0,end)
+- =range start end [step=1]=
+- =shuffle lst=
+- =combinations lst [size]=: if size is given, return only combination
+  of length size.
+- =permutations lst=
+- =argmin proc lst=: return the first elemnt in lst that minimize
+  =(proc elem)=
+- =argmax=
+
+Vectors
+- =vector-length=
+- =vector-ref=
+- =vector-set!=: it makes sense to set a vector, because it takes
+  constant time to access and update
+- =vector->list=
+- =list->vector=
+- =vector-fill! vec v=
+- =vector-copy! dst dst-start src [src-start] [src-end]=
+
+A /box/ is like a single-element vector, typically used as minimal
+mutable storage.
+- =box=: create a box
+- =box?=
+- =unbox=: return the content
+- =set-box! box v=: return =#<void>=
+- =box-cas! box old new=: *atomically* update content *from old* to
+  new, return =#t=. If does not contain old, nothing changed, and
+  return =#f=.
+
+
+From =racket/vector=:
+- =vector-map=
+- =vector-append=
+- =vector-take=, =vector-drop=
+- =vector-take-right=, =vector-drop-right=
+- =vector-split-at=, =vector-split-at-right=
+- =vector-copy=
+- =vector-filter=
+- =vector-filter-not=
+- =vector-count proc vec=
+- =vector-argmin=, =vector-argmax=
+- =vector-member=
+- =vector-sort=
+- =vector-sort!=
+
+* Hash Tables
+- =(hash key val ... ...)=
+- =hash-set hash key v=
+- =hash-ref hash key=
+- =hash-has-key?=
+- =hash-update=
+- =hash-remove=
+- =hash-clear=
+- =hash-keys=
+- =hash-values=
+- =hash->list=
+- =hash-keys-subset? hash1 hash2=: hash1 is a subset of hash2?
+- =hash-count hash=
+- =hash-empty?=
+- =hash-union=: require =racket/hash=
+
+* Sequence
+Sequence is designed to be used with =for=. Not only list and vectors
+are sequence, hash table is also sequence. Dictionary and set are also
+sequences. List can also be dictionary type.
+
+- =sequence?=
+Constructing sequences
+- =in-range=
+- =in-naturals=
+- =in-list=
+- =in-vector=
+- =in-string=
+- ~in-lines [in=(current-input-port)]~
+- =in-hash=
+- =in-hash-keys=, =in-hash-values=, =in-hash-pairs=
+- *=in-directory [dir use-dir?]=*: It is depth first. The path are
+  built, not individual components. If =dir= is not given, use current
+  dir. If use-dir? =with signature (path? . -> any/c)= is given, it
+  acts like as a filter of the results
+
+* Hash set (use racket/set)
+- =set v ...=: construct a hash set
+- =list->set lst=: construct from list
+- =for/set=
+- =set-member?=
+- =set-add=
+- =set-remove=
+- =set-empty?=
+- =set-count=
+- =set-first=
+- =set-rest=
+- =set-copy=
+- =set-clear=
+- =set-union=
+- =set-intersect=
+- =set-subtract=
+- ~set=?~
+- =subset? st1 st2=: st1 is subset of st2?
+- ~proper-subset? st1 st2~: strict subset
+- =set->list=
+- =in-set=
+
+
+* structure
+#+begin_example
+struct id maybe-super (field ...) struct-option ...
+field = field-id | [field-id field-option ...]
+#+end_example
+
+The =struct= form creates a structure type (unless =#:prefab= is
+specified), and some names (along with others). Now we use =myid= as
+the provided id:
+- =struct:myid=: the /structure type descriptor/, can be used in
+  =#:super= option
+- =myid=: constructor, unless =#:constructor-name= option is specified
+- =myid?=: predicate procedure
+- =myid-myfield=: accessor procedure for each field
+
+** Field options
+There are two available field options:
+- =#:auto=: automatic fields: the constructor does not accept argument
+  for that field, the auto value by =#:auto-value= (defaults to =#f=)
+  is used.
+- =#:mutable=: =set-myid-myfield!=: destructively update field. A
+  mutable field is defined in *one* of two ways: defined for the
+  fields with =#:mutable= option, or struct option =#:mutable= for all
+  fields. Specify both results in syntax error.
+
+** Subtyping
+You can specify super class in *one* of two ways: maybe-super or via
+=#:super= option. Specify both results in syntax error.  Subtype will
+inherit fields, when initialize, initialize those parent fields first.
+
+** Structure options
+- =#:mutable=: same as set =#:mutable= for all fields
+- =#:super=: same as set maybe-super
+- =#:prefab=: means /previously fabricated/. Also known as predefined,
+  globally shared. Such structure types are globally shared, and they
+  can be print and read back. If it has a super class, obviously it
+  must also be prefab. It is inherently transparent, and cannot have a
+  guard or property. I.e. it cannot be used together with
+  =#:transparent=, =#:inspector=, =#:guard=, =#:property=.
+- =#:auto-value=: supply *one* value for all =#:auto= fields
+- =#:transparent=: shorthand for =#:inspector #f=. All structures are
+  by default opaque, thus the print out format does not show any
+  information. If the structure is transparent, the print information
+  can see the data. The =equal?= will also works by recursively
+  compare all fields, while for opaque structures, this require to
+  define generic method for =equal?=. However, the prints cannot be
+  read back, to do which the prefab is required.
+- =#:inspector= specify an inspector. This is intended for use by
+  debuggers. It is related to reflection, i.e. providing access to
+  structure fields and structure type information.
+- =#:guard= specify a guard procedure, or just =#f= to turn it
+  off. This is used to filter the arguments to constructor. It accepts
+  n+1 arguments: the n constructor arguments, plus the name of the
+  structure, and return n arguments that is actually used for
+  construction. It is called "guard" in the sense that it can raise
+  exceptions.
+- =#:property=: this can be specified multiple times for multiple
+  properties. A property is associated with the type, not the
+  instance. Subtype will inherit property, and can override it. The
+  usage is TODO, and how to retrieve is also TODO.
+- =#:methods=: TODO
+
+
+Other
+- =#:authentic=
+- =#:name=
+- =#:extra-name=
+- =#:constructor-name=
+- =#:extra-constructor-name=
+- =#:reflection-name=
+- =#:omit-define-syntaxes=
+- =#:omit-define-values=
+
+** Generic Interface
+
+require =racket/generic=.
+
+First define the interface.
+#+begin_src racket
+(define-generics printable
+  (gen-print printable port)
+  (gen-port-print port printable)
+  (gen-print* printable [port] #:width width #:height height))
+#+end_src
+
+We are defining a generic id called =printable=. The =gen:printable=
+will be the transformer binding used when defining the structure. The
+followings are the methods that are supposed to be defined. Note:
+there must be a =printable= literally in each of these methods. It
+does not matter which position, but this particular position should be
+kept as the variable in your actual definition. The arguments are
+nothing new, including optional variable, default values, as well as
+keyword arguments.
+
+Define the structure. To declare that this structure satisfies a
+generic interface, specify it in =#:methods=. It accepts two values:
+=gen:name=, and =method-defs=. You can supply multiple =#:methods= of
+course. Each of the def is a define of the function, very normal. Note
+that the variable that corresponds to the =printable=, by position, is
+the data object. Since there cannot be duplicate arguments, you cannot
+use this twice (this of course is not likely what you want).
+
+There's a =define/generic= that has a fixed form of two arguments,
+=local-id= and =method-id=. The latter can only be one of these
+generic method. It is the form used to create a binding. Using just
+define cannot create this, because =gen-print= will not be in
+scope. And =define/generic= can only be used here. And interestingly
+inside a generic function, the =gen-print= is in scope, and can be
+bound by a =let= expression (why??).
+
+#+begin_src racket
+(struct num (v)
+  #:methods gen:printable
+  [(define/generic alias gen-print)
+   (define/generic alias2 gen-print*)
+   ;; (define alias3 gen-print)
+   (define (gen-print n port)
+     (fprintf port "Num: ~a" (num-v n)))
+   (define (gen-port-print port n)
+     (let ([alias2 gen-print]) 
+       (gen-print n port)
+       (alias n port)
+       ;; (alias2 n)
+       ;; (alias3 n port)
+       ))])
+#+end_src
+
+Use like this:
+#+begin_src racket
+(gen-port-print (current-output-port) (num 8) )
+#+end_src
+
+
+
+* Multiple Values
+values produce multiple values value, to consume that, typically use
+=let-values=, =let*-values=, =define-values=. Also, binding forms that
+can destruct values can also be used.
+
+* Exception
+For now, I only care about how to handle exceptions. To do that:
+
+- call-with-exception-handler f thunk: (f ex)
+- with-handlers ([pred-expr handler-expr] ...) body ...+
+#+BEGIN_SRC racket
+  (with-handlers ([exn:fail:syntax?
+                   (λ (e) (displayln "got a syntax error"))]
+                  [exn:fail?
+                   (λ (e) (displayln "fallback clause"))])
+    (raise-syntax-error #f "a syntax error"))
+#+END_SRC
+
+Here's the hierarchy of built-in exceptions
+- exn
+  - exn:fail
+    - exn:fail:contract
+    - exn:fail:syntax
+    - exn:fail:read
+    - exn:fail:filesystem
+    - exn:fail:network
+    - exn:fail:out-of-memory
+    - exn:fail:unsupported
+    - exn:fail:user
+  - exn:break
+
+To raise an exception, you can use:
+- =raise=: too general, don't use for now
+- =error=: raise exn:fail
+- =raise-user-error=
+- =raise-syntax-error=
+
+* Concurrency
+Comparison
+- Thread: all the threads are running parallel, but they run on the
+  /same processor/.
+- Future: can utilize multiple processors
+
+Thread
+- =thread thunk=: create a thread to run, and return immediately with
+  thread descriptor. When thunk terminates, the thread
+  terminates. Threads are managed in current custodian.
+- =thread?=
+- =current-thread=
+- =thread-suspend=
+- =thread-resume=
+- =kill-thread=
+- =break-thread=
+- ~sleep [secs=0]~: cause the current thread to sleep. 0 simply hint
+  other threads to execute (useful??).
+- =thread-running?=
+- =thread-dead?=
+- =thread-wait thd=: block until thd terminates
+- =thread-send thd v=
+- =thread-receive=: block until a v is ready
+- =thread-try-receive=: non-block version
+
+Parameters are procedures, which optionally accepts one argument. If
+no argument, get the value. Given the arguement, set the value. This
+is like a global variable, thus suitable for a command line option
+storage. The parameters are local to thread, and sub thread inherit
+parent ones, but not shared. This means setting the parameter will not
+affect the parameter in other thead (including parent thread).
+
+To make a parameter, simply:
+#+BEGIN_SRC racket
+(define aaa (make-parameter #f))
+(aaa) ; => #f
+(aaa 3)
+(aaa) ; => 3
+#+END_SRC
+
+Parameters are often used by parameterize it in some content, instead
+of set directly.
+
+#+begin_example
+(parameterize ([param value-expr] ...)
+  body ...+)
+#+end_example
+
+
+Future (=racket/future=)
+- =future thunk=: return the future. It will not run, until touch it.
+- =touch f=: blockingly run the future f, and return the result. After
+  touch returns, the results are still hold in the future. You can
+  touch it again and retrieve the same result. Then, how to run in
+  parallel? Create a thread to touch it??
+- =current-future=
+- =future-enabled?=
+- =future?=
+- =processor-count=
+- =for/async (for-clause ...) body ...+=
+
+Places can also use multiple cores. Place enables greater parallelism
+than future, because it creates a new racket VM, and include separate
+garbage collection. Thus the setup and communication cost is higher.
+Places can only communicate through place channels.
+
+* IO
+** ports
+*** General operation
+- =eof=: global variable
+- =eof-object?=
+- =close-input-port=, =close-output-port=
+- =current-input-port=, =current-output-port=, =current-error-port=:
+  can be used to get/set the current
+- =flush-output out=: Input or output ports are both block-buffered by
+  default. Terminal output port is line-buffered. This function cause
+  the port to be flushed immediately
+
+*** File IO
+- =open-input-file path [#:mode flag]=: return an input port. mode can
+  be ='binary= or ='text=
+- =open-output-file path [#:mode flag #:exists flag]=: exist flag
+  includes
+  - error
+  - append
+  - replace: remove old file, create a new one
+- =open-input-output-file path [#:mode flag #:exists flag]=
+- =call-with-input-file path proc=: proc is =(input-port? . ->
+  . any)=. When proc returns, the port is closed.
+- =call-with-output-file path proc=
+- =with-input-from-file path thunk=: set =current-input-port= to
+  file. As it is similar to =call-with-input-file=, the port is closed
+  when thunk returns.
+- =with-output-to-file path thunk=
+
+*** String IO
+- =open-input-string str=: create a string port using str
+- =open-output-string=: create a output string port
+- =get-output-string out=: read from a output string port. This should
+  be used with the above method, specifically the out should be
+  =(and/c output-port? string-port?)=.
+
+*** Extra
+Requires =racket/port=. This is actually the most commonly used
+helpers. All of these have bytes counterparts.
+
+- *=port->string=*
+- =port->lines=
+- =display-lines=
+- =call-with-output-string proc=: proc: =(output-port? . -> . any)=
+- =with-output-to-string proc=: proc is =(-> any)=
+- =call-with-input-string str proc=: proc: =(input-port? . -> . any)=
+- =with-input-from-string str proc=: proc is =(-> any)=
+
+
+
+** Reading
+- =read-char=
+- =read-byte=
+- =read-line=
+- =read-bytes-line=
+- =read=: read a /datum/ from an input port
+- =read-syntax=: like read, but produce a /syntax object/, with
+  source-location information
+
+** Writing
+- =write-char=
+- =write-byte=
+- =newline=
+- =write-string=
+- =write-bytes=
+
+- =write=: write a datum so that it can be read back
+- =display=: write string without the quotes
+- =print=: this is pretty weird. The existence rationale is that,
+  /display and write both have specific output convention/. But print
+  has no pre-assumed convention, and the environment is free to modify
+  its behavior.
+- =writeln=, =displayln=, =println=
+- =fprintf out form v ...=
+  - out is an output port
+  - form is a format string.
+    - =~n=: new line
+    - =~a=: display
+    - =~s=: write
+    - =~v=: print
+- =printf form v ...=: equivalent to =fprintf (current-output-port) form v ...=
+- =eprintf form v ...=: print to (current-error-port)
+- =format form v ...=: return the string
+
+with =racket/pretty=
+- =pretty-print=
+- =pretty-write=
+- =pretty-display=
+- =pretty-format=
+
+
+* OS
+- =(getenv name)=
+- =(putenv name value)=
+
+In =racket/os=
+- =gethostname=
+- =getpid=
+** Path
+- =string->path=
+- =path->string=
+- *=build-path base sub ...=*
+- =absolute-path?=, =relative-path?=
+- =path->directory-path=: from =x/y= to =x/y/=
+- =resolve-path=: follow soft link. Note that itself does not expand
+  user path.
+- =cleanse-path=: most racket functions clean the path before use,
+  unless it does not access filesystem (i.e. onlyl do a form
+  checking). =cleanse-path=, =expand-user-path=, =simplify-path= are
+  exceptions in the sense that they does not access filesystem, but
+  will do cleanse. But what exactly cleanse does?
+- *=expand-user-path=*: a leading =~= is replaced by the user home
+  directory.
+- =simplify-path=: nomalize as much as possible. I.e. remove
+  - redundant path separators (except single trailing separator)
+  - =..=, =.=
+- *=split-path=*: remove the last component (without consideration of
+  trailing =/=, as we will see in the 3rd return value), and return 3
+  values (e.g. "aa/bb/cc/"):
+  - base: =aa/bb/=
+  - name: =cc=
+  - must-be-dir?: =#t=
+- =explode-path=: split path extensively, the first one is root
+- *=path-replace-extension path ext=*: extension starts from the last
+  dot. =ext= should lead by a dot. If no dot in the path, simply add
+  it.
+- =path-add-extension path ext [sep #"_"]=: add the extension. If
+  there's a dot in the path, the last dot will be replaced by sep.
+
+From =racket/path=
+- =file-name-from-path=
+- *=path-get-extension=*
+- =path-has-extension?=
+- =file-relative-path base path=: how to do from base TO path
+  - =(find-relative-path "a/b" "a/b/c/d")= returns =c/d=
+- =normalize-path path=: complete, expand (NOT expand-user-path,
+  .. but what??), resolve soft links
+- =simple-form-path=: complete, then simplify. This is said to be used
+  more often than =normalize-path=.
+** File System
+- =find-system-path kind=, where kind is
+  - ='home-dir=
+  - ='temp-dir=
+- *=find-executable-path program=*
+- *=file-exists?=*
+- =link-exists?=
+- *=delete-file=*
+- =rename-file-or-directory old new=
+- =file-size=: in bytes
+- =copy-file src dest=
+- =make-file-or-directory-link to path=: create =path=, link to =to=
+  (soft or hard??)
+- *=current-directory=* get or set, this is a parameter
+- *=directory-exists?=*
+- =make-directory=
+- =delete-directory=
+- *=directory-list [path #:build build?]=*: list of all files or
+  directories in =path=. path defaults to current directory, while
+  build? defaults to =#f=. If =#:build= is =#t=, each of the results
+  are built with prefix =path=. Note that this is not recursive, for
+  that, use the *sequence generator =in-directory=*.
+
+From =racket/file=:
+- *=file->string=*: this READs the file content to a string
+- =file->value=: READs a single S-expression using =read=. Seems that
+  the file can contain more
+- =file->list path [proc = read]=: reads the file content with proc
+  until EOF
+- =file->lines=: read into lines, without line separators
+- =display-to-file v path=: =display= =v= to =path=
+- =write-to-file v path=: =write= =v= to =path=
+- =display-lines-to-file lst path [#:separator sep]=: as name suggests, add line seperators
+- =copy-directory/files src dest=
+- =delete-directory/files=
+- =find-files predicate [start-path]=: start-path defaults ot
+  current. Use predicate to filter what should be returned. Seems that
+  this is recursive.
+- *=make-directory*=*: seems to be =mkdir -p=
+- *=make-parent-directory*=*: this is very convenient in making a
+  necessary directory to write a file
+- =make-temporary-file [template copy-from-filename directory]=:
+  create it, and return path.
+  - template: ="rkttmp~a"=
+  - copy-from-filename
+    - a path: the created one is a copy of the path
+    - #f: which is also default, create an empty file
+    - ='directory=: create a directory(!!!) instead
+  - directory: =#f=, means use default temporary path (=/var/tmp=)
+
+** Networking
+I'm not going to dig deep on this because I don't use it. Just listing
+available functions. Needs require 
+
+TCP (=racket/tcp=)
+- =tcp-listen port-no=: return =tcp-listener?=
+- =tcp-connect hostname port-no=: return =input-port?= =output-port?=
+- =tcp-accept listener=: return =input-port?= =output-port?=
+- =tcp-close listener=
+
+UDP (=racket/udp=)
+- =udp-open-socket=
+- =udp-bind! udp-socket hostname-string port-no=
+- =udp-connect! udp-socket hostname-string port-no=
+- =udp-send-to udp-socket hostname port-no bstr=
+- =udp-send udp-socket bstr=
+- =udp-receive! udp-socket bstr=
+- =udp-send-to*=, =udp-send*=, =udp-receive!*=: non-block
+- udp-close udp-socket
+
+** Processes
+- =subprocess stdout stdin stderr cmd arg ...=
+  - the command runs ASYNC, it seems that it will run immediately
+  - If provided a port, it will use that. Otherwise (provide =#f=), it
+    will create one, and get returned. The return value is exactly the
+    same: =subprocess? port? port? port? path-string? string?=. =#f=
+    means no, no matter as parameter or return value.
+  - stderr can be ='stdout=, in which case the corresponding return
+    value will be =#f=
+  - All ports returned must be closed manually
+  - since the ports have capacity, it is possible to have deadlock
+- =subprocess-wait=: block until subprocess terminate
+- =subprocess-status=: returns either ='running= or the exit code
+- =subprocess-kill=
+- =subprocess-pid=
+
+In =racket/system=:
+- =system cmd=: execute cmd *through shell command*
+  SYNChronously. Return #t for success, #f for fail
+- =system* cmd arg ...=: differ in:
+  - execute directly instead of through shell command
+  - obviously arguments are provided as arguments instead of in string
+- =system/exit-code cmd=: same as =system=, but the return is exit
+  code
+- =system*/exit-code cmd arg ...=
+- =process cmd=: run ASYNC, through a shell, return (input port,
+  output port, PID, stderr, proc). All ports must be closed
+  manually. The procedure =proc= can accept one argument, and is used
+  to interact with the process. The argument can be:
+  - ='status=: return one of ='running=, ='done-ok=, ='done-error=
+  - ='exit-code=
+  - ='wait=: block until terminate
+  - ='interrupt=: send SIGINT
+  - ='kill=
+- =process* cmd arg ...=: like the difference of =system*= with
+  =system=
+- =process/ports out in error-out cmd=: You can provide the ports (the
+  return will be =#f=), or provide =#f= (the ports are created and
+  returned).
+- =process*/ports out in error-out cmd arg ...=
+
+** CMD parsing (racket/cmdline)
+The =command-line= macro actually parse the command line. The
+=current-command-line-arguments= is actually a parameter that returns
+a vector of strings. It is the cmd args that used to run the racket
+program. Thus =command-line= consumes this value. But since it is a
+parameter, you can access it as many times as you want.
+
+All the arguments are actually keyword arguments, but they must appear
+in order, according to the grammar.
+#+BEGIN_EXAMPLE
+(command-line [name-expr] [argv-expr] flag-clause ... finish-clause)
+#+END_EXAMPLE
+
+The flag clauses can be:
+- =#:multi=: flags can appear multiple times
+- =#:once-each=: each flag can appear one time
+- =#:once-any=: one of the flag can appear
+- =#:final=: this is like =#:multi=, but no argument is treated as
+  flag any more after it (means they are all left over)
+
+Each of them will be followed by some =flag-sepcs=:
+#+BEGIN_EXAMPLE
+flag-spec ::= (flags id ... help-spec body ...+)
+flags ::= flag-string | (flag-string ...+)
+help-spec ::= string | (string-expr ...+)
+#+END_EXAMPLE
+
+Flags are equivalent, usually to supply =-x= and =--longer-x=. If
+=help-spec= is a list of strings, they are printed in separate lines.
+
+The =flag-clause= can also be some general printing service, followed
+by strings to print
+- =#:usage-help=: this is going to be printed right after the /usage/
+  of the command
+- =#:ps=: insert at the end of the help
+
+
+Finish clause just use =#:args arg-formals body ...+=. It is intended
+to handle left over arguments. arg-formals can be just a single ID, in
+which case it will be a list of left over arguments. It can also be a
+list, which indicates how many left over are expected. The body are
+executed and the value of last is returned as the result.
+
+A typical command line parser looks like this. It typically:
+- set parameters
+- print messages
+- return file lists
+
+#+BEGIN_SRC racket
+  (define verbose-mode (make-parameter #f))
+  (define profiling-on (make-parameter #f))
+  (define optimize-level (make-parameter 0))
+  (define link-flags (make-parameter null))
+
+  (define file-to-compile
+    (command-line
+     #:program "compiler"
+     #:once-each
+     [("-v" "--verbose") "Compile with verbose messages"
+                         (verbose-mode #t)]
+     [("-p" "--profile") "Compile with profiling"
+                         (profiling-on #t)]
+     #:once-any
+     [("-o" "--optimize-1") "Compile with optimization level 1"
+                            (optimize-level 1)]
+     [("--optimize-2") ("Compile with optimization level 2,"
+                        "which includes all of level 1")
+                       (optimize-level 2)]
+     #:multi
+     [("-l" "--link-flags") lf
+                            "Add a flag"
+                            (link-flags (cons lf (link-flags)))]
+     #:args (filename) filename))
+#+END_SRC
+
+
+* Trouble shooting
+
+** racket cannot find browsers
+Browsers are declared in sendurl.rkt, with
+
+#+BEGIN_SRC racket
+  (define all-unix-browsers
+    '(
+      firefox
+      google-chrome
+      galeon
+      opera
+      mozilla
+      konqueror
+      ;; ...
+      ))
+#+END_SRC
+
+chromium is not in the list, thus
+#+BEGIN_SRC racket
+(require net/sendurl)
+unix-browser-list ;; empty
+(send-url "google.com") ;; error
+#+END_SRC
+
+The trick is to create a soft link for chromium named "google-chrome".
+Also, the default is using firefox ... So I need to make sure firefox
+is uninstalled. Is there a better way to configure browser??
+
+The =racket-doc= will use the local racket document to search, thus in
+order for it to work, install =racket-doc= package.
+
+
+
+* Logger
+
+#+BEGIN_SRC racket
+  (define lg (make-logger))
+  (define rc (make-log-receiver lg 'debug))
+  (current-logger lg)
+  (void
+   (thread
+    (lambda () (let loop ()
+                 (print (sync rc))
+                 (loop)))))
+  (log-error "error")
+  (log-fatal "fatal")
+  (log-debug "just a debug")
+#+END_SRC
+
+#+BEGIN_SRC racket
+  (require racket/logging)
+  (let ([my-log (open-output-string)])
+    (with-logging-to-port my-log
+      (lambda ()
+        (log-warning "Warning World!")
+        (+ 2 2))
+      'warning)
+    (get-output-string my-log))
+#+END_SRC
+
+* Libraries
+** Drawing libraries
+- metapict: https://github.com/soegaard/metapict
+- rosetta: https://github.com/aptmcl/rosetta/tree/master
+  - this one is for design 2/3d models, and seems broken and not in
+    official support.
+- 2htdp/image: in teachpack
+- racket/draw: bare-bone, object-oriented, not so interesting
+- pict-lib pict: this one is pretty good, functional. It was in
+  slideshow
+
+** pict-lib
+*** Constructors
+- text
+- hline, vline
+- frame
+- ellipse, circle, filled-ellipse, disk
+- rectangle, filled-rectangle
+- rounded-rectangle
+- filled-rounded-rectangle
+- bitmap: read a bitmap image
+- arrow, arrowhead
+
+Use pin to create lines connecting picts
+- pin-line, pin-arrow-line, pin-arrows-line: add lines onto a pict. It
+  finds positions in the src and dst picts, and can set angle to
+  create curve
+
+
+**** More constructors
+- cloud
+- file-icon
+- standard-fish
+- jack-o-lantern
+- angel-wing
+- desktop-machine
+- thermometer
+- face, face*
+
+Balloon annotation
+
+- wrap-balloon
+- pin-wrap-balloon
+- pin-balloon
+- balloon
+- filled-flash
+- outline-flash
+
+code
+- typeset-code
+- code
+- define-code
+- code-align: align code with pict
+- codeblock-pict: a block of code, seems to respect #lang option
+  inside the code string, to decide lexer
+
+code parameters
+- current-code-font
+- current-code-tt
+- current-code-line-sep
+- current-comment-color
+- current-keyword-color
+- current-id-color
+- current-literal-color
+- current-const-color
+- current-base-color
+- current-reader-forms: this should be able to define language
+- current-keyword-list
+- current-const-list
+- current-literal-list
+- code-colorize-enabled
+- code-italic-underscore-enabled
+- code-scripts-enabled
+
+
+
+*** Combiners
+- various of append
+  - syntax: v and h, then alignment
+  - vl, vc, vr, ht, htl, hc, hbl, hb
+  - v and h for vertical and horizontal
+  - t,b for top, bottom
+  - l,c,r for left, center, right
+- superimpose
+  - Syntax: horizontal alignment, vertical alignment
+  - lt,ltl,lc,lbl,lb,ct,ctl,cc,cbl,cb,rt,rtl,rc,rbl,rb
+  - l,c,r for left, center, and right
+  - t,b for top and bottom
+- pin
+  - pin-over
+  - pin-under
+- table
+*** Adjusters
+- scale, scale-to-fit, scale/improve-new-text
+- rotate
+- ghost: does not draw (invisible), but use the size
+- cellophane: make is semi-transparent
+- clip, inset/clip
+- freeze: to bitmap
+
+The followings can be used to specify parameters
+- linewidth
+- linestyle
+- colorize
+- black-and-white
+*** Bounding box
+- inset
+- clip-decent
+- lift-above-baseline
+- drop-below-ascent
+- baseless
+- refocus: focus on the top most sub-pict
+- panorama: enclose all sub-picts
+- use-last, use-last*
+
+*** Pict finder
+- with -find suffix
+  - lt,ltl,lc,lbl,lb,ct,ctl,cc,cbl,cb,rt,rtl,rc,rbl,rb
+
+*** Tree layout
+tree-layout creates a layout containing edges. The layout can be
+rendered to pict by
+- naive-layered (seems to be good)
+- binary-tidier
+- hv-alternating
+
+** graph
+This is a generic graphic library.  graph is defined through a generic
+interface =gen:graph=, supporting the following methods:
+- has-vertex?
+- has-edge?
+- vertex=?
+- add-vertex!
+- remove-vertex!
+- rename-vertex!
+- add-edge!
+- remove-edge!
+- get-vertices
+- in-vertices
+- get-neighbors
+- in-neighbors
+- get-edges
+- in-edges
+- edge-weight
+- transpose
+- graph-copy
+- graph-union!
+
+This actually is mostly not functional.
+
+To construct a graph, use =directed-graph= or =undirected-graph= with
+list of edges represented as list of vertex, with first being the
+source, rest being target. These functions seems only support single
+target.
+
+The library let you define vertex and edge properties, just like those
+in boost library. You can do bfs or dfs, shortest path, graph
+coloring, maximum flow.
+
+Finally, you can call =graphviz= to convert the graph to a string of
+dot format. It cannot output a =pict=.
+
+
+** 2htdp/image
+This is teachpack of How to design program version 2.  It provides
+several basic images, rotation, scale, flip, overlay.
+
+Other interesting packages in this pack:
+- 2htdp/planetcute contains many images
+
+
+*** Common Concepts
+The length is measured in terms of pixels, angle means degree. When
+using names, both string and symbol are acceptable, and
+case-insensitive.
+
+Mode can be ='solid= or ='outline=. The string format is also
+supported. Solid fills, outline only draws the outside line. A integer
+between 0 and 255 instead will indicate the transparency.
+
+Color can be name or color structure. If the name is not recognized,
+no error is reported, and black is used. The complete list (plus
+=transparent=) is in the document of =color-database<%>=. This is an
+interface, defined in =racket/draw=.
+
+The color structure is
+#+begin_src racket
+(struct color (red green blue alpha))
+#+end_src
+
+
+In many places, the color also accepts a pen. =pen= is a structure. It
+seems only for drawing lines, so outline mode will support it. Its
+definition is
+
+#+begin_src racket
+(struct pen (color width style cap join))
+#+end_src
+
+- style :: solid, dot, long-dash, short-dash, dot-dash
+- cap :: round, projecting, butt
+- join :: round, bevel, miter
+
+When doing alignment, you can use pinhole, only if all the images have
+a pinhole. You can add pinhole to image by
+- center-pinhole image
+- put-pinhole x y image
+- clear-pinhole
+
+And retrieve pinhole by
+- pinhole-x
+- pinhole-y
+
+
+*** basic shape
+- shape
+  - =(circle radius mode color)=
+  - =(ellipse width height mode color)=
+  - triangle
+    - =(triangle side-length mode color)=
+    - right-triangle
+    - isosceles-triangle
+    - triangle/sss
+  - square x
+  - rectangle x y
+  - rhombus x θ
+  - star
+    - star x
+    - star-polygon
+    - radial-star
+  - polygon
+    - regular-polygon
+    - polygon
+    - add-polygon
+    - scene+polygon
+- line
+  - =(line x y color)=: draw a line from (0,0) to (x,y).
+  - =(add-line image x1 y1 x2 y2 color)=: add line to image, from
+    (x1,y1) to (x2,y2)
+  - =add-curve=
+  - =add-solid-curve=
+- text
+  - =(text string font-size color)=
+  - =text/font=: this will use a complete font specification,
+    including
+    - face: which font name
+    - family: default, script, modern, etc
+    - style: normal, italic
+    - weight: normal, bold, light
+    - underline?: #t #f
+
+
+*** Overlay
+- =overlay= accepts a sequence of images, with the first being on
+  top. Images are aligned on their center.
+- =overlay/align x-place y-place= controls where to align the images.
+  - x: left, right, middle, center, pinhole
+  - y: top, bottom, middle, center, baseline, pinhole
+- =overlay/offset i1 x y i2=: moves i2 by (x,y) compared to (0,0),
+  thus to down right
+- =overlay/align/offset= combines both options
+- =overlay/xy=: what's the difference from offset?
+- =overlay/pinhole=
+
+There's also an =underlay= version that does the reverse order, for
+all above.
+
+- =beside= accepts images, and placing them in horizontal row, aligned
+  on their centers
+- =beside/align y=
+- =above=: in a vertical row
+- =above/align x=
+
+
+*** scene
+Typically you place images on a scene. If an image is placed (using
+those place functions) or add lines (using scene+XXX) on scene, it is
+cropped based on the size of scene. You can still compose the image by
+overlay or add-line, but those does not respect the size of scene.
+
+- =empty-scene x y color=
+- =place-image image x y scene=: the (x,y) is according to the
+  top-left corner of scene
+- =place-image/align image=
+- =place-images=: just a list of images and a list of positions
+- =place-images/align=
+- =scene+line=: add a line to the scene
+- =scene+curve=
+
+*** transform
+- =rotate angle image=
+- =scale factor image=
+- =scale/xy=: using different factor for x and y
+- =flip-horizontal image=
+- =flip-vertical image=
+- =crop x y width height image=
+- =crop/align=
+- =frame image=: return an image with a black frame around the
+  /bounding box/ of the it. Even if the image might be a circle, the
+  bounding box is still rectangle.
+- =color-frame color image=
+
+
+*** bitmap
+You can load a bit map file by =(bitmap filename)=, or =(bitmap/url
+url)= to download from web. For a vector image you created in racket,
+you can "freeze" it to bitmap by =freeze image=.
+
+Finally, you can save image to file by
+- =save-image image filename [width height]=: png
+- =save-svg-image image filename [width height]=: svg
+
+*** properties
+- image-width
+- image-height
+- image-baseline
+
+
+** Networking
+*** HTML parsing
+The package is =html-parsing=. It has only one function, =html->xexp=.
+
+The xexp is a list like this:
+
+#+begin_example
+(*TOP* (html (head (title) (title "whatever"))
+  (body "\n"
+    (a (@ (href "url")) "link"))))
+#+end_example
+
+The xexp needs to use =sxml= (needs install) package to
+parse. =sxpath= is a function for XPath like query. Use like this
+#+begin_src racket
+((sxpath '(html body table tr td a @ (*or* href title)))
+ table)
+#+end_src
+
+sxpath itself returns a function, apply that function on an xexp data,
+a list will be returned for matched results.
+1. the xexp must begin with =*TOP*=, the query result will not have
+   it. So if you want to parse it again, construct it by =`(*TOP* ,x)=
+2. the xpath starts from root (html)
+3. you can use ='(// table)= to query tables at arbitrary level
+
+*** URL & HTTP
+require the package =net/url= (needs install) and
+=net/url-string=. First, construct a url by =string->url=, then, open
+input port by =get-pure-port=, this is using =GET= method. The port
+can be used as input, e.g. =port->string=. How to download binary
+file, like pdf? It should be bytes streaming, so maybe
+- copy-port in out
+- port->bytes then write-bytes
+
+
+The =call/input-url URL connect handle= will call handle on the port,
+and close the port on return. The connect is a procedure,
+e.g. =get-pure-port=.

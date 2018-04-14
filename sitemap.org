@@ -3,8 +3,16 @@
 - [[file:hebi.org][Extra Index]]
 - [[file:index.org][Hebi Li, the Homepage]]
 - [[file:README.org][Homepage Source Repository]]
+- [[file:thinking.org][Thinking Tmp]]
 - art
   - [[file:art/README.org][Art]]
   - [[file:art/index.org][Art index]]
   - [[file:art/reading.org][Reading]]
   - [[file:art/poem.org][诗词曲]]
+- wiki
+  - [[file:wiki/common-lisp.org][Common Lisp]]
+  - [[file:wiki/emacs.org][Emacs]]
+  - [[file:wiki/functional.org][Functional Programming]]
+  - [[file:wiki/linux.org][Linux]]
+  - [[file:wiki/lisp.org][Lisp Index Page]]
+  - [[file:wiki/racket.org][Racket]]

@@ -2,8 +2,22 @@
 
 This is the lisp index page, containing general staff for lisp.
 
-There's a [[http://hyperpolyglot.org/lisp][page]] for corresponding APIs of common lisp, racket, clojure,
-emacs lisp.
+There's a [[http://hyperpolyglot.org/lisp][page]] for corresponding
+APIs of common lisp, racket, clojure, emacs lisp.
+
+
+
+* Dialects
+
+Richard P. Gabriel has a
+[[http://www.nhplace.com/kent/Papers/Technical-Issues.html][paper]]
+about Lisp-1 and Lisp-2. Basically Lisp-1 has seperate namespace for
+functions and variables, while Lisp-2 only have one universal
+namespace.
+
+Lisp-1 includes Elisp, [[file:common-lisp.org][Common Lisp]]. All
+scheme are lisp-2.  [[file:racket.org][Racket]] is the modern scheme
+with batteries.
 
 
 * Why Lisp?
@@ -22,17 +36,6 @@ There is a myth that Lisp is "special-purpose" languages, while
 languages like Pascal and C are "general purpose". Actually, just the
 reverse is true.
 #+end_quote
-
-
-
-* Lisp-1 vs. Lisp-2
-
-http://www.nhplace.com/kent/Papers/Technical-Issues.html
-
-Lisp-1 has seperate namespace for functions and variables, while
-Lisp-2 only have one universal namespace.
-
-Lisp-1 includes Elisp, common lisp. All scheme are lisp-2.
 
 
 * fold & unfold
