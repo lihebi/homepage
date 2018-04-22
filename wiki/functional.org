@@ -22,6 +22,14 @@ reduces the innermost redex, i.e. the one that contains no other
 redex. /Outermost reduction/ reduces the one that is contained in no
 other redex.
 
+Any term that is reduced must be reduced to /head normal form/. A term
+is in /head normal form/ if it is not a redex, and it cannot become a
+redex by reducing any of its subterms. For example, =(e1:e2)= is in
+head normal form, because the (:) /itself/ cannot be reduced. However,
+=e1= and =e2= might be reducible. It is a normal form only when e1 and
+e2 both are in normal form. By definition, every term in normal form
+is in head normal form, but not vice versa.
+
 The evaluation order matters because of the /termination/. Sometimes,
 the outermost reduction will terminate while the inner most fail to do
 so. In fact, we have the following property:
@@ -51,6 +59,39 @@ them will happen ones, for all the references of them. With graph
 reduction, we can say outermost reduction never performs more steps
 than innermost.
 
+In summary, we shall use /outermost graph reduction/ as the evaluation
+model, because
+1. it terminates whenever any reduction order terminates
+2. it requires no more steps than innermost order reduction
+
+However, the outermost reduction might use more space than
+innermost. In this case, it might be desired to mix innermost order to
+achieve better space efficiency. There is a special function =strict=
+that fine-control the evaluation order. =strict f e= is reduced by
+first reducing =e= to head normal form, then applying =f=. The term
+=e= itself is evaluated as normal, using outermost order. With that,
+=strict= can be defined like below. We can easily have this: =f =
+strict f= iff =f= is a strict function.
+
+#+begin_example
+strict f x = \bot, if x = \bot
+           = f x,  otherwise
+#+end_example
+
+There are some ways to decide how to use =strict= to optimize the
+space occupation, but some takeaway: for functions such as =(+)= or
+=(x)=, that are strict in *both arguments*, and can be computed in
+constant time and space, =foldl'= is more efficient. But for
+functions, such as =(&)= and =(++)=, that are non-strict in some
+argument, =foldr= is often more efficient.  (=foldl'= is a rewrite of
+=foldl= with strictness)
+
+#+begin_example
+foldl' (op) a [] = a
+foldl' (op) a (x:xs) = strict (foldl' (op)) (a op x) xs
+#+end_example
+
+
 
 * What is a Function?
 - currying: replacing structured arguments by a sequence of simple
@@ -78,7 +119,8 @@ The special value $\bot$ is polymorphic: $\bot$ is a value of every
 type. This means, any function can be applied to $\bot$. If $f \bot =
 \bot$, then $f$ is said to be strict. Otherwise, it is non-strict. In
 other words, a function is /strict/ if it is undefined whenever its
-argument is undefined. 
+argument is undefined.
+
 
 In fact, a non-strict semantic is often preferable for functions, for
 several reasons:
@@ -104,7 +146,8 @@ cond p x y = x, if p
 
 Under strict semantics, $cond\ True\ 0\ \bot = \bot$, under non-strict
 semantics, $cond True 0 \bot = 0$. But in either case, =cond= is
-strict on its first argument.
+strict on its first argument. This also means, strictness is bundled
+with the function, and is applied on some arguments, not all.
 
 The operational semantics of strict or non-strict functions is closely
 related to the reduction strategy. /eager-evaluation/ reduces every
@@ -119,6 +162,18 @@ for the evaluation.
   $\beta$, etc. Such type can be instantiated by substitute the type
   variable with specific type.
 - Polymorphic type: a type that contains /type variables/
+- Enumerated type: enumeration of possible values
+- Composite type: composite primitive type together to form new types
+- algebraic data type: is a form of composite type, containing product
+  type and sum type
+  - sum type: this is like C union, so it is also called a tagged
+    union. It can take value of either the type, but not both.
+  - product type: this is like a C structure with different
+    fields. The value set of this type is the set-theoretic product,
+    i.e., the Cartesian product of the set of the field type.
+- Abstract Type: types in which the values are prescribed, but the
+  operations are not, are called concrete types. A type whose values
+  are not defined, but operations are, is called abstract type.
 
 ** Type inference
 Three basic rules
@@ -161,6 +216,11 @@ $$(\circ) :: (\beta \rightarrow \gamma) \rightarrow (\alpha
 \rightarrow \beta) \rightarrow (\alpha \rightarrow \gamma)$$
 
 ** List
+List itself is defined as a recursive type.
+
+$$list \alpha :: Nil | Cons \alpha (list \alpha)$$
+
+
 Let list comprehension notation be =[<expr> | <qualifier>;
 ...]=. Qualifier can be boolean expression for predicates or
 generators. Later generators vary more quickly than their
