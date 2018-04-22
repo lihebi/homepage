@@ -26,6 +26,28 @@ sudo /Applications/Install\ OS\ X\ Mavericks.app/Contents/Resources/createinstal
 --nointeraction
 #+END_EXAMPLE
 
+** Virtualization
+Using =qemu=, first create hard disk image file:
+
+#+begin_example
+qemu-img create -f raw disk_image 30G
+#+end_example
+
+Then load the iso file and the hard disk image to install the
+system. The =-m 1024= is crucial, otherwise will result in errors
+booting. The =-enable-kvm= is also crucial for speed. You might need
+to enable CPU virtualization in BIOS.
+#+begin_example
+qemu-system-x86_64 -cdrom iso_image -boot order=d -drive file=disk_image,format=raw -enable-kvm -m 1024
+#+end_example
+
+Finally, run the system with
+#+begin_example
+qemu-system-x86_64 -enable-kvm -m 1024 disk_image
+#+end_example
+
+
+
 * Network
 When using docker container, host system cannot resolve the name of
 container to the specific IP. I have to specify it manually. To
@@ -47,7 +69,6 @@ ip link show <dev>
 
 ** Wireless Networking
 
-*** General DHCPCD
 DHCP is not enabled by default. It is the philloshophy for Arch:
 installing a package will not enable any service. Enable it by;
 
@@ -55,8 +76,7 @@ installing a package will not enable any service. Enable it by;
 systemctl enable dhcpcd
 #+END_EXAMPLE
 
-
-*** iw
+The utility for configuring wireless network is called =iw=.
 - iw dev: list dev
 - iw dev <interface> link: show status
 - ip link set <interface> up: up the interface
@@ -64,11 +84,9 @@ systemctl enable dhcpcd
 - iw dev interface scan: scan for network
 - iw dev <interface> connect "SSID": connect to open network
 
-*** wpa_supplicant
-=iw= can only connect to public network. This is used to connect
-WPA2/WEP encrypted network.
+=iw= can only connect to public network. =wpa_supplicant= is used to
+connect WPA2/WEP encrypted network.
 
-**** Configuration
 The config file (e.g. =/etc/wpa_supplicant/example.conf=) can be
 generated in two ways: using =wpa_cli= or =use wpa_passphrase=.
 =wpa_cli= is interactive, and has commands =scan=, =add_network=,
@@ -83,11 +101,14 @@ SSID name, while =psk= is unquoted encrypted phrase. The psk can also
 be quoted clear password.  If the network is open, you can use
 =key_mgmt=NONE= in place of =psk=
 
-**** Connect
+After the configuration, you can actually connect to a WPA/WEP
+protected network, where 
+
 #+begin_example
 wpa_supplicant -B -i <interface> -c <(wpa_passphrase <MYSSID> <passphrase>)
 #+end_example
-connect to a WPA/WEP protected network
+
+connect to a 
 - -b: fork into background
 - -i interface
 - -c: path to configuration file. 
@@ -97,7 +118,6 @@ Alternatively, you can use the config file
 wpa_supplicant -B -i <interface> -c /path/to/example.conf
 #+end_example
 
-**** Obtain IP
 After this, you need to get IP address by the "usual" way, e.g.
 #+begin_example
 dhcpcd <interface>
@@ -109,8 +129,7 @@ It seems that we should enable the service:
 
 Also, dhcpcd has a hook that can launch wpa_supplicant implicitly.
 
-**** To Sum Up
-Find the interface by =iw dev=. Say it is =wlp4s0=.
+To Sum Up, find the interface by =iw dev=. Say it is =wlp4s0=.
 
 Create config file =/etc/wpa_supplicant/wpa_supplicant-wlp4s0.conf=:
 
