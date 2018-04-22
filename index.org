@@ -12,42 +12,28 @@
 Life is short, I don't have time for things that don't bring me joy.
 #+end_quote
 
-* Academia
-
 I'm currently a PhD student in Computer Science department of Iowa
 State University. I graduated from Electrical Engineering (1010) of
 University of Science and Technology of China (USTC) in 2014 Fall. See
 details in my [[file:assets/cv.pdf][CV(pdf)]]. I also have a
 [[file:resume.pdf][resume (pdf)]] for industry interest.
 
+You can find a list of my coding on
+[[https://github.com/lihebi][GitHub@lihebi]].
+
+
+* Projects
+
+** Dynamic Analysis on Demand
 I was researching in Program Language and Analysis from 2015 Summer to
 2018 Spring, with one paper in submission to FSE-18
 cite:hebi-syntactic-patching, and a framework code
 [[https://github.com/lihebi/helium][Helium-V1]] and
-[[https://github.com/lihebi/helium2][Helium-V2]].  Although I write a
-lot of code, I actually like theory foundation more than
-application. I'm starting to research in theory of statistical
-learning and language theory from now on. More on this in the future.
+[[https://github.com/lihebi/helium2][Helium-V2]].
 
-I like to build software, specifically passionate of writing
-[[file:functional.org][functional]] programs and climbing the ladder
-of abstraction. The best language for that is
-[[file:wiki/lisp.org][lisp]]. It is a family of languages, the
-ultimate meta language that is ready for tuning as an ideal tool for
-any tasks, instead of forcing you to think in its way. I believe
-programming and computing has a basis on lisp, both the history and
-future. You can find a list of my coding on
-[[https://github.com/lihebi][GitHub@lihebi]].
+** USTC RoboGame 2012
 
-I'm always passionate to sharpen my working environment, the Operating
-System. I started to use [[file:wiki/linux.org][Linux]] from 2011 when
-I got my first laptop. I started with Vim initially, and quickly catch
-up with [[file:wiki/emacs.org][Emacs]] from 2015 as I entered graduate
-school and be exposed to more English documents.
-
-I like to build electrical hardware as much as I like for software.  I
-played with micro controllers for 3 years in my undergraduate life.  I
-was the leader of a team in USTC RoboGame 2012, and we ranked 3rd
+I was the leader of a team in USTC RoboGame 2012, and we ranked 3rd
 among 26 teams. The robot precisely fetched a bunch of flowers, found
 routes using image processing, climbing the ladders, and finally put
 the followers precisely in front of the sculpture of Jici Yan. The
@@ -55,6 +41,23 @@ micro controller was Freescale XS128. You can see
 [[https://www.youtube.com/watch?v=N0EbvINeiy4][a small video]] of our
 robot in the competition that day.
 
+* Wiki
+
+Writing things up is a great way to master a piece of knowledge.
+
+Programming has been a big part of my work, I'm particularly
+passionate of writing [[file:functional.org][functional]] programs and
+climbing the ladder of abstraction. The best language for that is
+[[file:wiki/lisp.org][lisp]]. It is a family of languages, the
+ultimate meta language that is ready for tuning as an ideal tool for
+any tasks, instead of forcing you to think in its way. I believe
+programming and computing has a basis on lisp, both the history and
+future.
+
+I started to use [[file:wiki/linux.org][Linux]] from 2011 when I got
+my first laptop. I started with Vim initially, and quickly catch up
+with [[file:wiki/emacs.org][Emacs]] from 2015 as I entered graduate
+school and be exposed to more English documents.
 
 * Misc
 
