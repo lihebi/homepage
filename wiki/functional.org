@@ -1,12 +1,268 @@
 #+TITLE: Functional Programming
 
-* Map Reduce
-map and reduce are from functional programming. Map is just map,
-reduce has another familiar name called /fold/.
+* References
+- introduction to functional programming cite:1988-Book-Bird-Introduction
 
-The Map-reduce framework does not just borrow the name. Its
-contribution is scalability and fault-tolerance.
+* Expression
+An expression can be /reduced/ to an simpler equivalent form.  We say
+an expression is /canonical/ (or in /normal form/) if it cannot be
+further reduced.
 
-The steps:
-1. map: produce data by filtering, and emit the data (marshalling)
-2. reduce: fold
+The result of /equality test/ is done by reducing the expressions to
+their canonical form, and testing whether the results are
+identical. If an expression does not have a canonical form, the result
+is undefined, represented by $\bot$. In particular, function values
+have no canonical form.
+
+The order of evaluation thus matters. Each reduction step replace a
+sub-term by an equivalent term. The term is called a /redex/, short
+for /reducible expression/. There are two reduction policies,
+/innermost reduction/ and /outermost reduction/. /Innermost reduction/
+reduces the innermost redex, i.e. the one that contains no other
+redex. /Outermost reduction/ reduces the one that is contained in no
+other redex.
+
+The evaluation order matters because of the /termination/. Sometimes,
+the outermost reduction will terminate while the inner most fail to do
+so. In fact, we have the following property:
+
+#+begin_quote
+For every term, if there exists any reduction order that terminates,
+then there is an outermost reduction that terminates.
+#+end_quote
+
+Thus, outermost reduction is also called /normal order reduction/,
+because it is capable of reducing a term to its normal form whenever
+the term has such a form. It is also called /lazy evaluation/, because
+it does not reduce a term unless it is essential for finding the
+answer. By contract, the innermost reduction is called /applicative
+order reduction/, or /eager evaluation/.
+
+Outermost reduction is essential for evaluating non-strict
+functions. But innermost and outermost reduction will yield the same
+answer when only strict functions are involved.
+
+With that said for termination property, however, outermost may
+require more steps than innermost reduction. The reason is that, the
+outermost reduction might duplicate some inner expressions. One
+problem is called /graph reduction/, which ensures that the duplicated
+sub-terms are always linked together in the graph, and reduction of
+them will happen ones, for all the references of them. With graph
+reduction, we can say outermost reduction never performs more steps
+than innermost.
+
+
+* What is a Function?
+- currying: replacing structured arguments by a sequence of simple
+  ones. The function application operation associates to the left,
+  i.e. =f x y= means =((f x) y)=.
+
+** Composition
+Functional composition has the definition of
+
+$$(f \circ g) x = f (g x)$$
+
+and the type of it
+
+$$(\circ) :: (\beta \rightarrow \gamma) \rightarrow (\alpha
+\rightarrow \beta) \rightarrow (\alpha \rightarrow \gamma)$$
+
+functional composition is also associative, thus no need to put
+brackets
+
+$$(f \circ g) \circ h = f \circ (g \circ h)$$
+
+** Strictness
+
+The special value $\bot$ is polymorphic: $\bot$ is a value of every
+type. This means, any function can be applied to $\bot$. If $f \bot =
+\bot$, then $f$ is said to be strict. Otherwise, it is non-strict. In
+other words, a function is /strict/ if it is undefined whenever its
+argument is undefined. 
+
+In fact, a non-strict semantic is often preferable for functions, for
+several reasons:
+- it makes reasoning about equality easier
+- we can define new control structures by defining new functions
+
+For example, we define a function =three= that takes anything and
+return the value =3=. I.e.
+
+#+begin_example
+three :: num -> num
+three x = 3
+#+end_example
+
+Another example, the definition of =cond=
+
+$$cond :: bool \rightarrow \alpha \rightarrow \alpha \rightarrow \alpha$$
+
+#+begin_example
+cond p x y = x, if p
+           = y, otherwise
+#+end_example
+
+Under strict semantics, $cond\ True\ 0\ \bot = \bot$, under non-strict
+semantics, $cond True 0 \bot = 0$. But in either case, =cond= is
+strict on its first argument.
+
+The operational semantics of strict or non-strict functions is closely
+related to the reduction strategy. /eager-evaluation/ reduces every
+expression to its simplest form, while /lazy-evaluation/ does not care
+about the wellness of the expressions whose values are not required
+for the evaluation.
+
+* Type
+- Strong-typing: the type of an expression depends only on the type of
+  its component expressions.
+- Type variable: typically represented in Greek letters $\alpha$,
+  $\beta$, etc. Such type can be instantiated by substitute the type
+  variable with specific type.
+- Polymorphic type: a type that contains /type variables/
+
+** Type inference
+Three basic rules
+
+1. Application rule: if =f x :: t=, then =x :: t'= and =f :: t' -> t=
+     for some new type =t'=
+2. Equality rule: if both the types =x :: t= and =x :: t'= can be
+     deduced for a variable =x=, then =t = t'=.
+3. Function rule: If =t -> u = t' -> u'=, then =t = t'=, and =u = u'=
+
+Often, the newly introduced types are named by numerical sub-notation.
+
+For example, consider the composition operator
+
+#+begin_example
+(.) f g x = f (g x)
+#+end_example
+
+The following script shows the inference steps:
+#+begin_example
+f :: t1
+g :: t2
+x :: t3
+f (g x) :: t4
+(.) :: t1 -> t2 -> t3 -> t4
+g x :: t5
+f :: t5 -> t4
+x :: t6
+g :: t6 -> t5
+t1 = t5 -> t4
+t2 = t6 -> t5
+t3 = t6
+(.) :: (t5 -> t4) -> (t6 -> t5) -> t6 -> t4
+#+end_example
+
+Finally, we need to replace the types with type variables to make it
+generic:
+
+$$(\circ) :: (\beta \rightarrow \gamma) \rightarrow (\alpha
+\rightarrow \beta) \rightarrow (\alpha \rightarrow \gamma)$$
+
+** List
+Let list comprehension notation be =[<expr> | <qualifier>;
+...]=. Qualifier can be boolean expression for predicates or
+generators. Later generators vary more quickly than their
+predecessors, and can depends on the variables introduced by earlier
+ones. With this, we can define many operators on lists:
+
+#+begin_example
+(++) :: [a] -> [a] -> [a]
+concat :: [[a]] -> [a]
+concat xss = [x | xs <- xss; x <- xs]
+#+end_example
+
+Instead of using =(++)= for concating list, we can use =(:)=
+(pronounced 'cons') for specifying consing. One important reason to
+use =(:)= is that, every list can be expressed in terms of =[]= and
+=(:)= in *exactly one way*.
+
+#+begin_example
+(:) :: a -> [a] -> [a]
+x:xs = [x] ++ xs
+#+end_example
+
+We have the following operators on lists:
+#+begin_example
+
+(#) :: [a] -> num
+#(xs ++ ys) = #xs + #ys
+
+hd :: [a] -> a
+tl :: [a] -> [a]
+hd ([x] ++ xs) = x
+tl ([x] ++ xs) = xs
+
+take n xs ++ drop n xs = xs
+
+takewhile :: (a -> bool) -> [a]  -> [a]
+zip :: ([a], [b]) -> [(a,b)]
+(!) :: [a] -> num -> a # index
+
+#+end_example
+
+Map and filter can be defined by:
+#+begin_example
+map :: (a -> b) -> [a] -> [b]
+map f xs = [f x | x <- xs]
+filter :: (a -> bool) -> [a] -> [a]
+filter p xs = [x | x <- xs; p x]
+#+end_example
+
+Fold:
+#+begin_example
+foldr :: (a -> b -> b) -> b -> [a] -> b
+foldl :: (b -> a -> b) -> b -> [a] -> b
+sum = foldr (+) 0
+product = foldr (x) 1
+concat = foldr (++) []
+and = foldr (&) True
+or = foldr (|) False
+#+end_example
+
+=foldr= and =foldl= do rely on associative of the underlying operators
+to function correctly, and there are several /duality theorems/.
+
+In big data literature, /map/ and /reduce/ are borrowed from
+functional programming. Map is just map, reduce has another familiar
+name called /fold/.  The Map-reduce framework does not just borrow the
+name. Its contribution is *scalability and fault-tolerance*. In this
+case, /map/ produces data by filtering, and emit the data,
+marshalling, and /reduce/ does folding.
+
+* Recursion
+
+Functions are often defined recursively. In this section, we see some
+of the list function definitions in recursion.
+
+#+begin_example
+zip([], ys) = []
+zip(x:xs, []) = []
+zip(x:xs, y:ys) = (x,y):zip(xs,ys)
+#+end_example
+
+#+begin_example
+take 0 xs = []
+take (n+1) [] = []
+take (n+1) (x:xs) = x:take n xs
+
+drop 0 xs = xs
+drop (n+1) [] = []
+drop (n+1) (x:xs) = drop n xs
+#+end_example
+
+#+begin_example
+hd(x:xs) = x
+tl(x:xs) = xs
+#+end_example
+
+#+begin_example
+map f [] = []
+map f (x:xs) = f x : map f xs
+filter p [] = []
+filter p (x:xs) = x : filter p xs, if p x
+                = filter p xs,     otherwise
+#+end_example
+
+bibliography:../../research/bib/manual/book.bib
