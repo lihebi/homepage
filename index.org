@@ -9,14 +9,13 @@
 # #+end_quote
 
 #+begin_quote
-Life is short, I don't have time for things that don't bring me joy.
+Life is short, I don't have space for things that don't bring me joy.
 #+end_quote
 
-I'm currently a PhD student in Computer Science department of Iowa
-State University. I graduated from Electrical Engineering (1010) of
-University of Science and Technology of China (USTC) in 2014 Fall. See
-details in my [[file:assets/cv.pdf][CV(pdf)]]. I also have a
-[[file:resume.pdf][resume (pdf)]] for industry interest.
+I'm currently a PhD student in [[https://www.cs.iastate.edu/][CS@ISU]]
+starting 2014 Fall.  I graduated from Electrical Engineering (1010) of
+[[http://en.ustc.edu.cn/][USTC]] in 2014. See details in my
+[[file:cv.pdf][CV(pdf)]].
 
 You can find a list of my coding on
 [[https://github.com/lihebi][GitHub@lihebi]].
@@ -27,7 +26,7 @@ You can find a list of my coding on
 ** Dynamic Analysis on Demand
 I was researching in Program Language and Analysis from 2015 Summer to
 2018 Spring, with one paper in submission to FSE-18
-cite:hebi-syntactic-patching, and a framework code
+cite:hebi-syntactic-patching. The framework code is open-source at
 [[https://github.com/lihebi/helium][Helium-V1]] and
 [[https://github.com/lihebi/helium2][Helium-V2]].
 
@@ -43,21 +42,23 @@ robot in the competition that day.
 
 * Wiki
 
-Writing things up is a great way to master a piece of knowledge.
+I use writing to refresh knowledge. More articles can be found on at
+[[https://wiki.lihebi.com][wiki.lihebi.com]].
 
 Programming has been a big part of my work, I'm particularly
-passionate of writing [[file:functional.org][functional]] programs and
-climbing the ladder of abstraction. The best language for that is
-[[file:wiki/lisp.org][lisp]]. It is a family of languages, the
+passionate of writing [[file:wiki/functional.org][functional]]
+programs and climbing the ladder of abstraction. The best language for
+that is [[file:wiki/lisp.org][lisp]]. It is a family of languages,
+with [[file:wiki/common-lisp.org][Common Lisp]] and scheme
+([[file:wiki/racket.org][racket]]) being the popular ones. It is the
 ultimate meta language that is ready for tuning as an ideal tool for
 any tasks, instead of forcing you to think in its way. I believe
 programming and computing has a basis on lisp, both the history and
 future.
 
 I started to use [[file:wiki/linux.org][Linux]] from 2011 when I got
-my first laptop. I started with Vim initially, and quickly catch up
-with [[file:wiki/emacs.org][Emacs]] from 2015 as I entered graduate
-school and be exposed to more English documents.
+my first laptop. I started with Vim initially, and catch up with
+[[file:wiki/emacs.org][Emacs]] from 2015.
 
 * Misc
 
@@ -72,13 +73,12 @@ clutch fluid, and tire rotation.
 I enjoyed traveling. I was driving along Road 1 in California along
 San Diego and Los Angeles in 2015 Spring, experiencing Orlando
 Universal Studio and cruising to Nassau in 2016 Winter, relaxing in
-Las Vegas 2017 Spring. I road trip a lot, so I'm really eager to move
-to the coast because I'm tired of all spots nearby. I drove the round
-trip from Iowa to Seattle 2017 Summer.
+Las Vegas 2017 Spring.  I drove the round trip from Iowa to Seattle
+2017 Summer.
 
 Exercise brings me a lot of joy and energy. I finished
 [[file:assets/finisher_certificate.pdf][full marathon (pdf)]] in 4h
-35min, Oct 2017.
+35min, Oct 2017 at Des Moines. Catch me up this year on Oct 20 2018.
 
 #+ATTR_HTML: :width 200px
 [[./assets/marathon.jpg]]
