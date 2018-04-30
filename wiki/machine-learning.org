@@ -21,9 +21,11 @@ many situations.
 
 ** General Concepts
 - Euclidean distance
-- parametric method :: reduce the fitting problem to estimating a set of coefficients.
-  But it will be imprecise if the model choose-d is very different from the true model
-- non-parametric method :: a very large number of observations is required.
+- parametric method :: reduce the fitting problem to estimating a set
+     of coefficients.  But it will be imprecise if the model choose-d
+     is very different from the true model
+- non-parametric method :: a very large number of observations is
+     required.
 
 
 ** Linear Regression
@@ -83,11 +85,13 @@ This kind of problem estimate $Pr(G=k|X=x)$ where G is the categories.
 conditional distribution. The error rate of Bayes classifier is called
 /the Bayes rate/.
 
-- Bayes Classifier :: assign each observation to the most likely class, given its predictor values.
-- Bayes Error Rate :: Bayes classifier produces the lowest possible test error rate.
-  The Bayes error rate is analogous to the irreducible error.
-  This means it is the optimal value.
-  So Bayes classifier serves as an unattainable gold standard against which to compare other methods.
+- Bayes Classifier :: assign each observation to the most likely
+     class, given its predictor values.
+- Bayes Error Rate :: Bayes classifier produces the lowest possible
+     test error rate.  The Bayes error rate is analogous to the
+     irreducible error.  This means it is the optimal value.  So Bayes
+     classifier serves as an unattainable gold standard against which
+     to compare other methods.
 - Bayes Decision Boundary :: determine the prediction
 
 /Linear Discriminant Analysis (LDA)/ solves the case when we assume
@@ -477,6 +481,22 @@ prediction itself. It makes the prediction over a collection of
 bootstrap samples, thus reducing the variance. The prediction result
 is defined as the averaging of all predictors for all samples.
 
+The decision tree suffers from high variance.  If we split the
+training data into two parts at random, the result two trees can be
+very different.  Bagging can reduce the variance.  It is related to
+bootstrap.
+
+Bagging involves
+1. creating multiple copies of the original training data set using
+   the bootstrap,
+2. fitting a separate decision tree to each copy,
+3. and then combining all of the trees in order to create a single
+   predictive model.
+
+Each tree is built on a bootstrap data set, independent of the other
+trees.  The key idea is averaging a set of observations reduces
+variance.
+
 /Random Forrest/ is a substantial modification of bagging that builds
 a collection of trees and then averages them. The essential idea in
 bagging is to average many noisy but approximately unbiased models,
@@ -519,7 +539,45 @@ Each value in the summary is called log-likelihood component. The
 method of maximum likelihood chooses the value of $\theta$ to maximize
 $\ell(\theta;Z)$.
 
-** Other
+** Tree-based method
+/Tree-based methods/ partition the feature space into a set of
+rectangles, then fit a model in each one.
+
+/regression tree/:
+1. divide the predictor space into J distinct and non-overlapping
+   regions $R_1,...,R_J$.
+2. for each observation fail into R_j, make the prediction using the
+   mean in R_j.
+
+To get the regions, use /recursive binary splitting/, a top-down,
+greedy approach.
+- From the root
+- every split choose the best split that leads to the greatest
+  possible reduction of RSS
+
+It is likely to overfit the data.  So we can grow a very large tree,
+and then /prune/ it back in order to obtain a subtree.
+
+The whole algorithm goes here:
+1. recursive binary splitting to grow a large tree
+2. apply /cost complexity pruning/
+3. use /K-fold cross-validation/
+
+/Patient Rule Induction Method (PRIM)/ is also a tree-based method,
+but with different splitting approach. It seeks for boxes in which
+response average is high. Hence, it looks for maxima in the target
+function. It works from the top down, starting with a box containing
+all the data. It repeatedly peel off data.
+
+/Hierarchical Mixture of Experts (HME)/ is a variant of tree-based
+method. The tree split not by hard decision, but by probability. The
+observation goes left or right with probability depending on its input
+value. The terminal node is called /expert/, the non-terminal node is
+called /gating networks/. The idea is that each expert provides an
+opinion (prediction) about the response, and these are combined
+together by the gating network.
+
+** Additive Model
 /Generalized Additive Model (GAM)/ has the form
 
 $$E(Y|X_1,X_2,...,X_p) = \alpha + f_1(X_1) + f_2(X_2) + ... + f_p(X_p)$$
@@ -530,134 +588,66 @@ each $X_j$, and add together all of their contributions.  Additive
 models provide a useful extension of linear models, making them more
 flexible while retaining much of their interpretability.
 
-/Tree-based methods/ partition the feature space into a set of
-rectangles, then fit a model in each one.
-
-/Patient Rule Induction Method (PRIM)/ is also a tree-based method,
-but with different splitting approach. It seeks for boxes in which
-response average is high. Hence, it looks for maxima in the target
-function. It works from the top down, starting with a box containing
-all the data. It repeatedly peel off data.
-
-/Multivariate Adaptive Regression Splines (MARS)/ is an adaptive
-procedure for regression, and well suited for high-dimensional
-problems. It can be viewed as generalization of step-wise linear
-regression.
-
-/Hierarchical Mixture of Experts (HME)/ is a variant of tree-based
-method. The tree split not by hard decision, but by probability. The
-observation goes left or right with probability depending on its input
-value. The terminal node is called /expert/, the non-terminal node is
-called /gating networks/. The idea is that each expert provides an
-opinion (prediction) about the response, and these are combined
-together by the gating network.
-
 /Boosting method/ combines the output of many weak classifier to
 produce a powerful committee, through a weighted majority vote, with
 the assumption that they do not make the same mistake.
+
+/Boosting/ is another approach for improving the prediction results from
+ a decision tree.  The different from bagging is,
+- the trees are grown sequentially: each tree is grown using
+  information from previously grown trees.
+- Boosting does not involve bootstrap sampling.  Each tree is fit on a
+  modified version of the original data set.
 
 /Ensemble learning/ builds a prediciton model by combining the
 strengths of a collection of simpler base models. Bagging and random
 forest are ensemble methods for classification. The /Importance
 Sampled Learning Ensemble (ISLE)/ is one ensemble-generation method.
 
-* Tree-based Methods
-** Decision tree
-*** regression tree
-1. divide the predictor space into J distinct and non-overlapping regions $R_1,...,R_J$.
-2. for each observation fail into R_j, make the prediction using the mean in R_j.
+** Other
 
-To get the regions, use /recursive binary splitting/, a top-down, greedy approach.
-- From the root
-- every split choose the best split that leads to the greatest possible reduction of RSS
 
-It is likely to overfit the data.
-So we can grow a very large tree, and then /prune/ it back in order to obtain a subtree.
-
-The whole algorithm goes here:
-1. recursive binary splitting to grow a large tree
-2. apply /cost complexity pruning/
-3. use /K-fold cross-validation/
-*** classification tree
-intuitive
-** bagging
-The decision tree suffers from high variance.
-If we split the training data into two parts at random, the result two trees can be very different.
-
-Bagging can reduce the variance.
-It is related to bootstrap.
-
-Bagging involves
-1. creating multiple copies of the original training data set using the bootstrap,
-2. fitting a separate decision tree to each copy,
-3. and then combining all of the trees in order to create a single predictive model.
-
-Each tree is built on a bootstrap data set, independent of the other trees.
-
-The key idea is averaging a set of observations reduces variance.
-** boosting
-This is another approach for improving the prediction results from a decision tree.
-The different from bagging is,
-- the trees are grown sequentially: 
-  each tree is grown using information from previously grown trees.
-- Boosting does not involve bootstrap sampling.
-  Each tree is fit on a modified version of the original data set.
+/Multivariate Adaptive Regression Splines (MARS)/ is an adaptive
+procedure for regression, and well suited for high-dimensional
+problems. It can be viewed as generalization of step-wise linear
+regression.
 
 * Support Vector Machine
-the best “out of the box” classifiers.
+A linear hyperplane can separate classes, but there exists an infinite
+number of such hyperplanes. There is a classifier called /Maximal
+Margin Classifier/, also known as /optimal separating hyperplane/.
+The separating hyperplane that is farthest from the training
+observations.  That is, we can compute the (perpendicular) distance
+from each training observation to a given separating hyperplane; the
+smallest such distance is the minimal distance from the observations
+to the hyperplane, and is known as the /margin/. The /maximal margin
+hyperplane/ is the separating hyperplane for which the margin is
+largest—that is, it is the hyperplane that has the farthest minimum
+dis- tance to the training observations.  The closest observations are
+/support vectors/.  they “support” the maximal margin hyperplane in
+the sense that if these points were moved slightly then the maximal
+margin hyperplane would move as well.
 
-A hyperplane is something like this:
-\begin{eqnarray}
-\beta_0 + \beta_1 X_1 + \beta_2 X_2 = 0
-\end{eqnarray}
-
-A hyperplane can separate two clusters.
-** Maximal Margin Classifier
-Also known as /optimal separating hyperplane/.
-
-In fact exist an infinite number of such hyperplanes.
-This is the motivation.
-
-The separating hyperplane that is farthest from the training observations.
-That is, we can compute the (perpendicular) distance from each training observation to a given separating hyperplane;
-the smallest such distance is the minimal distance from the observations to the hyperplane, and is known as the margin
-
-The maximal margin hyperplane is the separating hyperplane for which the margin is largest—that is,
-it is the hyperplane that has the farthest minimum dis- tance to the training observations.
-
-The closest observations are /support vectors/.
-they “support” the maximal margin hyperplane in the sense that
-if these points were moved slightly then the maximal margin hyperplane would move as well.
-
-guarantees that each observation will be on the correct side of the hyper- plane, provided that M is positive.
-
-** Support Vector Classifier
-The above method is
-- not stable ::
-  An additional blue observation has been added, leading to a dramatic shift in the maximal margin hyperplane.
-- not allow mistake ::
-
-Also known as /soft margin classifier/.
-
-allow some observations to be on the incorrect side of the margin, or even the incorrect side of the hyperplane.
-
-The model formula is TODO.
-
-The parameters in the model:
-1. the slack variable εi tells us where the ith observation is located, relative to the hyperplane and relative to the margin
-2. C: determines the number and severity of the vio- lations to the margin (and to the hyperplane) that we will tolerate
-   C is treated as a tuning parameter that is generally chosen via cross-validation
+However, the above classifier is not stable, and more importantly, it
+is still linear decision boundary, and cannot be applied in
+non-separable cases. Thus the /Support Vector Classifier (SVM)/, also
+known as /soft margin classifier/, is introduce.  It the best “out of
+the box” classifiers. It allows some observations to be on the
+incorrect side of the margin, or even the incorrect side of the
+hyperplane.
 
 Some observations:
-1. only observations that either lie on the margin or that violate the margin will affect the hyperplane
-2. an observation that lies strictly on the correct side of the margin does not affect the support vector classifier
-3. Observations that lie directly on the margin, or on the wrong side of the margin for their class, are known as support vectors.
+1. only observations that either lie on the margin or that violate the
+   margin will affect the hyperplane
+2. an observation that lies strictly on the correct side of the margin
+   does not affect the support vector classifier
+3. Observations that lie directly on the margin, or on the wrong side
+   of the margin for their class, are known as support vectors.
 4. When the tuning parameter C is large, then the margin is wide
 
-
-** Support Vector Machine
-enlarging the feature space in a specific way, using kernels.
-Can deal with non-linear, just use a non-linear kernel.
+The support vector machine is a linear classifier, but it can be
+extended into non-linear through using non-linear kernels. Kernel
+trick is basis expansion.
 
 linear kernel:
 
@@ -675,24 +665,22 @@ Radial kernel:
 K(x_i, x_{i'}) = exp(-\gamma \sum_{j=1}^p (x_{ij} - x{i'j})^2)
 \end{eqnarray}
 
-** SVMs with More than two classes
-*** one-versus-one classification
-compute all pairs SVMs.
-*** one-versus-all classification
-compute all one versus all other SVMs.
+SVMs can be extended easily to more than 2 classes.  /One-versus-one
+classification/ computes all pairs SVMs, while /one-versus-all
+classification/ computes all one versus all other SVMs.
 
 
+* Unsupervised Learning
 
-
-* Unsupervised Learning (Clustering)
-- Euclidean distance ::
+/Unsupervised learning/ is typically used for /Clustering/.
 
 ** K-means
-- W(C_k) :: the amount by which the observations within a cluster differ from each other
-
-It says the total within-cluster variation, summed over all K clusters, is as small as possible.
-It defines the within-cluster variation.
-The formula for it is: the sum of all of the pairwise squared Euclidean distances between the observations in the kth cluster.
+/K-means/ method ensures the total within-cluster variation, summed
+over all K clusters, is as small as possible.  It defines the
+within-cluster variation.  The formula for it is: the sum of all of
+the pairwise squared Euclidean distances between the observations in
+the kth cluster. W(C_k) depicts the amount by which the observations
+within a cluster differ from each other
 
 \begin{eqnarray}
 W(C_k) = \frac{1}{|C_k|} \sum_{i,i' \in C_k} \sum_{j=1}^p (x_{ij} - x_{i'j})^2
@@ -701,22 +689,24 @@ W(C_k) = \frac{1}{|C_k|} \sum_{i,i' \in C_k} \sum_{j=1}^p (x_{ij} - x_{i'j})^2
 where $|C_k|$ denotes the number of observations in the kth cluster.
 
 The algorithm:
-1. select a number K, randomly assign a clustering from 1 to K for each observation
+1. select a number K, randomly assign a clustering from 1 to K for
+   each observation
 2. iterate until cluster assignments stop changing
-  2.1 for each cluster, compute /centroid/: the vector of the p features means for the observations in the kth cluster.
-  2.2 assign each observation to the cluster whose centroid is closest.
+  1. for each cluster, compute /centroid/: the vector of the p
+     features means for the observations in the kth cluster.
+  2. assign each observation to the cluster whose centroid is closest.
 
 This algorithm guarantee to decrease the objective formula above.
+
 ** Hierarchical Clustering
-Does not predefine the number of clusters.
-The result is called a /dendrogram/, a tree-based representation of the observations.
+The downside of K-mean is the need for predefined number of
+clusters. /Hierarchical Clustering/ does not predefine the number of
+clusters.  The result is called a /dendrogram/, a tree-based
+representation of the observations.
 
-It is constructed bottom-up.
-The tree node means a fusion.
-The height of the fusion indicates how different the two observations are.
-Never compare the horizontal distance.
-
-Construction algorithm:
+It is constructed bottom-up.  The tree node means a fusion.  The
+height of the fusion indicates how different the two observations are.
+Never compare the horizontal distance.  Construction algorithm:
 examine all pairwise inter-cluster dissimilarities among all clusters.
 Fuse the most similar ones.
 
