@@ -10,6 +10,11 @@
   toggle this will truncate the line.
 - =browse-url-of-file=: open current file in browser
 
+#+BEGIN_QUOTE
+In emacs, <DEL> means backspace, <delete> means the delete key.
+#+END_QUOTE
+
+
 * buffer
   - =list-face-displays=
   - =fill-region=
@@ -497,70 +502,28 @@ Interact:
 
 
 
-* Gnus
-#+BEGIN_QUOTE
-In emacs, <DEL> means backspace, <delete> means the delete key.
-#+END_QUOTE
+* Mail
 
+In this section, we discuss how to set up and use Email in Emacs.
 
-** Gmail Setup
-Add the credential information to =~/.authinfo=
-
-#+BEGIN_EXAMPLE
-machine imap.gmail.com login <username> password <password> port 993
-machine smtp.gmail.com login <username> password <password> port 587
-#+END_EXAMPLE
-
-To configure multiple IMAP client for gnus:
-#+begin_example
-machine gmail login XXX@gmail.com password <PASSWORD> port 993
-machine cymail login XXX@iastate.edu password <PASSWORD> port 993
-#+end_example
-
-Add the following into =.gnus=
+** Reading Mail
+Some groups should be combined. The most obviously example is INBOX
+and Sent, so that I can have a tree-view of the interactions of
+email. To do that, in the group buffer, create a virtual group via =G
+V=, then edit it by =C-e=. A edit buffer should pop out and the
+content should be changed to something like this:
 
 #+BEGIN_EXAMPLE
-(setq user-mail-address "lihebi.emacs@gmail.com"
-      user-full-name "Hebi Li")
-
-(setq gnus-select-method
-      '(nnimap "gmail"
-	       (nnimap-address "imap.gmail.com")  ; it could also be imap.googlemail.com if that's your server.
-	       (nnimap-server-port "imaps")
-	       (nnimap-stream ssl)))
-
-(setq smtpmail-smtp-server "smtp.gmail.com"
-      smtpmail-smtp-service 587
-      gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\"]\"[#'()]")
-
-
-;; send mail using gmail smtp, no require for installation of sendmail or something
-(setq message-send-mail-function 'smtpmail-send-it
-      smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
-      smtpmail-auth-credentials '(("smtp.gmail.com" 587 "lihebi.emacs@gmail.com" nil))
-      smtpmail-default-smtp-server "smtp.gmail.com"
-      smtpmail-smtp-server "smtp.gmail.com"
-      smtpmail-smtp-service 587
-      starttls-use-gnutls t)
+(nnvirtual "nnimap\\+cymail:INBOX\\|nnimap\\+cymail:.*/Sent Mail")
 #+END_EXAMPLE
 
-** Mail
-To start a mail, use =compose-mail (C-x m)=. This will drop you to a
-=message= buffer, with =message-mode=.
+** Sending Mail
+I usually just use =m= in gnus buffer to send mail. But you can also
+use =compose-mail (C-x m)= at any time, and this seems to use the same
+set of configuration for sending mail. Fire =message-send-and-exit
+(C-c C-c)= to send it, =C-c C-k= to kill it.
 
-- =message-send-and-exit (C-c C-c)=: send it
-
-Actually when =gnus= is set up, simply type =m= to compose email.
-
-** gmane news group setting
-#+BEGIN_SRC elisp
-(setq gnus-default-nntp-server "news.gmane.org")
-(setq gnus-select-method '(nntp "news.gmane.org"))
-(setq gnus-use-adaptive-scoring t)
-(add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
-#+END_SRC
-
-** Usage
+** Gnus Usage
 Inside emacs, run =gnus= command. This brings the =*Group*=
 buffer. You will see the list of groups, use =<spc>= or =<enter>= to
 enter the group. As usual, =g= to refresh. =q= for quit.
