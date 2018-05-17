@@ -8,6 +8,7 @@
 - =toggle-truncate-lines=: some file format, e.g. txt, will have a
   line wrap at the end of the screen. This might be annoying, and
   toggle this will truncate the line.
+- =browse-url-of-file=: open current file in browser
 
 * buffer
   - =list-face-displays=
