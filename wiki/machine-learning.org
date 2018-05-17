@@ -1,5 +1,9 @@
 #+TITLE: Machine Learning
 
+#+BEGIN_QUOTE
+All models are wrong, but some are useful.
+#+END_QUOTE
+
 * Supervised Learning
 The /input/ is also called /predictors/, /independent variables/, or
 /features/. The /output/ is also called /response/ or /dependent
