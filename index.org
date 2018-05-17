@@ -25,10 +25,9 @@ You can find a list of my coding on
 
 ** Dynamic Analysis on Demand
 I was researching in Program Language and Analysis from 2015 Summer to
-2018 Spring, with one paper in submission to FSE-18
-cite:hebi-syntactic-patching. The framework code is open-source at
-[[https://github.com/lihebi/helium][Helium-V1]] and
-[[https://github.com/lihebi/helium2][Helium-V2]].
+2018 Spring. We designed an on-demand dynamic analysis framework,
+called [[https://helium.lihebi.com][Helium]], and is
+[[https://github.com/lihebi/helium2][open source]].
 
 ** USTC RoboGame 2012
 
