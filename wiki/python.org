@@ -1,0 +1,1041 @@
+#+TITLE: Python
+
+* Language
+The ultimate reference:
+# - language reference: https://docs.python.org/2/reference/
+# - standard library: https://docs.python.org/2/library
+
+For python 3
+- https://docs.python.org/3.7/reference/
+- https://docs.python.org/3.7/library/
+
+
+=atom= is the most basic expression, while the =enclosure= is interesting.
+
+#+BEGIN_EXAMPLE
+atom      ::=  identifier | literal | enclosure
+enclosure ::=  parenth_form | list_display | dict_display | set_display
+               | generator_expression | yield_atom
+#+END_EXAMPLE
+
+The =display= is a special syntax for python to create lists and dicts, using /comprehension/.
+
+#+BEGIN_EXAMPLE
+list_display ::=  "[" [starred_list | comprehension] "]"
+set_display ::=  "{" (starred_list | comprehension) "}"
+
+dict_display       ::=  "{" [key_datum_list | dict_comprehension] "}"
+key_datum_list     ::=  key_datum ("," key_datum)* [","]
+key_datum          ::=  expression ":" expression | "**" or_expr
+dict_comprehension ::=  expression ":" expression comp_for
+#+END_EXAMPLE
+
+And the comprehension grammar:
+#+BEGIN_EXAMPLE
+comprehension ::=  expression comp_for
+comp_for      ::=  [ASYNC] "for" target_list "in" or_test [comp_iter]
+comp_iter     ::=  comp_for | comp_if
+comp_if       ::=  "if" expression_nocond [comp_iter]
+#+END_EXAMPLE
+
+The =comp_for= non-terminal contains one or more =for= clause, and zero or more =if= clause.
+
+The evaluation of these displays will evaluate from left to right, so
+the last assignment will prevail in the case of set and dict. The
+comprehension is executed by nesting the for and if clauses from left
+to right.
+
+So some examples:
+
+#+BEGIN_SRC python
+((a,b) for a in range(2) for b in range(3))
+[(a,b) for a in range(2) for b in range(3)]
+{(a,b) for a in range(2) for b in range(3)}
+
+{a:b for a in (1,2) for b in (3,4)}
+#+END_SRC
+
+Note the out-most braces are required, which also creates a scope.
+
+* Emacs support
+Install the =elpy= package. It provides:
+- =C-c C-c= runs the shell and send the current buffer
+- =C-c C-d= runs =elpy-doc=
+- =C-c C-t= runs =elpy-test=, which runs the unittest discover
+
+To enable linter python in emacs, use pylint. It will use =pylint=
+executable. And it also needs the configure file. Generate it:
+
+#+BEGIN_EXAMPLE
+pylint --generate-rcfile > ~/.pylintrc
+#+END_EXAMPLE
+
+
+* Unit Test
+#+BEGIN_SRC python
+class MyTest(unittest.TestCase):
+    def test_me(self):
+        self.assertEqual(1,2)
+unittest.main()
+#+END_SRC
+
+python unit test can support automatic test discovery. To use that,
+the file must be named =test_xxx.py=, and run the =python -m unittest discover=.
+
+* Concept
+
+** Scoping
+There're four levels:
+- current scope
+- parent scope
+- module scope (global)
+- built-in scope
+
+=nonlocal= keyword specify this variable should be referenced to the parent scope.
+But, this will not reach global.
+Instead, the =global= keyword declares the listed variables to be in the module level scope.
+
+#+BEGIN_QUOTE
+The nonlocal statement causes the listed identifiers to refer to previously bound variables in the nearest enclosing scope excluding globals.
+#+END_QUOTE
+
+As an example:
+#+BEGIN_SRC python
+var = 0 # global
+
+def outer():
+  var = 1 # parent
+  def inner():
+    nonlocal var
+    var = 2 # local
+    global var
+    var =3
+  inner()
+  # var = 2
+
+outer()
+# global var = 3
+#+END_SRC
+
+** Collection
+
+*** String
+
+**** Concatenation
+- concatenate two strings directly by =+=.
+- need to convert integer to string before concatenate: =s + str(35)=
+- "".join(lst) works
+
+**** split
+- ~str.split(sep=None)~ :: default by white space
+- ~str.strip()~ :: strip out white space at both begin and end
+- ~str.replace(old, new)~ :: replace /all/.
+- ~str.startswith(s)~ ::
+- ~str.endswith(s)~ ::
+
+**** Slicing
+String is an immutable object. It can use slicing. E.g. reversing a
+string is as easy as ="hello"[::-1]=!
+
+However, notice that when using a negative step, the slicing should be
+=lst[end:begin:-1]=. This is because ~x = i + n*k~:
+
+#+BEGIN_QUOTE
+with a third “step” parameter: a[i:j:k] selects all items of a with
+index x where x = i + n*k, n >= 0 and i <= x < j.
+#+END_QUOTE
+
+Also, the negative step does not always work as expect. E.g. the i
+index is included and j is not; the j can not be negative, then how
+can I include the first one in the list??
+
+Thus if want to get a reverse of a sub-string, I would get sub-string
+first and then reverse it.
+
+*** TODO tuple
+*** List
+**** Slicing
+The slicing syntax is =l[start:end:step]=.
+The slicing will return a /new/ list. Change to that list will not change the original one.
+#+BEGIN_SRC python
+l[4]
+l[4:]
+l[::2]
+l[:-1]
+#+END_SRC
+
+However, assign to the slicing itself /will change/ the original one:
+#+BEGIN_SRC python
+l[1:2] = [4,5,6]
+#+END_SRC
+
+Also, assign to a new variable only assign the reference:
+#+BEGIN_SRC python
+a = [1,2,3]
+b = a # only a reference
+#+END_SRC
+
+**** create a list
+- ~range(stop)~
+- ~range(start, stop[, step])~
+
+Creating a matrix:
+#+BEGIN_SRC python
+newmat=[[-1 for x in range(height)] for y in range(width)]
+#+END_SRC
+
+**** Modify a list
+- list.append
+- list.pop
+
+*** Dictionary
+Create:
+#+BEGIN_SRC python
+x = {'a': 1, 'b': 2}
+#+END_SRC
+Dictionary is not sorted. Use =collections.OrderedDict= if you want this feature.
+Basically it remember the order when the elements are inserted.
+
+#+BEGIN_SRC python
+import collections
+od = collections.OrderedDict(sorted(d.items()))
+#+END_SRC
+
+Merge two dictionary (=x= and =y=):
+#+BEGIN_SRC python
+z = x.copy()
+z.update(y)
+#+END_SRC
+
+*** Set
+#+BEGIN_SRC python
+s = set()
+s.add(x)
+if x in s:
+  pass
+#+END_SRC
+
+** Algorithm
+*** TODO sort
+sort a dictionary by value:
+#+BEGIN_SRC python
+sorted(dict1, key=dict1.get) # => list
+sorted(dict1, key=dict1.get, reverse=True)
+#+END_SRC
+
+
+** Function
+*** variadic parameter
+use =*args= syntax, and =args= will be a /tuple/:
+#+BEGIN_SRC python
+  def foo(*args):
+    for a in args:
+      print a
+#+END_SRC
+
+use =**args= to capture all /keyword arguments/.
+
+#+BEGIN_SRC python
+def bar(**kwargs):
+  for a in kwargs:
+    print a, kwargs[a]
+#+END_SRC
+
+Combine them together:
+#+BEGIN_SRC python
+def foobar(kind, *args, **kwargs):
+  pass
+#+END_SRC
+
+Also, there's a concept for the reverse thing: unpack argument list from a list, with =*list=:
+#+BEGIN_SRC python
+def foo(a,b):
+  pass
+
+l = [1,2]
+foo(*l)
+#+END_SRC
+
+on python3, this syntax can appear on left side
+#+BEGIN_SRC python
+first, *rest = [1,2,3,4]
+first,*l,last = [1,2,3,4]
+#+END_SRC
+
+** Exception
+To give a quick feel:
+#+BEGIN_SRC python
+try:
+  pass
+except TypeError as e: # capture the exception into a variable
+  pass
+except AnotherError: # does not capture
+  pass
+except: # all exception
+  pass
+else: # if doesn't raise an exception
+  pass
+finally:
+  pass
+#+END_SRC
+
+** Lambda
+#+BEGIN_SRC python
+lambda x : x+2
+lambda x: x%2==0
+#+END_SRC
+
+The usage of lambda is often in /map/ and /filter/.
+- ~map(lambda_exp, mylist)~ will execute the lambda expression on each element of the list, and return a list containing the results.
+
+** Packaging
+Exposing API: the following only expose =foo= but not =bar=.
+#+BEGIN_SRC python
+__all__ = ['foo']
+def foo():
+  pass
+def bar():
+  pass
+#+END_SRC
+
+*** importing
+The local structure directory must contain the =__init__.py= file to be able to import.
+#+BEGIN_EXAMPLE
+|-- main.py
+|-- mypackage
+    |-- __init__.py
+    |-- a.py
+    |-- b.py
+    |-- subdir
+        |-- __init__.py
+        |-- c.py
+#+END_EXAMPLE
+
+The import statements should be:
+#+BEGIN_SRC python
+from mypackage import a
+from mypackage.b import foo as myfoo
+from mypackage.subdir import c
+#+END_SRC
+
+
+** Thread
+#+BEGIN_SRC python
+from threading import Thread
+
+class MyThread(Thread):
+  def __init__(self, arg):
+    Thread.__init__(self)
+    self.arg = arg
+  def run(self):
+    pass
+
+t = MyThread(arg)
+t.start()
+#+END_SRC
+
+* Type
+** Boolean
+- =not True=
+
+** Integer
+- ~i += 1~
+
+** conversion
+- string to integer: ~int('45')~
+- integer to string: ~str(45)~
+- ASCII to char: ~chr(100)~ returns 'd'
+- char to ASCII: ~ord('d')~ returns 100
+
+* Black Tech
+If else or:
+#+BEGIN_SRC python
+var = d.get('key') or 0
+# is equal to:
+var = d.get('key') if d.get('key') else 0
+#+END_SRC
+
+list comprehension
+
+#+BEGIN_SRC python
+even_squares = [x**2 for x in l if x%2 == 0]
+#+END_SRC
+
+* Pep8
+Indent:
+- *function and class* should be separated by *2 lines*
+- *In a class*, function should be separated by *1 line*
+- 1 space before and after variable assignment
+
+Naming
+- function, variable, attribute: =func_var_attr=
+- protected instance attributes: =_protected_field=
+- private instance attributes: =__private_field=
+- class and exception: =ClassExceptionName=
+- module level constants: =CONSTANT=
+- instance method of class should use =self= as first parameter, refer to the object
+- class method should use =cls= as first parameter, refer to the class
+
+Expression
+
+| use           | DONT use              |
+|---------------+-----------------------|
+| =a is not b=  | +=not a is b=+        |
+| =if not list= | +~if len(list) == 0~+ |
+
+Import
+- always use absolute path
+- if must use relative, use =from . import foo= instead of +=import foo=+
+
+** document
+One can use one line or multi-line document.
+The doc string can be retrieved by =func.__doc__=.
+#+BEGIN_SRC python
+def func():
+  """one line doc"""
+
+def func():
+  """The outline
+
+  The above empty line is required.
+  Here's the detailed documentation.
+  """
+#+END_SRC
+
+* IO
+#+BEGIN_SRC python
+print('xxx', end='')
+#+END_SRC
+
+#+BEGIN_SRC python
+  f = open('text.txt')
+  f.read() # return all content
+
+  f = open('text.txt')
+  for line in f:
+      print(line)
+
+  with open('a.txt') as f:
+      for line in f:
+          print(line)
+#+END_SRC
+
+read from stdin:
+#+BEGIN_SRC python
+for line in sys.stdin:
+  print(line)
+#+END_SRC
+
+get command line argument: =sys.argv=
+
+
+* Operating System
+
+** Work filesystem:
+#+BEGIN_SRC python
+import os
+for root,dirs,files in os.walk('.'):
+  for f in files:
+    print f
+#+END_SRC
+
+- =os.path.abspath('relative/path/to/file')=
+- =os.path.exists("/path/to/file")=
+- =os.rename('old', 'new')=
+- =os.path.isfile=
+
+
+
+** Shell command
+- =os.system= :: simply run command
+#+BEGIN_SRC python
+os.system("some command")
+#+END_SRC
+
+- =os.popen= :: access to input output
+#+BEGIN_SRC python
+stream = os.popen("some command")
+stream.read()
+#+END_SRC
+
+- =subprocess.Popen=
+#+BEGIN_SRC python
+p = subprocess.Popen("echo Hello World", shell=True, stdout=subprocess.PIPE)
+p.stdout.read()
+s = subprocess.check_output('wc -l', stdin=p.stdout)
+#+END_SRC
+
+- =subprocess.call= :: this is the same as =subprocess.Popen= except that it waits and gives return code.
+#+BEGIN_SRC python
+return_code = subprocess.call("echo Hello World", shell=True, stdout=subprocess.DEVNULL)
+#+END_SRC
+
+* Standard Library
+** Built-in exceptions
+#+BEGIN_EXAMPLE
+BaseException
+ +-- SystemExit
+ +-- KeyboardInterrupt
+ +-- GeneratorExit
+ +-- Exception
+      +-- StopIteration
+      +-- StandardError
+      |    +-- BufferError
+      |    +-- ArithmeticError
+      |    |    +-- FloatingPointError
+      |    |    +-- OverflowError
+      |    |    +-- ZeroDivisionError
+      |    +-- AssertionError
+      |    +-- AttributeError
+      |    +-- EnvironmentError
+      |    |    +-- IOError
+      |    |    +-- OSError
+      |    |         +-- WindowsError (Windows)
+      |    |         +-- VMSError (VMS)
+      |    +-- EOFError
+      |    +-- ImportError
+      |    +-- LookupError
+      |    |    +-- IndexError
+      |    |    +-- KeyError
+      |    +-- MemoryError
+      |    +-- NameError
+      |    |    +-- UnboundLocalError
+      |    +-- ReferenceError
+      |    +-- RuntimeError
+      |    |    +-- NotImplementedError
+      |    +-- SyntaxError
+      |    |    +-- IndentationError
+      |    |         +-- TabError
+      |    +-- SystemError
+      |    +-- TypeError
+      |    +-- ValueError
+      |         +-- UnicodeError
+      |              +-- UnicodeDecodeError
+      |              +-- UnicodeEncodeError
+      |              +-- UnicodeTranslateError
+      +-- Warning
+           +-- DeprecationWarning
+           +-- PendingDeprecationWarning
+           +-- RuntimeWarning
+           +-- SyntaxWarning
+           +-- UserWarning
+           +-- FutureWarning
+	   +-- ImportWarning
+	   +-- UnicodeWarning
+	   +-- BytesWarning
+#+END_EXAMPLE
+
+** Built-in
+These functions are always available.
+
+Numbers:
+- abs(x): absolute value
+- divmod(a,b): a pair (a // b, a % b)
+- max(arg1, arg2, *args)
+- min(arg1, arg2, *args)
+- pow(x,y): x^y
+- round(x, ndigits=0)
+- sum(iterable)
+
+Convertion
+- int(x)
+- float(x)
+- long(x)
+- chr(x): ASCII to char
+- ord(c): char to ASCII
+- bool(x): convert x to bool
+- hex(x): convert integer to lowercase hex string prefix with '0x'
+- oct(x): integer to octal string
+- bin(x): an integer to binary string
+
+Boolean:
+- all(iterable): true if all items are true. empty => True
+- any(iterable): true if any item is true. empty => False
+- cmp(x,y)
+  - x<y => negative
+  - x=y => 0
+  - x>y => positive
+
+Symbol Table
+- locals()
+- globals()
+- dir()
+
+Creation
+- dict
+- list
+- set
+- tuple
+
+Other
+- len(s): length
+- next(iterator)
+- print(*objects, sep='', end='\n', file=sys.stdout)
+- range(stop): [0,stop)
+- range(start, stop, step=1)
+- sorted(iterable, cmp, key, reverse=False)
+  - key=lambda x: x[1]
+- type(obj): get the type of obj
+- open(name, mode): return an object of file type.
+  - r,w,a,b; + for read and write
+
+** Printing
+- pprint.pprint(object, stream=None): pretty print
+- 'string {0}, {hello}'.format('yes', hello=2)
+
+** File System
+*** os.path
+If parameter is not listed, it means a single path.
+
+- =exists=: GOOD. check whether a path exists
+- =split=: return a pair (head, tail). tail is the last component,
+  without slash. If path ends with slash, tail is empty
+  - =basename=: the tail of the split output
+  - =dirname=: head of split output
+- =normpath=: collapse redundant separators and up level references
+- =abspath=: from relative to absolute
+  path. normpath(join(os.getcwd(), path))
+- =commonprefix(list)=: return the longest path prefix
+- =expanduser=: replace the initial component of ~ by the users directory.
+- =getsize=: in bytes
+- =isabs=: predicate for absolute
+- =isfile=:
+- =isdir=
+- =islink=
+- =join(path, *paths)=: join intelligently
+- =realpath=: canonical path by following symbolic links
+
+*** TODO pathlib
+*** TODO tempfile
+
+** os
+*** Env
+- os.environ['HOME']
+- os.getenv(name)
+- os.putenv(name, value)
+- os.unsetenv(name)
+
+*** Filesystem
+- os.getcwd(): current working directory
+- os.chdir(path): change cwd
+- os.mkdir(path)
+- ~os.listdir(path='.')~: list all in this dir. E.g. ~for item in os.listdir('/path'): print (item)~
+- =os.makedirs(path)=: GOOD this is the way to go the make directories
+- ~os.remove(path)~: remove a file
+- ~os.rmdir()~: remove an empty dir.
+- os.removedirs(path): foo/bar/aaa will try to remove aaa, than bar,
+  then foo. Don't use! To recursively remove all contents, use
+  =shutil.rmtree=
+- os.rename(src, dst)
+- os.renames(old, new)
+- os.rmdir(path): only work if dir is empty
+- os.tempnam(): a reasonable absolute name for creating temporary file
+  - seems to be vulnerable
+- os.walk(top, topdown=True): for each directory including top itself,
+  it yields 3-tuple (dirpath, dirnames, filenames). E.g. ~for root,dirs,files in os.walk('/path'): for f in files: print (f);~
+
+*** shutil
+- copy(src,dst)
+- copytree(src, dst): recursive
+- rmtree(path): rm -r
+- move(src, dst)
+
+popen family is deprecated. Use subprocess.
+
+*** Process
+- os.abort()
+- os.execl(path, arg0, arg1, ...)
+- os.execle(path, arg0, arg1, ..., env)
+- os.execlp(file, arg0, arg1, ...)
+- os.execlpe(file, arg0, arg1, ..., env)
+- os.execv(path, args)
+- os.execve(path, args, env)
+- os.execvp(file, args)
+- os.execvpe(file, args, env)
+- os.folk
+- os.wait()
+
+
+- os.system(cmd): run cmd, return exit code
+- os.times(): 5-tuple
+  - user time
+  - system time
+  - childrens user time
+  - childrens system time
+  - elapsed real time
+
+** io
+- f = open('file.txt')
+- f = io.StringIO("some string"): in memory text stream
+- f = open('file', 'rb')
+- f = io.BytesIO(b"some binary data \x00\x01")
+- support /with statement/: =with open('file.txt') as file:=
+*** IOBase
+Methods:
+- close()
+- flush()
+- readline(): return one line
+- readlines(): return a list of lines
+- seek(offset=0)
+  - 0 start
+  - 1 current
+  - 2 end
+- tell(): current position
+- writelines(lines): write a list of lines
+
+*** RawIOBase : IOBase (should not use directly)
+- read()
+- readall()
+- readinto(b)
+- write(b)
+
+*** BufferedIOBase
+- read(): read all
+- write(b)
+*** FileIO : RawIOBase
+*** BytesIO : BufferedIOBase
+*** BufferedReader(raw)
+- peek()
+- read()
+*** BufferedWriter(raw)
+- flush()
+- write()
+*** TextIOBase : IOBase
+- read()
+- readline(size=1)
+- seek(offset=0)
+- tell()
+- write(s): finally the string!
+*** TextIOWrapper(buffer) : TextIOBase
+*** StringIO
+- getvalue()
+
+** time
+- time.sleep(secs)
+- time.time(): time in seconds since epoch
+
+- strptime(string[, format]): parse a string into time object
+  - format default: "%a %b %d %H:%M:%S %Y"
+  - time.strptime("30 Nov 00", "%d %b %y") 
+- strftime(format[, t]): convert from time object to string
+  - %a/A: abbr/full weekday name
+  - %b/B: abbr/full month name
+  - %Y: year
+  - %m: month [01,12]
+  - %d: day of the month [01,31]
+  - %H: 24-hour [00,23]
+  - %I: 12-hour [01,12]
+  - %p: AM or PM
+  - %M: Minute [00,59]
+  - %S: second [00,61]
+- gmtime(): in seconds, from epoch
+- localtime(): convert gmtime() to local
+- clock(): processor time as floating number in seconds
+
+class time.struct_time: returned by gmtime(), localtime() and strptime()
+
+** argparse
+#+BEGIN_SRC python
+  import argparse
+  parser = argparse.ArgumentParser(descripton='Description here')
+
+  parser.add_argument(...)
+  parser.add_argument(...)
+
+  args = parser.parse_args()
+#+END_SRC
+
+add_argument(name[, action][, nargs])
+
+- =name=: can be either. In either case, the name of variable will be args.foo
+  - a name, e.g. foo
+  - a list of options, e.g. ('-f', '--foo')
+- =action=
+  - =store=: store what is supplied by the command line
+  - =store_const=: no need to supply a value in command line, will store
+    the const argument (see below)
+  - =store_true=, store_false: special case for store_const
+  - =append=: append multiple options into a list
+- =const=: hold values not read from command line, but from program. Use
+  with store_const
+- =default=: the value can be omited from command line, and take this
+  default value
+- =type=: the default type is string, can be int, float, etc, without quotes
+- =choices=: this is a list of possible values to choose from
+- =required=: True or False, indicate whether there must be this option
+- =help=: the help message to be displayed
+- =dest=: the dest can be automatic. It can be the name of the first
+  argument, or the name of the --foo. So don't need to set it
+  manually. The name is added as an attributes to the returned args
+  object.
+
+** Concurrent
+
+*** threading
+The package name is =threading=, the object is =Thread=.
+
+Functions
+- threading.active_count(): number of Thread object
+- threading.current_thread(): current Thread object
+- threading.enumerate(): return a list of all Thread objects
+- threading.meain(): the main Thread object
+- threading.local(): the instance of local storage. Different for
+  different threads. Typical usage: ~mydata = threading.local()~
+
+Two ways to specify what to run:
+- pass a callable object to the =target= argument when constructing Thread
+- define a subclass of Thread and override the =run= method.
+
+Methods:
+- =start=: start the thread. It will call =run= method in a separate
+  thread. The thread terminate when =run= terminate
+- =join(timeout=None)=: the calling thread will block until this thread terminate
+  - timeout should be float in seconds
+- =is_alive=: test whether the thread terminate
+
+*** Thread Sync
+class threading.Lock
+- acquire()
+- release()
+
+class threading.RLock
+- this is recursive lock. The same thread can acquire the lock
+  multiple times. They will be nested and only when the last release
+  is called, the lock can be acquired by another thead
+- acquire()
+- release()
+
+
+class threading.Condition(lock=None)
+- the lock must be a Lock or RLock. If none, a RLock is created
+- acquire()
+- release()
+- wait(timeout=None): wait until notified
+  - release underlying lock
+  - block until notify
+  - re-acquire the lock and return
+  - typical usage: =while not item_is_available(): cv.wait()=
+  - often use =with= statement: =with cv: cv.wait_for(pred); get();
+- wait_for(predicate, timeout=None)
+  - this is same as =while not predicate(): cv.wait()=, thus more
+    convenient than =wait=
+- notify(n=1): notify one thread
+- notify_all(): notify all threads waiting on this condition
+
+class threading.Semaphore: this class manage resources with limited capacity.
+- acquire(): decrease capacity
+- release(): increase capacity
+
+class threading.Event
+- is_set():
+- set(): set flag to true
+- clear(): set flag to false
+- wait(timeout=None): block until internal flag is true
+
+class threading.Timer(interval, function) : Thread
+- interval is float in seconds, function is callable. use =start=
+  method to start the thread, and the function will be called after
+  the delay.
+- cancel(): stop the timer and cancel the execution. Only work if the
+  the timer is still waiting.
+
+class threading.Barrier(parties, action=None, timeout=None)
+- parties is integer. Every thread calling wait will block, until
+  /parties/ number of such call is called. Then all players unblock
+  and do things simultaneously.
+- wait(timeout=None)
+- reset(): reset the barrier. The thread waiting for it will receive =BrokenBarrierError=
+- abort(): all current and /future/ wait call for it will get =BrokenBarrierError=
+- parties: number of parties
+- n_waiting: number of current waiting
+- broken: True or False
+
+**** Using with statement
+Lock, RLock, Condition, Semaphore can be used.
+
+#+BEGIN_SRC python
+with somelock:
+  # do somthing
+#+END_SRC
+
+is equivalent to:
+#+BEGIN_SRC python
+somelock.acquire()
+try:
+  # do something
+finally:
+  somelock.release()
+#+END_SRC
+
+*** multiprocessing
+This provide multiprocessing.Process class, having similar API with
+Thread.  It seems to use fork but don't have explicit exec on the
+document?? Wired and seems just do something thread can do (except the
+sharing of memory of course).
+
+*** Process (subprocess module)
+- subprocess.run(args, *, stdin=None, input=None, stdout=None,
+  stderr=None, shell=False, timeout=None, check=False)
+  - run the command and wait for it to complete. Return a
+    =CompleteProcess= instance.
+  - if check is True, raise CalledProcessError exception if return
+    code non-zero. This replace the check_call and check_output.
+
+class subprocess.CompletedProcess
+- args
+- returncode
+- stdout: captured if PIPE is passed to stdout 
+- stderr: captured if PIPE is passed to stderr
+- check_returncode(): if returncode is non-zero, raise CalledProcessError
+
+Variables:
+- subprocess.DEVNULL
+- subprocess.PIPE
+- subprocess.STDOUT: this is only used in the place of stderr to redirect it to stdout
+
+class subprocess.CalledProcessError
+- returncode
+- cmd
+- output: same as stdout
+- stdout
+- stderr
+
+The followings are from 2.7, now only use run.
+- subprocess.call(args, *, stdin=None, stdout=None, stderr=None, shell=False)
+  - args: a list of argument, including arg0
+  - it can also be a string due to that *
+  - it will wait, then return returncode
+  - do not use stdout=PIPE, use communicate() instead TODO
+  - use shell=True is bad, but it can give me
+    - shell pipes
+    - filename wildcard
+    - env variable expansion
+    - ~ expansion
+- check_call(args, *, ...): same as call, except it will raise exception if return non-0
+- check_output(args, *, stdin=None, stderr=None, shell=False, universal_newlines=False)
+  - if return non-0, raise exception. Otherwise return the stdout
+
+Popen object
+- Popen constructor
+  - args, bufsize=0, executable=None,
+  - stdin=None, stdout=None, stderr=None,
+  - preexec_fn=None, close_fds=False,
+  - shell=False, cwd=None, env=None,
+  - universal_newlines=False, startupinfo=None, creationflags=0
+- Popen.poll(): check if child process has terminated. Set and return
+  returncode.
+- Popen.wait(): wait for process to terminate. Don't use PIPE with this.
+- Popen.communicate(input=None): to use this, the corresponding stdin,
+  stdout, stderr should be set to PIPE.
+  - send data to stdin (string)
+  - read data from stdout and stderr (it returns a tuple (out, err))
+  - wait for termination
+- Popen.sned_signal(signal)
+- Popen.terminate(): send SIGTERM
+- Popen.kill(): send SIGKILL
+- Popen.pid
+- Popen.returncode
+  - set by poll and wait (and indirectly by communicate)
+  - None indicate hasn't terminated
+  - -N means terminated by signal N
+
+** Internet
+*** urllib.request
+package urllib.request
+
+Functions
+- urlopen(url, data=None)
+  - url can be a string or Request object
+  - for http and https, returns a http.client.HTTPResponse object
+  - for FTP, file, data urls, return a urllib.response.addinfourl object
+- pathname2url(path): do quoting
+- url2pathname(path): do unquoting
+
+class Request
+- constructor: (url, data=None, headers={}, method=None)
+  - url: a string
+  - headers: a dictionary.
+  - method: a string. 'GET' is default. Available values: 'HEAD', 'POST'
+methods:
+  - get_method()
+  - add_header(key, val)
+  - has_header(key)
+  - get_header(key)
+  - remove_header(key)
+  - get_full_url()
+  - header_items(): return a list of tuples (key, value)
+
+#+BEGIN_SRC python
+  req = request.Request(query)
+  req.add_header("Authorization", "token " + token)
+  response = request.urlopen(req)
+  s = response.read().decode('utf8')
+  langj = json.loads(s);
+  # deprecated
+  urllib.request.urlretrieve(url[, filename])
+#+END_SRC
+
+*** urllib.parse
+- quote(string)
+- quote_plus(string)
+- unquote(string)
+- unquote_plus(string)
+- urlencode(query)
+
+** Data
+*** Json
+
+#+BEGIN_SRC python
+import json
+json.dumps({"C": 0, "D": 1})
+json.loads("a string of json")
+
+json.dump(obj, fp, indent=2)
+json.load(fp)
+#+END_SRC
+
+* Third party libraries
+
+** argparse
+#+BEGIN_SRC python
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument('-q', '--query', help='query github api', require=True)
+parser.add_argument('-d', '--download', help='do download', action='store_true')
+args = parser.parse_args()
+#+END_SRC
+
+** urllib
+#+BEGIN_SRC python
+from urllib import request
+import json
+
+url = 'https://api.github.com'
+api = '/search/repositories'
+query = 'language:C&stars:>10&per_page='+size
+response = request.urlopen(url+api+"?q="+query)
+
+s = response.read().decode('utf8')
+j = json.loads(s)
+# j will be a mix of list and dict
+#+END_SRC
+
+** XML
+
+#+BEGIN_SRC python
+import xml.etree.ElementTree as ET
+root = ET.fromstring(s)
+# XPath
+nodes = root.findall('{http://www.sdml.info/srcML/src}function')
+for node in nodes:
+  # do with node
+  pass
+#+END_SRC
+
+APIs
+- =node.find(XPath)=
+- =node.findall(XPath)=
+- =node.get(Attribute)=
+- =node.text=
+** Requests
+http://docs.python-requests.org/en/master/

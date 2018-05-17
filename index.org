@@ -53,7 +53,8 @@ with [[file:wiki/common-lisp.org][Common Lisp]] and scheme
 ultimate meta language that is ready for tuning as an ideal tool for
 any tasks, instead of forcing you to think in its way. I believe
 programming and computing has a basis on lisp, both the history and
-future.
+future. Other languages, e.g. [[file:wiki/python.org][Python]], are
+helpful for collaborate with people.
 
 I started to use [[file:wiki/linux.org][Linux]] from 2011 when I got
 my first laptop. I started with Vim initially, and catch up with
