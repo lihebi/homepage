@@ -1039,3 +1039,52 @@ APIs
 - =node.text=
 ** Requests
 http://docs.python-requests.org/en/master/
+
+** BeautifulSoup
+The package is called =BeautifulSoup4=.
+
+The preface to use the package:
+
+
+#+BEGIN_src python
+from bs4 import BeautifulSoup
+BeautifulSoup('<html>string</html>')
+with open('a.html') as fp:
+    BeautifulSoup(fp)
+#+END_src
+
+
+Each node can be used as a data structure, with the following fields:
+- =name=: the tag name
+- =string=: the (first?) string directly embedded inside the node
+- =strings=: a list of the strings
+- =a-tag=: the first child that is of that tag
+- =attrs=: a list of all attribute names
+- =children=: going downwards
+- =descendants=: intuitive
+- =parent=
+- =parents=: wow, this should be called ancestor?
+- =next_sibling=, =previous_sibling=
+
+
+It can also be used as a dictionary of its attributes,
+e.g. =s['href']=. This should be a string. It is equivalent to using
+the =get= method with the class name.
+
+Several methods are of particular interests.
+- =get_text()=: return all text in the node
+
+You can also execute a query on it. In general, =find_all= returns a
+list, while =find= returns the first one. There are also some methods
+in this family, namely =find_next_siblings=, =find_parents=. E.g.
+- =s.find_all('a')=: return a list of all 'a' tag nodes
+
+Or it can be a query respecting css id and classes. Although =find=
+has some support for id and class, the =select= is easier to use.
+- =s.select("body a")=: non-direct
+- =s.select("p > a")=: direct
+- =s.select(p.c#id)=: class and id
+- =s.select(p > #id)=: mix
+- =s.select(a[href^=xxx])=: filtering based on attribute values
+
+
