@@ -523,6 +523,33 @@ use =compose-mail (C-x m)= at any time, and this seems to use the same
 set of configuration for sending mail. Fire =message-send-and-exit
 (C-c C-c)= to send it, =C-c C-k= to kill it.
 
+The easiest way to use multiple SMTP account is through =msmtp=. The
+configuration of =msmtp=:
+
+#+BEGIN_EXAMPLE
+defaults
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+tls on
+auth on
+port 587
+
+account XXX
+from XXX@gmail.com
+host smtp.gmail.com
+user XXX@gmail.com
+password XXXXXX
+
+account YYY
+from YYY@gmail.com
+host smtp.gmail.com
+user YYY@gmail.com
+password YYYYYY
+#+END_EXAMPLE
+
+
+
+
+
 ** Gnus Usage
 Inside emacs, run =gnus= command. This brings the =*Group*=
 buffer. You will see the list of groups, use =<spc>= or =<enter>= to
