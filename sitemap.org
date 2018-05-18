@@ -18,4 +18,5 @@
   - [[file:wiki/linux.org][Linux]]
   - [[file:wiki/lisp.org][Lisp Index Page]]
   - [[file:wiki/machine-learning.org][Machine Learning]]
+  - [[file:wiki/python.org][Python]]
   - [[file:wiki/racket.org][Racket]]
