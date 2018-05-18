@@ -12,6 +12,7 @@
 - wiki
   - [[file:wiki/ai.org][Artificial Intelligence]]
   - [[file:wiki/common-lisp.org][Common Lisp]]
+  - [[file:wiki/database.org][Data base]]
   - [[file:wiki/deep-learning.org][Deep Learning]]
   - [[file:wiki/emacs.org][Emacs]]
   - [[file:wiki/functional.org][Functional Programming]]

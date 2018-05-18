@@ -1,0 +1,174 @@
+#+TITLE: Data base
+
+ 
+* XPath
+ * tag
+ * ~*~: all child elements
+ * ~.~: current node. Used mostly at the beginning of the path to indicate it is a relative path.
+ * ~//~: all subelements
+ * ~..~: parent element
+ * ~[@attr]~: have attribute
+ * ~[@attr='value']~
+ * ~[tag]~: select all elements that have a child named tag
+ * ~[position]~: position can be integer(1 is the first) or ~last()~ or ~last()-1~
+
+predicates(expressions with square brackets) must be preceded by a:
+
+ * tag name
+ * asterisk ~*~
+ * another predicate
+
+position predicate must be preceded by a tag name.
+
+or:
+
+#+begin_src text
+//tag1|//tag2/tag22
+#+end_src
+
+* CSV
+- fields/columns separated by the comma character
+- records/rows terminated by newlines.
+- header is optional, so special care is needed when importing.
+- Any field /may/ be quoted with double quotes.
+- Fields containing a /comma/ should be quoted by double quotes.
+
+* SQL
+
+** Emacs Babels
+There're two babels: =sqlite= and =sql=. The SQL babel works for a RDBMS like MySQL.
+But a file-based sqlite database is easier to use, so we talk about =sqlite= babel here.
+
+To create a table, you probably want it to be silent.
+Use this header:
+=#+header: :results silent=
+to do that.
+
+You need a database file of course.
+=#+header: :dir ~/tmp/=
+and
+=#+header: :db test-sqlite.db=
+together will locate the database file.
+
+To show the result, the default is in table format, like most babels for emacs.
+If you also want the column names like those shown in command line interface, add
+=#+header: :colnames yes=
+
+In stead of showing as a table by default, =#+header: :results raw= will print the raw text.
+However the result will be appended if running multiple times instead of replacing.
+
+The following is an example.
+
+#+name: sqlite-populate-test
+#+header: :results silent
+#+header: :dir ~/tmp/
+#+header: :db test-sqlite.db
+#+BEGIN_SRC sqlite
+create table greeting(one varchar(10), two varchar(10));
+insert into greeting values('Hello', 'world!');
+#+END_SRC
+
+#+name: sqlite-populate-test
+#+header: :colnames yes
+#+header: :dir ~/tmp/
+#+header: :db test-sqlite.db
+#+BEGIN_SRC sqlite
+select * from greeting;
+#+END_SRC
+
+** Basic Statements
+*** create & insert & delete
+#+BEGIN_SRC sqlite
+  create table greeting(one varchar(10), two varchar(10));
+  insert into greeting values('Hello', 'world!');
+  insert into tablename values (1, 'xxx', 34);
+  insert into tablename (col1, col3) values (1, 34);
+  update tablename set col1=3,col3=8 where col2='yyy';
+  delete from tablename where col1=3;
+  delete from tablename; -- same as:
+  delete * from tablename;
+#+END_SRC
+*** select
+#+BEGIN_SRC sqlite
+  select * from tablename;
+  select col1,col2 from tablename;
+  select distinct col1,col2 from tablename;
+  -- 'xxx' depends on the type of that column, e.g. for integer, 123
+  -- operators can be =, <=, <>(not equal)
+  select * from tablename where col1='xxx';
+  select * from tablename where col1='xxx' and col2<>3 or col3=8;
+  select * from tablename order by col1 ASC, col2 DESC, col3;
+  select * from tablename where col1 in ('xxx', 'yyy');
+
+  select top 2 * from tablename;
+  select top 50 percent * from tablename;
+  select * from tablename limit 3;
+#+END_SRC
+
+*** Aliasing
+#+BEGIN_SRC sqlite
+SELECT o.OrderID, o.OrderDate, c.CustomerName
+FROM Customers AS c, Orders AS o
+WHERE c.CustomerName="Around the Horn" AND c.CustomerID=o.CustomerID;
+#+END_SRC
+
+** SQLite
+This is a file-based database.
+There's no server, every read and write goes into the ordinary file.
+
+There're some special commands for sqlite command line client, the dot commands.
+To see the help, use =.help=.
+Some useful ones:
+- =.tables ?TABLE?= show the tables (optionally only the tables that match the pattern =?TABLE?=).
+  There's no statements like =show tables;= in MySQL.
+- =.schema ?TABLE?=: similar to =describe tablename;=
+
+
+
+*** C interface
+
+- #include <sqlite3.h>
+
+Execute a command
+
+#+BEGIN_SRC cpp
+  sqlite3 *db = nullptr;
+  db = sqlite3_open("/path/to/index.db", &db)
+  char *cmd = "insert into mytable values (1, 3, 'hello');";
+  char *errmsg = nullptr;
+  int rc = sqlite3_exec(db, cmd, nullptr, nullptr, &errmsg);
+  if (rc != SQLITE_OK) {
+    fprintf(stderr, "SQL error: %s\n", errmsg);
+    sqlite3_free(errmsg);
+  }
+#+END_SRC
+
+Query
+
+#+BEGIN_SRC cpp
+  sqlite3 *db = nullptr;
+  db = sqlite3_open("/path/to/index.db", &db)
+  char *cmd = "select * from mytable;";
+  sqlite3_stmt *stmt = nullptr;
+  int rc;
+  rc = sqlite3_prepare_v2(db, cmd, -1, &stmt, nullptr);
+  assert(rc == SQLITE_OK);
+  while (true) {
+    rc = sqlite3_step(stmt);
+    if (rc == SQLITE_ROW) {
+      // data row
+      int column_count = sqlite3_column_count(stmt);
+      for (int i=0;i<column_count;i++) {
+        // get data as int
+        int data = sqlite3_column_int(stmt, i);
+        // get data as string
+        const unsigned char *s = sqlite3_column_text(stmt, i);
+      }
+    } else if (rc == SQLITE_DONE) {
+      break;
+    } else {
+      assert(false);
+    }
+  }
+  sqlite3_finalize(stmt);
+#+END_SRC
