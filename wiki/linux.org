@@ -666,6 +666,37 @@ remove the kernel module:
 rmmod pcspkr
 #+end_example
 
+** Audio
+
+Bluetooth headsets:
+
+- bluez
+- bluez-utils
+- bluez-libs
+- pulseaudio-alsa
+- pulseaudio-bluetooth
+
+use =bluetoothctl= to enter config:
+#+BEGIN_EXAMPLE
+[bluetooth]# power on
+[bluetooth]# agent on
+[bluetooth]# default-agent
+[bluetooth]# scan on
+[NEW] Device 00:1D:43:6D:03:26 Lasmex LBT10
+[bluetooth]# pair 00:1D:43:6D:03:26
+[bluetooth]# connect 00:1D:43:6D:03:26
+#+END_EXAMPLE
+
+If you're getting a connection error org.bluez.Error.Failed retry by
+killing existing PulseAudio daemon first:
+
+#+BEGIN_EXAMPLE
+$ pulseaudio -k
+[bluetooth]# connect 00:1D:43:6D:03:26
+#+END_EXAMPLE
+
+
+
 ** Power Management
 Power management is done through =systmed= can handle it, by =acpid=.
 The configure file is =/etc/systemd/logind.conf=.  =man logind.conf=
