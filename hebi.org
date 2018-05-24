@@ -1,7 +1,8 @@
 #+TITLE: Extra Index
 
+* Wiki draft
 - [[file:art/index.org][Art Index]]
-
+- [[file:wiki/database.org][Database]]
 
 * What the future looks like, and what we should do
 
