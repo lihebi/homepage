@@ -37,6 +37,34 @@ languages like Pascal and C are "general purpose". Actually, just the
 reverse is true.
 #+end_quote
 
+* CASE
+
+David J. Cooper in /Basic Lisp Techniques/:
+
+#+BEGIN_QUOTE
+Many developers once hoped that the software development process of
+the future would be more automated through Computer-aided Software
+Engineering (CASE) tools. Such tools claim to enable programmers and
+non-programmers to diagram their applications visually and
+automatically generate code. While useful to a certain extent,
+traditional CASE tools cannot cover domain-specific details and
+support all possible kinds of customizations — so developers
+inevitably need to hand-code the rest of their applications, breaking
+the link between the CASE model and the code. CASE systems fall short
+of being a true “problem solving tool.”
+
+The recursive nature of CL, and its natural ability to build
+applications in layers and build upon itself — in essence, code which
+writes code which writes code..., makes CL a much better software
+engineering solution. CL programs can generate other CL programs
+(usually at compile-time), allowing the developer to define all parts
+of the application in one unified high-level language. Using macros
+and functions, naturally supported by the CL syntax, the system can
+convert applications written in the high-level language automatically
+into “final” code. Thus, CL is both a programming language and a
+powerful CASE tool, and there is no need to break the connection.
+#+END_QUOTE
+
 
 * fold & unfold
 
@@ -105,3 +133,7 @@ programming language; the bad news is that they will be Unix and C++.
 - Robert Strandh: what is wrong with lisp: http://metamodular.com/Essays/wrong.html
 - Kent Pitman on Genera vs. Emacs:
   https://groups.google.com/forum/?hl=en#!topic/comp.lang.lisp/XpvUwF2xKbk%5B101-125%5D
+
+- The book: Lisp Lore: A Guide to Programming the LISP Machine
+  http://www.archive.org/details/lisploreguidetop00brom
+- http://www.lispmachine.net/
