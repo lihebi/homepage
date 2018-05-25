@@ -50,6 +50,16 @@ qemu-system-x86_64 -enable-kvm -m 1024 disk_image
 
 * Git
 
+Withdraw remote commit is actually fairly easy. First, reset local
+commit, then force pushing.
+
+#+BEGIN_EXAMPLE
+git reset --hard <commit-hash>
+git push -f origin master
+#+END_EXAMPLE
+
+By contrast, =git-revert= will create a new commit to undo the
+previous commits.
 
 ** TODO gitolite
 
