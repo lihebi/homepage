@@ -736,38 +736,50 @@ class time.struct_time: returned by gmtime(), localtime() and strptime()
 
 ** argparse
 #+BEGIN_SRC python
-  import argparse
-  parser = argparse.ArgumentParser(descripton='Description here')
+import argparse
+parser = argparse.ArgumentParser(descripton='Description here')
 
-  parser.add_argument(...)
-  parser.add_argument(...)
+parser.add_argument('-q', '--query', help='query github api', require=True)
+parser.add_argument('-d', '--download', help='do download', action='store_true')
 
-  args = parser.parse_args()
+args = parser.parse_args()
 #+END_SRC
 
-add_argument(name[, action][, nargs])
+The most interesting method is of course the =add_argument=. It
+accepts the name, either a single string, =bar=, indicating positional
+argument, or a string starting with ~-~, indicating optional
+arguments. You can supply =parser.add_argument(-f, --foo)= for short
+and full argument. The value is stored as an attribute with the same
+name (i.e. =bar=, =foo=) of the result, but you can change it to
+anther name via =dest= argument.
 
-- =name=: can be either. In either case, the name of variable will be args.foo
-  - a name, e.g. foo
-  - a list of options, e.g. ('-f', '--foo')
-- =action=
-  - =store=: store what is supplied by the command line
-  - =store_const=: no need to supply a value in command line, will store
-    the const argument (see below)
-  - =store_true=, store_false: special case for store_const
-  - =append=: append multiple options into a list
-- =const=: hold values not read from command line, but from program. Use
-  with store_const
-- =default=: the value can be omited from command line, and take this
-  default value
-- =type=: the default type is string, can be int, float, etc, without quotes
-- =choices=: this is a list of possible values to choose from
-- =required=: True or False, indicate whether there must be this option
-- =help=: the help message to be displayed
-- =dest=: the dest can be automatic. It can be the name of the first
-  argument, or the name of the --foo. So don't need to set it
-  manually. The name is added as an attributes to the returned args
-  object.
+An /action/ defines what to do with the argument. It is a string
+(!!!). The default is ='store'=, meaning store the supplied value to
+the result. If you don't need the value, but just want to know if the
+option is supplied, use =store_true= or =store_false=, which differ
+only in default value. The action =append= will collect each
+occurrence of the argument into a list.
+
+By default, each option consume one argument. You can change this by
+the argument =nargs=. If it is an integer, it means how many should be
+consumed. The result will be a list, thus in case of =1=, it is still
+different from default. It can be a string ='*', '+', '?'=, which
+conforms to the regular expression meaning of them. =*= and =+=
+produce a list, =+= will get give error when no arguments are
+provided, =?= will use =default= if missing.
+
+In case of missing value, the =default= argument can be used to supply
+the default value. Otherwise, it is none. You can also use =required=
+argument to make sure user supplies something. A value is by default a
+string, you can convert it to anther data type by the =type= option,
+accepting a data type, e.g. =int=. You might also want to restrict the
+choices of the argument, so =choices= is a list of allowed values.
+
+
+Finally, =help= option can be used to provide help string, and it can
+be printed out using =parser.print_help()=.  To test the parser, you
+can use =parser.parse_args(['-f', '1', 'bar'])=.
+
 
 ** Concurrent
 
@@ -996,14 +1008,6 @@ json.load(fp)
 
 * Third party libraries
 
-** argparse
-#+BEGIN_SRC python
-import argparse
-parser = argparse.ArgumentParser()
-parser.add_argument('-q', '--query', help='query github api', require=True)
-parser.add_argument('-d', '--download', help='do download', action='store_true')
-args = parser.parse_args()
-#+END_SRC
 
 ** urllib
 #+BEGIN_SRC python
