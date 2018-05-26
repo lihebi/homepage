@@ -2,65 +2,202 @@
 
 * Graphical Model
 
+** Graph Background
+We typically denote undirected graph as H, directed graph as G, and a
+general graph as K.
+- For two nodes connected by any edge, we have neighbor (Nb) relation
+- For a direct edge, we have parent (Pa) and child (Ch) relation
+- The boundary of X, denoted as $Boundary_X$, is $Pa_X \cup Nb_X$
+
+For undirected graph, two nodes are /adjacent/ if there is an edge
+joining them, denoted as $X \sim Y$. A /path/ is a set of vertices
+that are adjacent sequentially. A /complete graph/ is a graph where
+every pair of vertices is joined by an edge. A /subgraph/ is a subset
+of vertices together with their edges. A /clique/ is a complete
+subgraph. It is called /maximal/ if it is a clique and no other
+vertices can be added to it and still yield a clique.
+
+A path can follow any edge, but must not reverse direction. However,
+a trail can follow either direction.
+
+An acyclic graph containing both directed and undirected edges is
+called a /partially directed acyclic graph (PDAG)/. Such a PDAG can be
+cecomposed into chain components, where the edges between components
+must be directed.
+
+
+** Probability Background
+We define the /outcome space/ as the space of possible outcomes,
+denoted as $\Omega$. We also define the /events/ $S$. Each event
+$\alpha \in S$ is a subset of $\Omega$. For example, for a dice
+throwing, $\Omega=\{1,2,3,4,5,6\}$, $\{1\}$ and $\{2,4,6\}$ are
+events.
+
+Then, we can formally define a */probability distribution/* P over
+$(\Omega, S)$ as a mapping from events in $S$ to real values that
+satisfies the following conditions:
+- $P(\alpha) \ge 0$ for all $\alpha \in S$
+- $P(\Omega)=1$
+- If $\alpha,\beta \in S$ and $\alpha \cap \beta = \emptyset$, then
+  $P(\alpha \cup \beta) = P(\alpha) + P(\beta)$
+
+This definition also implies several interesting properties:
+- $P(\emptyset) = 0$
+- $P(\alpha \cup \beta) = P(\alpha) + P(\beta) - P(\alpha \cup \beta)$
+
+There are two views of probability distribution. The /frequentist
+interpretation/ views it as the frequencies of events, and the
+/subjective interpretation/ views it as the degrees of belief.
+
+We define *conditional probability* as $P(\beta | \alpha) =
+\frac{P(\alpha \cap \beta)}{P(\alpha)}$. From this, we can get:
+- chain rule: $P(\alpha_1 \cap ... \cap \alpha_k) = P(\alpha_1)
+  P(\alpha_2 | \alpha_1) ... P(\alpha_k | \alpha_1 \cap ... \cap
+  \alpha_{k-1})$
+- bayes' rule: $P(\beta|\alpha) =
+  \frac{P(\alpha|\beta)P(\beta)}{P(\alpha)}$
+
+So far, we use events. The use of /events/ are cumbersome in some
+case. For example, we need to use =GradeA=, =GradeB=, =GradeC=, etc to
+represent the events for different grades. Thus, we introduce */random
+variables (RV)/* as a way of reporting an attribute of the
+outcome. Formally, a random variable is defined by a function that
+associates with each outcome in $\Omega$ a value. We use $Val(X)$ to
+denote the set of values a random variable $X$ can take. We use upper
+case $X$ to denote the random variables, use lower case $x$ to denote
+a generic value of $X$, and use $x^1, ..., x^k$ to denote the possible
+values. We use bold typeface *X* to denote a set of random variables,
+and lowercase bold typeface *x* to denote an assignment to all
+variables in the set. A distribution over random variables with $k$
+values are called /Multinomial Distribution/, one over binary random
+variables are called /Bernoulli Distribution/.
+
+Once we define the random variables, we can define */marginal
+distribution/* over X as the distribution over events that can be
+described using X, denoted by $P(X)$. We may also be interested in the
+distribution over multiple random variables. In general, a */joint
+distribution/* over a set $X = \{X_1, ..., X_n\}$, denoted as $P(X_1,
+..., X_n)$, is the distribution that assigns probabilities to events
+that can be described using these random variables. We use $\xi$ to
+refer to a full assignment to the variables in $X$. The conditional
+probability in terms of random variables are intuitive.
+
+Next, we introduce *independence*. First in events notation, we say
+that
+
+#+BEGIN_QUOTE
+an event $\alpha$ is /independent/ of event $\beta$ in P, denoted as
+$P \models (\alpha \bot \beta)$, if $P(\alpha | \beta) = P(\alpha)$ or
+if $P(\beta) = 0$
+#+END_QUOTE
+
+An alternative definition
+
+#+BEGIN_QUOTE
+$P \models (\alpha \bot \beta)$ iff $P(\alpha \cap \beta) = P(\alpha)
+P(\beta)$
+#+END_QUOTE
+For conditional independence, we say that
+
+#+BEGIN_QUOTE
+an event $\alpha$ is /conditionally independent/ of event $\beta$
+given event $\gamma$ in P, denoted as $P \models (\alpha \bot \beta |
+\gamma)$, if $P(\alpha | \beta \cap \gamma) = P(\alpha | \gamma)$ or
+if $P(\beta \cap \gamma) = 0$
+#+END_QUOTE
+
+And the alternative definition as well:
+#+BEGIN_QUOTE
+$P \models (\alpha \bot \beta | \gamma)$ iff $P(\alpha \cap \beta |
+\gamma) = P(\alpha | \gamma) P(\beta | \gamma)$
+#+END_QUOTE
+
+Of course, we want to define in terms of random variables as well:
+
+#+BEGIN_QUOTE
+Let *X*, *Y*, *Z* be sets of random variables. We say *X* is
+conditional independent of *Y* given *Z*, if $P \models (X=x \bot
+Y=y | Z=z)$ for /all/ values x,y,z. When $Z=\emptyset$, we simply
+write $(X \bot Y)$, and say X and Y are marginally independent.
+#+END_QUOTE
+
+The alternative for this:
+#+BEGIN_QUOTE
+$P \models (X \bot Y | Z)$ iff $P(X,Y | Z) = P(X|Z) P(Y|Z)$
+#+END_QUOTE
+
+We have some properties hold in general:
+- /Symmetry/: $(X \bot Y | Z) \Rightarrow (Y \bot X | Z)$
+- /Decomposition/: $(X\bot Y,W | Z) \Rightarrow (X \bot Y | Z)$
+- /Weak union/: $(X \bot Y,W |Z) \Rightarrow (X\bot Y | Z,W)$
+- /Contraction/: $(X \bot W | Z, Y) \& (X \bot Y|Z) \Rightarrow (X\bot
+  Y,W|Z)$
+
+There is one more property, /intersection/, that holds in /positive
+distribution/, where $P(\alpha) > 0$ for non-empty events. The
+property says, for mutually disjoint sets X,Y,Z,W, we have:
+- /intersection/: $X\bot Y|Z,W \& (X\bot W|Z,Y) \Rightarrow (X \bot
+  Y,W|Z)$
+
+After defining probability distribution, we are interested in
+answering */probability queries/*. We have /evidence variables/ E and
+/query variables/ Y, and we aims to compute $P(Y|E=e)$, and this is
+called the Posterior/, also called /conditional probability/ or
+/posterior probability/. It seems also to be called /probabilistic
+inference/, referring to the computation of posterior probabilities
+given evidence.
+
+A second type of query is MAP query, also called /Most Probable
+Explanation (MPE)/. It aims to find a high-probable joint assignment
+to some subset of variables. The /MAP assignment/ is the most likely
+assignment to all of the non-evidence variables. Formally, let
+$W=X-E$, our task is to find $MAP(W|e) = argmax_w P(w,e)$
+
+For *continuous random variables*, /probability density function
+(PDF)/ is used for continuous random variables, because the vector is
+infinite. I record some distributions here:
+- /Uniform distribution/ over [a,b], denoted as $X \sim Unif[a,b]$, if
+  $p(x) = \frac{1}{b-1}$ in [a,b] otherwise 0.
+- /Gaussian distribution/ with mean $\mu$ and variance $\sigma^2$,
+  denoted as $X \sim N(\mu; \sigma^2)(x)$, if
+  $p(X)=\frac{1}{\sqrt{2\pi} \sigma} e^{-\frac{(x-\mu)^2}{2
+  \sigma^2}}$
+
+The /linearity of expectation/ property states that
+$E[X+y]=E[X]+E[Y]$. There is no general product form, but if X and Y
+are independent, we have $E[X*y]=E[X]*E[Y]$. The variance is defined
+as $Var_P[X] = E_P[(X-E_P[X])^2]$, or $Var[X] = E[X^2] - (E[X])^2$. We
+don't have even the linear property, but if X and Y are independent,
+then $Var[X+Y]=Var[X]+Var[Y]$. The variance generally scales as a
+quadratic function of X: $Var[aX+b]=a^2Var[X]$. The standard deviation
+is $\sigma_X=\sqrt{Var[X]}$.
+
+
+** Representation
+
+We have two views of the graphical model. On one hand, we view it as a
+representation of a set of independence that holds in the
+distribution. On the other, the graph defines a skeleton for
+factorizing a distribution: rather than represent the entire joint
+distribution, we break up the distribution into smaller factors
+locally, and the overall joint distribution can be represented as the
+product of these factors.  This two perspectives of graphical model
+are equivalent in a deep sense.
+
 /Undirected graphical model/ is also called /Markov random field/ or
 /Markov network/. /Directed graphical model/ is called /Bayesian
-network/.
+network/. They differ in the set of independence they can encode, and
+in the factorization of the distribution they can induce.
 
-Two types of tasks are popular in the literature. /Learning/ refers to
-the estimation of edge parameters from data. /Inference/ refers to the
-computation of marginal vertex probabilities and expectations from
-their joint distribution.
+** Inference
+/Inference/ refers to answering probabilistic queries, the computation
+of marginal vertex probabilities and expectations from their joint
+distribution. In particular, we study the computing of posterior
+probability of some variables given evidence on others.
 
-Some graph theory background. For undirected graph, two nodes are
-/adjacent/ if there is an edge joining them, denoted as $X \sim Y$. A
-/path/ is a set of vertices that are adjacent sequentially. A
-/complete graph/ is a graph where every pair of vertices is joined by
-an edge. A /subgraph/ is a subset of vertices together with their
-edges. A /clique/ is a complete subgraph. It is called /maximal/ if it
-is a clique and no other vertices can be added to it and still yield a
-clique.
-
-Some probability background.  /Prior/ is also called /unconditional
-probabilities/ or /prior probabilities/.  /Posterior/ is also called
-/conditional probability/ or /posterior probability/.  /Evidence/ is
-the results observed, should be synonymous for observation.
-/Probability distribution/ is the name for discrete random variables,
-/probability density function/ is used for continuous random
-variables, because the vector is infinite.  /Joint probability
-distribution/ is the P for two variables with some interaction.  /full
-joint probability distribution/ is the joint distribution for all
-variables.  /marginalization/ is also called /summing out/, because it
-sums the conditional probabilities. The process of computing the
-unconditional probability, aka marginal probability.  /Probabilistic
-inference/ refers to the computation of posterior probabilities given
-evidence.
-
-Product rule
-
-$$P(a \wedge b) = P(a|b) P(b)$$
-
-inclusion-exclusion principle
-
-$$P(a\vee b) = P(a) + P(b) - P(a \wedge b)$$
-
-Bayes rule:
-
-$$P(b|a) = \frac{P(a|b)P(b)}{P(a)}$$
-
-conditioning rule:
-
-$$P(Y) = \sum_{z} P(Y|z)P(z)$$
-
-(absolute) independence
-
-$$P(X|Y)=P(X)$$
-
-conditional independence:
-
-$$P(X,Y|Z) = P(X|Z) P(Y|Z)$$
-
-Gausion (normal) distribution: $N(\mu, \sigma^2)(x)$ has the mean
-$\mu$ and the variance $\sigma^2$.
+** Structure and Parameter Learning
+/Learning/ refers to the estimation of edge parameters from data, and
+learning the structure skeleton.
 
 
 ** Markov Network
