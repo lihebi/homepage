@@ -447,7 +447,223 @@ probability of some variables given evidence on others.
 
 ** Structure and Parameter Learning
 /Learning/ refers to the estimation of edge parameters from data, and
-learning the structure skeleton.
+learning the structure skeleton.  Fundamental assumptions in learning
+is the /Independent and Identical Distribution (IID)/, meaning that
+the data samples are sampled independently from the same distribution.
+
+The central idea of learning is the */likelihood/* of the data, given
+the model, denoted as $P(D: M)$. The log of it is the log-likelihood
+$l(D: M) = log P(D: M)$. The negated forms are called the loss and
+log-loss, reflecting the cost per instance of using the model. The
+/hamming loss/ counts the number of variables in which the model
+differs from the ground truth.
+
+Generally the amount of data required to estimate parameters grows
+linearly with the number of parameters. And since the network
+connectivity can be exponential to the number of variables, the amount
+of data can grow exponentially with the variables, or the network
+connectivity.  The bias-variance trade-off also applies here
+obviously. Restricting our model class is one way to reduce
+overfitting, it prevents us from selecting a model that precisely
+captures the training data. However, we are giving more bias.  The
+less restricted ones generally cause large variance.
+
+Different types of *objectives* defines different kind of training. If
+we use P(Y,X) as the objective, it is called /generative training/,
+because we train the model to generate all the variables, both the
+predict variable and the feature variable. Alternatively, the
+/discriminative training/ uses $P(Y|X)$ as the objective, thus only
+model the result. Generally speaking, generative models have a higher
+bias, because they make more assumptions about the form of the
+distribution, but obviously this training works better on limited
+data. The generative models offer a more natural interpretation of a
+domain, and are better able to deal with missing values and unlabeled
+data.
+
+The training will contain three axes of problems, namely whether the
+output is Bayesian or Markov network, the constraints we know about
+the model prior to learning, and whether the data are fully
+observable.
+
+*** Parameter Estimation for Bayesian Network
+In this setting, we consider the fixed structure, and the data set are
+fully observed, what we need is to estimate the parameters on top of
+the structure.
+
+The central idea is */Maximum Likelihood Estimation (MLE)/*. The model
+is parameterized by $\theta$, the likelihood function is a function of
+$\theta$ and the observed data instance, characterizing the
+probability of the observed data under this model. Of course, we want
+this probability to be high, so that the model is more likely given
+the data. The value of $\theta$ that maximizes the likelihood is
+called the /maximum likelihood estimator/.
+
+Another concept is called the /sufficient statistic/. It measures what
+features are required for estimating the likelihood, rendering other
+features useless. For example in coin tossing, the number of heads and
+number of tails are sufficient, while the order of tossing is
+useless. Formally, the sufficient statistic is a function from
+instance of $\chi$ to IR, such that $L(\theta: D) = L(\theta: D')$.
+
+The key property to solve the MLE problem in Bayesian network is to
+decompose the likelihood function into products of /local likelihood
+function/, measuring how well the variable is predicted given its
+parents. This decomposition is called the /global decomposition/ of
+the likelihood function. We can then maximize each local likelihood
+independently.
+
+One problem of the MLE approach is the lack of modeling of
+confidence. When we observe 3 heads out of 10 tosses, we are not
+convinced by the bias. But once we observe 3,000 heads out of 10,000
+tosses, we tend to be convinced that the coin is tricked. But the MLE
+will parameterize the model as the same. We introduce */Bayesian
+parameter estimation/*. The fundamental fact is that, we have a lot
+more prior knowledge. We assumed the tosses are independent of each
+other, however, this assumption was made when $\theta$ is fixed. If we
+do not know $\theta$ in advance, then the tosses are not marginally
+independent, because each toss tells us something about the parameter
+$\theta$, and thereby the probability of the next toss. Thus, we can
+only assume that the tosses are conditionally independent given
+$\theta$. In this setting, we treat $\theta$ as a random variable.
+
+More formally, now the posterior distribution over $\theta$ is
+$P(\theta | x[1], ..., x[M]) = \frac{P(x[1], ..., x[M] | \theta)
+P(\theta)}{P(x[1], ..., x{M})}$, where the denominator is a
+normalizing factor. We can see that the new posterior is the product
+of prior and the likelihood. If we have only a uniform prior
+($P(\theta) = 1 for \theta \in [0,1]$), the posterior is just he
+likelihood function. However, it is still different from the MLE. The
+main philosophical difference is in the use of posterior: instead of
+selecting from the posterior a single value for the parameter
+$\theta$, we use it, in its entirety, for predicting the probability
+over the next toss.
+
+The interesting part is choosing the prior. We want to choose the
+prior distribution that is compact, and efficient for update.
+
+#+BEGIN_QUOTE
+A /Beta Distribution/ is parameterized by two hyperparameters,
+$\alpha_1$ and $\alpha_0$: $\theta \sim Beta(\alpha_1, \alpha_0)$ if
+$p(\theta) = \gamma \theta^{\alpha_1 - 1} (1-\theta)^{\alpha_0 - 1}$,
+where $\gamma$ is a normalizing constant, defined as $\gamma =
+\frac{\Gamma(\alpha_1 + \alpha_0)}{\Gamma(\alpha_1)\Gamma(\alpha_0)}$,
+and $\Gamma(x) = \int_0^\infty t^{x-1}e^{-t}dt$ is the Gamma function.
+#+END_QUOTE
+
+What's good about /Beta Distribution/ is that, when we get more data,
+we get the new posterior is exactly $Beta(\alpha_1 + M[1], \alpha_0 +
+M[0])$, where M[1] is the number of heads, M[0] being the number of
+tails. The key property is that if the prior is a Beta distribution,
+then the posterior is also a Beta distribution. The distribution
+satisfying this is called to be conjugate to the Bernouli likelihood
+function.  Another such prior is /Dirichlet distribution/, which
+generalizes the Beta distribution with K hyperparameters: $\theta \sim
+Dirichlet(\alpha_1, ..., \alpha_k)$ if $P(\theta) \propto \prod_k
+\theta_k^{\alpha_k - 1}$
+
+*** Structure Learning in Bayesian Network
+If we include more edges, the model often contains spurious edges. If
+we include fewer edges, we may miss dependencies. When the data is
+limited, it is better to prefer a sparse structure.
+
+*/Constraint-based structure learning/* try to test conditional
+dependence and independence in the data, then find a network that best
+explains these dependencies and independencies. The downside is the
+sensitivity to failures in individual independence tests. Since their
+are multiple networks having the same I-map, we often learn the
+I-equivalent class rather than a single network. For performance
+consideration, we often assume the network has bounded indegree, and
+our independence test procedure can perfectly answer any independence
+query involving a bounded number of variables. If the network is more
+complex, we cannot hope to learn it with a small (polynomial) number
+of independence queries.
+
+The part of independence test deserves more space, while the building
+of the network is somehow trivial. The independence test concerns the
+problem of given joint samples of two variables X and Y, determine
+whether X and Y are independent. We often use /hypothesis
+testing/. The null hypothesis $H_0$ says the data were sampled from a
+distribution $P(X,Y)=P(X)P(Y)$, in other words, X and Y are
+independent. We want to design a procedure (called the decision rule)
+to decide to accept or reject the null hypothesis. This problem has
+two part:
+1. design the decision rule: the key idea is to define a measure of
+   deviance from the null hypothesis. A common measure is $\chi^2$
+   statistic $d_{\chi^2} (D) = \sum_{x,y} \frac{(M[x,y] - M P(x)
+   P(y))}{M P(x) P(y)}$, where $M[x,y]$ is the actual count in the
+   observation, $M P(x) P(y)$ is the expected count, and the
+   denominator is a normalizing constant. Intuitively it measures in
+   terms of number of mismatched data. Another deviance measure is
+   /mutual information/. Once we have the deviance measure, we can
+   design the rule as the distance is under a threshold. There is also
+   a $\chi^2$ statistic for conditional independence.
+2. evaluate the decision rule: The approach is to compute the
+   probability of /false rejection/, i.e. the probability of seeing
+   each particular data set if the hypothesis happens to be correct,
+   $P(\{D:R(D)=Reject\} | H_0, M)$, denoted as $p$. The $1-p$ is the
+   confidence in rejecting the hypothesis. This is called /p-value/,
+   and we often use 0.95 confidence interval, or significance level,
+   i.e. p-value of 0.05 or less.
+
+Another family of approach is */score-based structure learning/*,
+which assign a scoring function to rate how well a model fits the
+observed data, and turn the problem of structure learning into a model
+selection one, and find the one with highest possible score. However,
+the problem is NP-hard, and we need to find heuristic search
+techniques. The advantage is that it is less sensitive to individual
+failures, and estimate the structure as a whole.
+
+The design of score is central to this approach, different scores also
+have different strategies for search. The most fundamental score is
+the */Likelihood score/*, denoted as $score_L(G, D)$, and this score
+can be decomposed to local scores with parent-children
+relation. Indeed, the likelihood of a network measures the strength of
+the dependencies between variables are their parents, in other words,
+we prefer networks where the parents of each variable are informative
+about it. However, this is typically not used, because in almost all
+cases, the maximum likelihood network will be a fully connected one,
+i.e. it this score overfits the training data.
+
+To take into consideration the prior to avoid overfitting, we design
+the */Bayesian score/*, as $score_B(G:D) = log P(D|G) + log P(G)$. As
+we get more data, Bayesian score prefers the structure $G_{X
+\rightarrow Y}$ where X and Y are dependent. When the dependency
+between them is strong, this preference arises very quickly. But as
+the dependency becomes weaker, more data are required to justify this
+selection. Going deeper, the Bayesian score seems to be biased toward
+simpler structures, but as it gets more data, it is willing to
+recognize that a more complex structure is necessary. Therefore, it
+reduces the extent of overfitting. /Bayesian information criterion
+(BIC)/ score, denoted as $score_{BIC}(G:D)$, is an approximation to
+Bayesian score.  One important property is the score decomposability,
+and it allows us to conduct local search of local score for local
+structure, and local change to structure does not change the scores of
+the other parts. There is a condition for a Bayesian score to be
+decomposable.  The popular actual prior distributions are K2 (software
+name) prior, BDe prior.
+
+The search space of the models are huge, rendering the problem of
+searching the highest scored network NP-hard. Thus we need to define
+heuristic search. One fundamental step is to restrict the search
+space. In stead of enumerating all models, we define some moves
+between candidate solutions, i.e. an operation to mutate structure to
+another. The operations include edge addition, edge deletion, and edge
+reversal. These operations result in changing only one local score
+term. Thus, we can apply local search strategies, like greedy hill
+climbing, first-ascent hill climbing, basin flooding and tabu search
+for addressing local maxima, etc. The decomposibility of the score
+function is the key to reducing the computation cost.
+
+A third approach is */Bayesian model averaging/*, where instead of one
+model, it generates an ensemble of possible structures.
+
+
+*** Learning Markov Network
+
+*** Hidden Variable
+The previous discussions all assume the data are fully observed.
+Inclusion of hidden variables in the network can greatly simplify the
+structure, reducing the complexity of the network.
 
 
 * Search Algorithm
@@ -521,6 +737,25 @@ Stop when the goal nodes has the lowest cost function value.
 
 
 ** local search
+Concepts:
+- plateau: a large set of neighbors having the same score
+
+Searches
+- first-ascent hill climbing: once it finds one that leads to a better
+  score, it applies it without considering other directions
+
+Overcome local maxima:
+- basin flooding: keep track of all previous results, and consider any
+  operator leading to result that has not been visited
+- tabu search: keep a list or recent operators applied, and in each
+  subsequent step, do not consider operators that reverse the effect
+  of recently applied operators.
+- data-perturbation: similar to random restarts. Perturb the search in
+  a way that will allow it to overcome local obstacles and make
+  progress toward the global maxima. Different from random restart
+  where perturbation change the network, the data-perturbation changes
+  the training data.
+
 *** hill climbing
 Find an initial solution, which is much worse than optimal one.
 Attempts to find a better solution by incrementally changing a
@@ -543,6 +778,7 @@ always goes to smaller state if found.  But this is not required.
 
 *** gradient descent
 Go alone the decrease of the gradient.
+
 
 * Similarity metrics
 /Jaccard index/, also known as the /Jaccard similarity coefficient/,
