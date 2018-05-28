@@ -25,6 +25,7 @@ called a /partially directed acyclic graph (PDAG)/. Such a PDAG can be
 cecomposed into chain components, where the edges between components
 must be directed.
 
+The /skeleton/ of G is the corresponding undirected graph.
 
 ** Probability Background
 We define the /outcome space/ as the space of possible outcomes,
@@ -49,8 +50,9 @@ There are two views of probability distribution. The /frequentist
 interpretation/ views it as the frequencies of events, and the
 /subjective interpretation/ views it as the degrees of belief.
 
-We define *conditional probability* as $P(\beta | \alpha) =
-\frac{P(\alpha \cap \beta)}{P(\alpha)}$. From this, we can get:
+We define *conditional probability distribution (CPD)* as $P(\beta |
+\alpha) = \frac{P(\alpha \cap \beta)}{P(\alpha)}$. From this, we can
+get:
 - chain rule: $P(\alpha_1 \cap ... \cap \alpha_k) = P(\alpha_1)
   P(\alpha_2 | \alpha_1) ... P(\alpha_k | \alpha_1 \cap ... \cap
   \alpha_{k-1})$
@@ -189,15 +191,160 @@ are equivalent in a deep sense.
 network/. They differ in the set of independence they can encode, and
 in the factorization of the distribution they can induce.
 
-** Inference
-/Inference/ refers to answering probabilistic queries, the computation
-of marginal vertex probabilities and expectations from their joint
-distribution. In particular, we study the computing of posterior
-probability of some variables given evidence on others.
+The general model is the /Naive Bayes Model/, or /Idiot Bayes Model/,
+where we assume the /naive Bayes Assumption/ that all features are
+conditionally independent given its class. Thus we have the
+factorization $P(C,X_1,...,X_n) = P(C) \prod_{i=1}^n P(X_i|C)$.
 
-** Structure and Parameter Learning
-/Learning/ refers to the estimation of edge parameters from data, and
-learning the structure skeleton.
+** Bayesian Network
+The naive Bayes model has too strong assumption. The Bayesian Network
+can encode the conditional independence relationship in a finer
+granularity. It can be viewed in two different ways, representing a
+joint distribution, and a compact representation of a set of
+conditional independence assumptions. Both views are equivalent.
+
+The Bayesian network has two components: a graph encode the relation,
+and its /Conditional Probability Distribution (CPD)/.
+
+*** Local Independence
+The */local independence/* encoded in the Bayesian Network, denoted by
+$I_l(G)$, is
+
+#+BEGIN_QUOTE
+For each variable $X_i$, we have $(X_i \bot NonDescendants_{X_i} |
+Pa_{X_i}^G)$
+#+END_QUOTE
+
+In other words, a node is conditionally independent of its
+non-descendants given its parent.
+
+
+Now, we give formal semantic of a Bayesian network, through the notion
+of /I-map/.  We use the notation $I(P)$ to denote the set of
+independence assertions the hold in the distribution P (ground
+truth). Then we can get that the local independence $I_l(G) \subseteq
+I(P)$. In other words, the graph G encodes a subset of independence
+that is true in the distribution. We will call *G as an /independency
+map (I-map)/ for P*. Clearly from the definition, G must not mislead
+us regarding the independencies in P. The I-map concept is important
+because, when we use G to encode a set of conditional independence
+assumptions, every distribution for which G is an I-map, must satisfy
+these assumptions.  
+
+If P can be expressed as a product $P(X_1,...,X_n)=\prod_{i=1}^n
+P(X_i | Pa_{X_i}^G)$, we say that */P factorizes according to G/*.
+This equation is called the /chain rule for Bayesian network/, the
+individual factors on the right hand side is called the /local
+probabilistic models/.
+
+Then, importantly we have the above I-map and factorization are
+equivalent:
+
+#+BEGIN_QUOTE
+G is an I-map for P iff P factorizes according to G.
+#+END_QUOTE
+
+*** Global Independence
+Besides local independence, we can read off other independence from
+Bayesian Network.
+
+There are four possible trails from X and Y via Z. When influence can
+flow from X to Y via Z, we say the trail is active.
+- /Causal trail/ =X->Z->Y= encode the indirect causal effect, is active
+  iff Z is not observed
+- /Evidential trail/ =Y->Z->X= encodes the indirect evidential effect,
+  is active iff Z is not observed
+- /Common Cause/ =Z->{X,Y}=, is active iff Z is not observed
+- /Common Effect/ ={X,Y}->Z= (also called /v-structure/), is active
+  iff either Z or one of Z's descendants is observed
+
+More formally
+#+BEGIN_QUOTE
+Let Z be a subset of observed variables. The trail $X_1
+\rightleftharpoons ... \rightleftharpoons X_n$ is active given Z if
+- whenever we have a v-structure, $X_{i-1} \rightarrow X_i \leftarrow
+  X_{i+1}$, then $X_i$ or one of its descendants are in Z
+- no other node along the trail is in Z
+#+END_QUOTE
+
+If there are more trails between X and Y, the influence can flow as
+long as any trail is active. More generally, if there are no active
+trail between any pair of nodes in two sets X and Y given Z, they are
+said to be */directed separated (d-separated)/*, denoted as
+$d-sep_G(X;Y|Z)$. The set of independencies corresponding to
+d-separation is denoted as $I(G)$, as $I(G) = \{(X \bot Y | Z) :
+d-sep_G(X;Y|Z)\}$, and it is called the */global Markov
+independencies/*. This time, we use I instead of $I_l$, without a
+subscript, because actually we can prove it to be sound and complete
+to the independencies of the distribution, $I(P)$. In other words,
+d-separation precisely encodes all independencies, i.e. $I(G) = I(P)$.
+(Note: the completeness seems to be not true, and there is a weaker
+definition of completeness).
+
+Actually, very different BN structure can actually encode the same set
+of I(G). If they do, they are called */I-Equivalent/*. And it is
+impossible to decide which structure is true: there is no intrinsic
+property of P that would allow us to associate it with one graph
+rather than an equivalent one. In particular, although we can
+determine whether X and Y are correlated, there is no way to tell
+whether the correct structure is =X->Y= or =Y->X=. An entire
+I-equivalence class can be represented as a /class PDAG/.
+
+We have a necessary condition for I-equivalent.
+#+BEGIN_QUOTE
+If G_1 and G_2 have the same skeleton and the same set of
+v-structures, then they are I-equivalent.
+#+END_QUOTE
+
+However, the reverse is not true: if they are I-equivalent, they may
+have different v-structures. A intuitive example is that, since a
+complete graph encodes empty set of conditional independence
+assertions, any two complete graphs are I-equivalent. But, although
+they have the same skeleton, they can have different v-structures. We
+can strengthen the condition to provide a necessary and sufficient
+condition, by introducing /immorality/:
+
+#+BEGIN_QUOTE
+A v-structure =X->Z<-Y= is an immorality if there is no direct edge
+between X and Y.  (Such an edge is called a /covering edge for the
+v-structure/ if exists).
+
+G_1 and G_2 have the same skeleton and the same set of immoralities,
+iff they are I-equivalent.
+#+END_QUOTE
+
+Clearly we would like to construct a graph G that is an I-map for P,
+so that G can encode some independence assertions in P. However, there
+are many I-equivalent graphs, which one do we use? The complete graph
+is I-map for any distribution, thus it is a candidates. But since it
+is fully connected, it encodes no conditional indepencencies, thus not
+interesting at all. What we want is actually a /minimal I-map/, where
+removal of a single edge from the graph will render it not an I-map of
+P.  However, the minimal I-map may fail to capture all independencies
+in P for sure. What we want is called a /perfect map (P-map)/ encoded
+in graph K, where $I(K)=I(P)$. However, not every distribution has a
+P-map.
+
+*** Other
+When choosing prior, it is important to distinguish the extremely
+unlikely and impossible, because one can never condition away a zero
+probability, no matter how much evidence we see.
+
+#+begin_quote
+Node X is conditionally independent of all other nodes in the network,
+given its markov blanket. (parents, children, and children's parents).
+#+end_quote
+
+/Conditional probability table (CPT)/ is a table in which each row
+shows a conditional probability.
+
+For continuous variables, the Bayes needs to do something.  Of course
+we can do discretization, but the precision is lost.  One common
+solution is to define standard families of probability density
+functions, with a finite number of parameters, the most commonly used
+is the Gausion (normal) distribution.  Another solution is
+non-parameter one.  A network with both discrete and continuous
+variables is called hybrid Bayesian network.
 
 
 ** Markov Network
@@ -220,28 +367,17 @@ if C separates A and B, then $A \bot B | C$
 
 The pairwise and global Markov properties of a graph are equivalent.
 
-** Bayesian Network
 
-#+begin_quote
-Node X is conditionally independent of all other nodes in the network,
-given its markov blanket. (parents, children, and children's parents).
-#+end_quote
+** Inference
+/Inference/ refers to answering probabilistic queries, the computation
+of marginal vertex probabilities and expectations from their joint
+distribution. In particular, we study the computing of posterior
+probability of some variables given evidence on others.
 
-#+begin_quote
-Node X is conditionally independent of its non-descendants given its
-parent.
-#+end_quote
+** Structure and Parameter Learning
+/Learning/ refers to the estimation of edge parameters from data, and
+learning the structure skeleton.
 
-/Conditional probability table (CPT)/ is a table in which each row
-shows a conditional probability.
-
-For continuous variables, the Bayes needs to do something.  Of course
-we can do discretization, but the precision is lost.  One common
-solution is to define standard families of probability density
-functions, with a finite number of parameters, the most commonly used
-is the Gausion (normal) distribution.  Another solution is
-non-parameter one.  A network with both discrete and continuous
-variables is called hybrid Bayesian network.
 
 * Search Algorithm
 
