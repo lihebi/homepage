@@ -64,3 +64,29 @@ blockquote::before{
   top:-10px;
 }
 
+
+/* h1 { */
+/*   font-size: 2rem; */
+/*   padding-bottom: 0.5rem; */
+/*   border-bottom: 1px solid #444; */
+/* } */
+
+/* h2 { */
+/*   font-size: 1.1rem; */
+/* } */
+
+/* h3 { */
+/*   font-size: 0.9rem; */
+/* } */
+/* h4 { */
+/*   font-size: 0.8rem */
+/* } */
+
+
+pre {
+  margin: 1rem;
+  padding: 0.5rem 1rem;
+  border: 1px dashed #444;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
