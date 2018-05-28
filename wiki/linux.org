@@ -954,6 +954,9 @@ remove the kernel module:
 rmmod pcspkr
 #+end_example
 
+To use ssh key for connecting to remote ssh daemon, on the host
+machine, run =ssh-keygen=. Then =ssh-copy-id user@server=.
+
 ** Audio
 
 Bluetooth headsets:
