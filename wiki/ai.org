@@ -657,13 +657,50 @@ function is the key to reducing the computation cost.
 A third approach is */Bayesian model averaging/*, where instead of one
 model, it generates an ensemble of possible structures.
 
-
 *** Learning Markov Network
 
 *** Hidden Variable
 The previous discussions all assume the data are fully observed.
 Inclusion of hidden variables in the network can greatly simplify the
-structure, reducing the complexity of the network.
+structure, reducing the complexity of the network.  When dealing with
+hidden variables, we introduce a set of /observability variables/, for
+each variable $X_i$, a $O_{X_i}$, indicating whether the variable is
+observed or not.
+
+There are three kinds of missing mechanism. $P_{missing}$ is /Missing
+Completely At Random (MCAR)/ if $P_{missing} \models (X \bot
+O_X)$. MCAR assumption is a very strong one, and is sufficient for
+decomposition of likelihood function. $P_{missing}$ is /Missing At
+Random (MAR)/ if $P_{missing} \models (O_X \bot x_{hidden}^y |
+x_{obs}^y)$. The MAR assumption is a license to ignore the observation
+model while learning parameters.
+
+First, consider the parameter estimation problem, where we used
+maximum likelihood approach.  In the presence of partially observed
+data, we lose all of the important properties of the likelihood
+function: its unimodality, its closed-form representation, and the
+decomposition as a product of likelihoods.  One approach is the
+gradient ascent method to go straight to optimize the
+likelihood. However, the lost of important properties makes it very
+hard.
+
+The /Expectation Maximization (EM)/ method is especially designed for
+optimizing the likelihood function in case of missing data: it tries
+to fill in the missing data. Indeed, this is a chicken and egg
+problem: learning the parameters and hypothesizing values for
+unobserved variables, both of them are fairly easy given the solution
+to the other. EM algorithm solve this chicken and egg problem using a
+bootstrap approach: it starts with some arbitrary starting point, and
+repeatedly apply the two steps, until converge. The expectation step
+is to use the current parameter assignment, to complete the data. The
+maximization step treats the completed data as observed, perform
+maximum likelihood estimation, and learn a new set of parameters. The
+algorithm guarantee that each iteration can improve the log-likelihood
+function, thus the process is guaranteed to converge.
+
+In terms of structure learning, the dominate approach here is score
+based one. We apply /laplace approximation/, and use the /Laplace
+Score/.
 
 
 * Search Algorithm
