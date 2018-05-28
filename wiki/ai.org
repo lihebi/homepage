@@ -659,6 +659,18 @@ model, it generates an ensemble of possible structures.
 
 *** Learning Markov Network
 
+The likelihood function of Markov network contains the partition
+function, which is a global function over all variables. This prevents
+us from decomposing it. For this reason, the parameter estimation
+seems to have a lot of difficulties. There are no closed-form solution
+for parameters.
+
+For structure learning, the constraint-based approaches seem to be
+easier, the independencies associated with separation in Markov
+network are much simpler than those with d-separation in Bayesian
+network. For score based approach, there are $score_L$, $score_{BIC}$,
+$score_{Laplace}$, and $score_{MAP}$.
+
 *** Hidden Variable
 The previous discussions all assume the data are fully observed.
 Inclusion of hidden variables in the network can greatly simplify the
