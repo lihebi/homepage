@@ -196,7 +196,7 @@ where we assume the /naive Bayes Assumption/ that all features are
 conditionally independent given its class. Thus we have the
 factorization $P(C,X_1,...,X_n) = P(C) \prod_{i=1}^n P(X_i|C)$.
 
-** Bayesian Network
+** Bayesian Network (BN)
 The naive Bayes model has too strong assumption. The Bayesian Network
 can encode the conditional independence relationship in a finer
 granularity. It can be viewed in two different ways, representing a
@@ -349,26 +349,97 @@ variables is called hybrid Bayesian network.
 
 ** Markov Network
 
-In a Markov graph, the absence of an edge implies that the
+The Bayesian network is parameterized by a CPD, representing the
+distribution over one node given others. However, this does not make
+sense in an undirected model, in which we want a symmetric
+parameterization, and the probability should capture the degree to
+which A and B agree or disagree. We define a */factor/* $\phi$ to be a
+function from $Val(D)$ to IR, where D is a set of random variables. As
+with Bayesian network, we want to represent the distribution by
+products of local probability, thus we want to compute $P(a,b,c,d)$ as
+$\phi_1(a,b) \phi_2(b,c) \phi_3(c,d) \phi_4(d,a)$. However, it is by
+no means to be normalized, thus we need to normalize it. The
+normalization is not a constant obviously, but a function. In
+particular, $P(a,b,c,d) = \frac{1}{Z} \phi_1(a,b) \phi_2(b,c)
+\phi_3(c,d) \phi_4(d,a)$, where $Z=\sum_{a,b,c,d} \phi_1(a,b)
+\phi_2(b,c) \phi_3(c,d) \phi_4(d,a)$ is called /partition function/.
+The factors product $\phi_1 (X,Y) \phi_2(Y,Z)$ is defined such that
+the common parts in Y are matched, similar to database joins. A factor
+is only one contribution to the overall joint distribution, the full
+joint distribution must take into consideration of all factors
+involved. A concept called /pairwise Markov Network/ is one where all
+the factors are over single variables or pairs of variables. In
+visual, it is structured as a grid.
+
+When we want to make some assignment to some variables $U=u$, it is
+called /condition a distribution/, or */factor reduction/*, and the
+operation is to remove the entries that are inconsistent with the
+event $U=u$, and re-normalize the factors. Using the same idea, given
+$U=u$ as a context, the /reduced Markov Network/ $H[u]$ of the Markov
+Network $H$ is the one over nodes $W=X-U$, and keeps the same edges,
+i.e. we have an edge =X-Y= if there is an edge =X-Y= in H.
+
+*** Independence
+
+The Markov Network also encodes a set of independence assertions,
+where the influence flow along undirected path. Let Z be a set of
+observed variables, a path is active given Z if none of the nodes in
+the path is in Z. Thus, this can be used to separate the
+graph. Formally, Z separates X and Y in H, denoted $sep_H(X;Y|Z)$, if
+there is no active path between any nodes in X and Y given Z, denoted
+as $I(H) = \{(X \bot Y | Z) : sep_H(X;Y|Z)\}$. This is the *global
+independence*, just as the d-separation defines the global
+independence for Bayesian network.  This separation criterion is sound
+for detecting independence properties in distributions over
+H. However, it is not complete, and as in Bayesian network, there is a
+weaker definition of completeness that holds. The I-map definition and
+the relation with factorization is similar to that of Bayesian
+network. If P is a Gibbs distribution that factorizes over H, then H
+is an I-map for P. The reverse is true only for positive
+distributions. In other words, for positive distributions, the global
+independencies imply that the distribution factorizes according to the
+network structure, thus for this class of distributions, we have that,
+a distribution P factorizes over a Markov network H iff H is an I-map
+of P.
+
+Bayesian network has a local independence, so as Markov network, and
+two of them, but only for positive distributions. The non-positive
+distributions allow for deterministic dependencies between variables,
+and such deterministic interactions can "fool" local dependence tests.
+
+The first and weakest is the */local Markov Assumption/*. It comes
+from the intuition that if two variables are directly connected, they
+"have the potential" of being directly correlated in a way that is not
+mediated by other variables. Conversely when two variables are not
+directly linked, there must be some way to render them conditionally
+independent. Specifically, the absence of an edge implies that the
 corresponding random variables are conditionally independent given the
-variables given /all/ other variables. This is also known as /pairwise
-Markov independence of G/:
+variables given /all/ other variables. This is known as the */pairwise
+independence/*, $I_p(H)$, to be defined precisely $I_p(H) = \{(X \bot
+Y | \chi - {X,Y}) : X-Y \not\in H\}$.
 
-$$ \neg X \sim Y \Leftrightarrow X \bot Y | rest$$
+The second local independence is defined using /Markov blanket/ of X
+in H, denoted as MB_H(X), defined as the neighbors of X in H. Then,
+the */local independencies/* associated with H is $I_l(H) = \{(X \bot
+\chi - {X} - MB_{H}(X) | MB_{H}(X)) : X \in \chi\}$. In other words, X
+is independent of the rest of the nodes in the graph given its
+immediate neighbors.
 
-A,B,C are subgraphs. C is said to /separate/ A and B if every path
-between A and B intersects a node in C. These separators have nice
-property that they break the graph into conditionally independent
-pieces, this is known as /global Markov properties of G/:
+For general distributions, $I_p(H)$ is strictly weaker than $I_l(H)$,
+and strictly weaker than $I(H)$. For positive distributions, all three
+definitions are equivalent. This can be specified by three
+propositions:
+- If $P \models I_l(H)$, then $P \models I_p(H)$
+- If $P \models I(H)$, then $P \models I_l(H)$
+- Let P be a positive distribution, if $P \models I_p(H)$, then $P
+  \models I(H)$
 
-#+begin_quote
-if C separates A and B, then $A \bot B | C$
-#+end_quote
-
-The pairwise and global Markov properties of a graph are equivalent.
+The Markov network is often over-parameterized. It is easier to obtain
+a Markov network from a Bayesian network, but much harder for the
+reverse.
 
 
-** Inference
+** TODO Inference
 /Inference/ refers to answering probabilistic queries, the computation
 of marginal vertex probabilities and expectations from their joint
 distribution. In particular, we study the computing of posterior
