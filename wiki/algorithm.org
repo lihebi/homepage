@@ -1,0 +1,371 @@
+#+TITLE: Algorithm
+
+* Other
+
+** Barrel shifter
+
+A barrel shifter is a digital circuit that can shift a data word
+by a specified number of bits in one clock cycle.
+
+https://farm8.staticflickr.com/7578/16260221182_53a096f18c_o.png
+
+In the above image, x is input and y is output.
+
+For shift 1, all the erjiguan on the green line exist, while others
+not.
+
+*** shift register
+
+https://farm9.staticflickr.com/8671/16074934899_03921f148b_o.png
+
+F0、F1、F2、F3是四个边沿触发的D触发器，每个触发器的输出端Q接到右边一个
+触发器的输入端D。因为从时钟信号CP的上升沿加到触发器上开始到输出端新状
+态稳定地建立起来有一段延迟时间，所以当时钟信号同时加到四个触发器上时，
+每个触发器接收的都是左边一个触发器中原来的数据(F0接收的输入数据D1)。寄
+存器中的数据依次右移一位。
+
+** Bloom Filter
+
+It is used to judge whether an item is in a set or not.
+
+If bloom() return false, it is false. But if bloom() return true,
+it may not be true.
+
+The basic idea is, hash(item), map it in a vector of m size.
+The vector is 0 initially.
+v[hash(item)] is set to 1.
+To reduce fault rate, use k hash functions.
+
+To verify, only if all k hash functions has 1 in the vector will it return true.
+Otherwise return false.
+
+
+** Linear congruential generator
+
+A linear congruential generator (LCG)
+is an algorithm that yields a sequence of pseudo-randomized numbers.
+
+pseudorandom number generator algorithms(PRNG).
+
+$X_{n+1} = (aX_n+c) mod m$
+
+X array is the pseudorandom.
+
+ * $X_0$: seed
+ * =m=: modulus
+ * =a=: multiplier
+ * =c=: increment
+
+If c = 0,
+the generator is often called a multiplicative congruential generator (MCG),
+or Lehmer RNG.
+If c ≠ 0, the method is called a mixed congruential generator.
+
+
+
+* Dynamic Programming
+Solve problem by breaking down into simpler sub-problems.
+
+** One dimension
+Given n, find the number of different ways to write n as the sum of 1,3,4
+
+*** Define sub-problems
+D_n is the number of ways to write n as sum of 1,3,4
+
+*** Recurrence formula
+D_n = D_{n-1} + D_{n-3} + D_{n-4}
+
+** Two Dimensions
+Given two string x and y, find the length of longest common sub-sequence.
+
+*** Define sub-problems
+
+D_{ij} is the length for x_{i..i} and y_{1..j}
+
+*** Recurrence formula
+D_{ij} =
+- if x_i = y_i: D_{i-1,j-1} + 1
+- otherwise: max{D_{i-1,j}, D_{i,j-1}}
+
+** Interval DP
+Given a string x=x_{1..n},
+find the minimum number of characters that need to be inserted to make it a palindrome.
+
+*** Define sub-problem
+D_{i,j} be the minimum number of characters.
+
+*** Recurrence formula
+say y_{1..k} is the palindrome for x_{i..j},
+*we have either y_1 = x_i or y_k = x_j*
+
+D_{ij} =
+- if x_i \neq x_j: 1 + min{D_{i+1,j}, D_{i,j-1}}
+- if x_i = x_j: D_{i+1,j-1}
+
+** Tree DP
+Given a tree, color nodes black as many as possible without coloring two adjacent nodes.
+
+*** Define
+- B(r) as the maximum nodes if the (root) node r is colored black.
+- W(r) as the maximum nodes if the (root) node r is colored white.
+
+*** Recurrence
+- B(v) = 1 + \sum_{children} W(c)
+- W(v) = 1 + \sum_{children} max{B(c), W(c)}
+
+
+* String Algorithm
+
+** Knuth–Morris–Pratt(KMP)
+#+BEGIN_QUOTE
+Match a pattern string P inside given long string T.
+#+END_QUOTE
+
+The idea is, when failure happens, we shift multiple position instead of just 1.
+We are able to do that because when the failure happens, we know what have been examined, so we have everything available to make the best choice.
+Specifically, we build a look-up table, *for the pattern string*.
+The table has an entry for each index of the string, describing the shift position.
+E.g., =ABCABDA=, the lookup table will be: =0000120=.
+Actually the table refers to what's the substring matched the prefix of the pattern string.
+
+The algorithm to build the table:
+
+#+BEGIN_SRC lisp-interaction
+  (defun build-table (pattern)
+    (cl-loop with pos = 2
+             with match = 0
+             with size = (length pattern)
+             with ret = (make-vector size 0)
+             initially do
+             ;; here I assume size is at least 2
+             (assert (> size 1))
+             (aset ret 0 -1)
+             (aset ret 1 0)
+             while (< pos size) do
+             (if (equal (elt pattern (- pos 1)) (elt pattern match))
+                 (progn
+                   (aset ret pos (+ 1 match))
+                   (incf match)
+                   (incf pos))
+               (if (> match 0)
+                   (setq match (elt ret match))
+                 (aset ret pos 0)
+                 (incf pos)))
+             finally return ret))
+
+  (ert-deftest build-table-test()
+    (should (equal (build-table "AABAAAC") [-1 0 1 0 1 2 2]))
+    (should (equal (build-table "ABCABCD") [-1 0 0 0 1 2 3])))
+
+  (ert-run-test (ert-get-test 'build-table-test))
+#+END_SRC
+
+*** 214. Shortest Palindrome
+#+BEGIN_QUOTE
+Given a string S, you are allowed to convert it to a palindrome by adding characters in front of it. Find and return the shortest palindrome you can find by performing this transformation.
+#+END_QUOTE
+
+**** KMP
+
+It is easy to convert the problem to find the longest Palindrome at the beginning of s.
+To apply KMP, we write the string as =s + '#' + reverse(s)=.
+Then we build the KMP table for this string.
+What we need is to find the largest number inside KMP table.
+
+**** brute force
+I have a brute-force that "just" pass the tests.
+
+#+BEGIN_SRC C++
+class Solution {
+public:
+  string shortestPalindrome(string s) {
+    if (s.size() == 0) return s;
+    if (s.size() == 1) return s;
+    for (int i=(s.size()-1)/2;i>0;i--) {
+      if (check(s, i, false)) {
+        // std::cout << "success on " << i << " false"  << "\n";
+        string sub = s.substr(i*2+2);
+        std::reverse(sub.begin(), sub.end());
+        return sub + s;
+      } else if (check(s, i, true)) {
+        // std::cout << "success on " << i << " true"  << "\n";
+        // THREE
+        // 1 2 3 4 5 6
+        // - - -|- - -
+        // 6/2=3
+        // 1 2 3 4 5
+        // - - | - -
+        // i*2+1 - end
+        string sub = s.substr(i*2+1);
+        std::reverse(sub.begin(), sub.end());
+        return sub + s;
+      }
+    }
+    string sub;
+    if (check(s, 0, false)) {
+      sub = s.substr(2);
+    } else {
+      sub = s.substr(1);
+    }
+    std::reverse(sub.begin(), sub.end());
+    return sub + s;
+  }
+  /**
+   * on: pivot on idx or not
+   */
+  bool check(string &s, int idx, bool on) {
+    // std::cout << idx  << "\n";
+    if (idx <0 || idx >= (int)s.size()) return false;
+    int i=0,j=0;
+    if (on) {
+      i=idx-1;
+      j=idx+1;
+    } else {
+      i = idx;
+      j = idx+1;
+    }
+    int size = s.size();
+    while (i >= 0) {
+      if (j >= size) return false;
+      if (s[i] != s[j]) return false;
+      i--;
+      j++;
+    }
+    return true;
+  }
+};
+#+END_SRC
+
+** Boyer Moore
+
+It is a string match algorithm.
+
+The rule lookup is in a hash table,
+which can be formed during proprocessing of pattern.
+
+In the following examples, the lower case denote the matched or unmatched part for illustration purpose only.
+They are upper case when considering matching.
+*** Bad Character Rule
+Match from last. In the below example, the suffix =MAN= matches, but =N= does not match. Shift the pattern so that the first N (counted from last) go to the =N= place.
+
+#+begin_src text
+- - - - X - - K - - -
+A N P A n M A N A M -
+- N n A A M A N - - -
+- - - N n A A M A N -
+#+end_src
+
+from right end to left.
+when a mismatch happens at `n`,
+find to left a `n`, then shift it to the position.
+
+*** Good Suffix Rule
+Similar to the bad rule, find the matched, in this case =NAM=.
+Then, if an failure happens, move the same part to the left of that match (in this case another =NAM= at the left) to that position.
+#+begin_src text
+- - - - X - - K - - - - -
+M A N P A n a m A N A P -
+A n a m P n a m - - - - -
+- - - - A n a m P N A M -
+#+end_src
+
+when a mismatch happens,
+=nam= is the longest good suffix.
+Find =nam= to the left,
+and shift it to the position.
+
+*** Galil Rule
+
+As opposed to shifting, the Galil rule deals with speeding up the actual comparisons done at each alignment by skipping sections that are known to match.
+Suppose that at an alignment k1,
+P is compared with T down to character c of T.
+Then if P is shifted to k2 such that its left end is between c and k1,
+in the next comparison phase a prefix of P must match the substring T[(k2 - n)..k1].
+Thus if the comparisons get down to position k1 of T,
+an occurrence of P can be recorded without explicitly comparing past k1.
+In addition to increasing the efficiency of Boyer-Moore,
+the Galil rule is required for proving linear-time execution in the worst case.
+
+** Rabin-Karp Algorithm
+
+It is a string searching algorithm.
+
+The Naive Solution for string search:
+
+#+begin_src C
+int func(char s[], int n, char pattern[], int m) {
+  char *ps,*pp; //*
+  ps=s;
+  pp=pattern;
+  for (i=0;i<n-m+1;) {
+    if (*pp=='\0') return i; //*
+    if (*ps == *pp) { //*
+      ps++;pp++;
+    } else {
+      i++;
+      ps=s+i;
+      pp=pattern;
+    }
+  }
+}
+#+end_src
+
+The running time is $O(mn)$.
+
+The Rabin-Karp algorithm use hash for pattern match.
+First calculate ~hash(pattern)~.
+Then for every s[i,i+m-1], calculate the hash.
+Then compare them.
+
+The key of the algorithm is the hash function.
+If the hash function need time m to compute, then it is still $O(mn)$.
+If the collision happens often, then even if hash matches, we still need to verify.
+
+Key point is to select a hast function, such that =hash(i,i+m-1)= can be computed
+by ~hash(i-1,i+m-2)~.
+
+If add all characters' ASCII together, collision is often.
+
+The used hash function is:
+select a large prime as base, 101 for example.
+Hash value is:
+
+\begin{equation}
+hash("abc") = ASCII('a')*101^2 + ASCII('b')*101^1 + ASCII('c')*101^0
+\end{equation}
+
+Rabin-Karp is not so good for single string match because the worst case is $O(mn)$,
+but it is the algorithm of choice for multiple pattern search.
+
+K patterns, in a large string s, find any one of the K patterns.
+
+*** Rolling Hash
+
+**** Rabin-Karp rolling hash
+
+**** Cyclic Polynomial (Buzhash)
+
+=s(a)= means shift a left.
+
+\begin{equation}
+H=s^{k-1}(h(c_1)) \oplus s^{k-2}(h(c_2)) \oplus \ldots \oplus s(h(c_{k-1})) \oplus h(c_k)
+\end{equation}
+
+=h= is a tabulation hashing.
+
+To remove $c_1$ and add $c_{k+1}$:
+
+\begin{equation}
+H = s(H) \oplus s^k(h(c_1)) \oplus h(c_{k+1})
+\end{equation}
+
+*** Tabulation hashing
+
+input key is =p= bits, output is =q= bits.
+choose a =r= less then =p=, and $t=\lceil p/r \rceil$.
+
+view a key as t r-bit numbers. Use a lookup table filled with random values
+to compute hash value for each of t numbers. Xor them together.
+
+The choice of r should be made in such a way that this table is not too large,
+so that it fits into the computer's cache memory.
