@@ -6,8 +6,19 @@
 We typically denote undirected graph as H, directed graph as G, and a
 general graph as K.
 - For two nodes connected by any edge, we have neighbor (Nb) relation
+- A graph in which every pair of nodes is connected by an edge is
+  called complete
+
+For directed graph:
 - For a direct edge, we have parent (Pa) and child (Ch) relation
 - The boundary of X, denoted as $Boundary_X$, is $Pa_X \cup Nb_X$
+- A family in a graph is a node and its all parents
+- A node is root if no parent
+- A node is sink if it has no children
+- A connected DAG in which every node has at most one parent is called
+  a tree
+- A connected DAG in which every node has at most one child is called
+  a chain
 
 For undirected graph, two nodes are /adjacent/ if there is an edge
 joining them, denoted as $X \sim Y$. A /path/ is a set of vertices
@@ -17,15 +28,21 @@ of vertices together with their edges. A /clique/ is a complete
 subgraph. It is called /maximal/ if it is a clique and no other
 vertices can be added to it and still yield a clique.
 
-A path can follow any edge, but must not reverse direction. However,
-a trail can follow either direction.
+For directed graph, a path can follow any edge, but must not reverse
+direction. However, a trail can follow either direction. Some defines
+the path as a trail, i.e. can go either along or against the arrows,
+and define the directed path for those that go along arrows. If there
+exists a path between two vertices, they are said to be connected,
+otherwise disconnected.
 
 An acyclic graph containing both directed and undirected edges is
 called a /partially directed acyclic graph (PDAG)/. Such a PDAG can be
 cecomposed into chain components, where the edges between components
-must be directed.
+must be directed. The hybrid network is the one that has both
+continuous and discrete probabilities.
 
-The /skeleton/ of G is the corresponding undirected graph.
+The /skeleton/ of G is the corresponding undirected graph, i.e. strip
+away all arrowheads.
 
 ** Probability Background
 We define the /outcome space/ as the space of possible outcomes,
@@ -128,7 +145,9 @@ The alternative for this:
 $P \models (X \bot Y | Z)$ iff $P(X,Y | Z) = P(X|Z) P(Y|Z)$
 #+END_QUOTE
 
-We have some properties hold in general:
+The conditional independence says that, learning the value of Y does
+not provide additional information about X, once we know Z.  We have
+some properties hold in general:
 - /Symmetry/: $(X \bot Y | Z) \Rightarrow (Y \bot X | Z)$
 - /Decomposition/: $(X\bot Y,W | Z) \Rightarrow (X \bot Y | Z)$
 - /Weak union/: $(X \bot Y,W |Z) \Rightarrow (X\bot Y | Z,W)$
@@ -139,7 +158,8 @@ There is one more property, /intersection/, that holds in /positive
 distribution/, where $P(\alpha) > 0$ for non-empty events. The
 property says, for mutually disjoint sets X,Y,Z,W, we have:
 - /intersection/: $X\bot Y|Z,W \& (X\bot W|Z,Y) \Rightarrow (X \bot
-  Y,W|Z)$
+  Y,W|Z)$.
+All these properties are called /graphoid axioms/.
 
 After defining probability distribution, we are interested in
 answering */probability queries/*. We have /evidence variables/ E and
@@ -206,6 +226,7 @@ conditional independence assumptions. Both views are equivalent.
 The Bayesian network has two components: a graph encode the relation,
 and its /Conditional Probability Distribution (CPD)/.
 
+
 *** Local Independence
 The */local independence/* encoded in the Bayesian Network, denoted by
 $I_l(G)$, is
@@ -250,13 +271,20 @@ Bayesian Network.
 
 There are four possible trails from X and Y via Z. When influence can
 flow from X to Y via Z, we say the trail is active.
-- /Causal trail/ =X->Z->Y= encode the indirect causal effect, is active
-  iff Z is not observed
+- /Causal trail/, or /causal chain/, =X->Z->Y= encode the indirect
+  causal effect, is active iff Z is not observed
 - /Evidential trail/ =Y->Z->X= encodes the indirect evidential effect,
   is active iff Z is not observed
-- /Common Cause/ =Z->{X,Y}=, is active iff Z is not observed
-- /Common Effect/ ={X,Y}->Z= (also called /v-structure/), is active
-  iff either Z or one of Z's descendants is observed
+- /Common Cause/, or /causal forks/, =Z->{X,Y}=, is active iff Z is
+  not observed
+- /Common Effect/, or /inverted forks/, ={X,Y}->Z= (also called
+  /v-structure/), is active iff either Z or one of Z's descendants is
+  observed. Observations on a common consequence of two independent
+  causes tend to render those causes dependent, because information
+  about one of the cause tends to make the other less likely, given
+  that the consequence has occurred. This pattern is known as
+  /selection bias/, or /Berkson's paradox/ in statistics, /explaining
+  away effect/ in AI.
 
 More formally
 #+BEGIN_QUOTE
@@ -270,8 +298,8 @@ Let Z be a subset of observed variables. The trail $X_1
 If there are more trails between X and Y, the influence can flow as
 long as any trail is active. More generally, if there are no active
 trail between any pair of nodes in two sets X and Y given Z, they are
-said to be */directed separated (d-separated)/*, denoted as
-$d-sep_G(X;Y|Z)$. The set of independencies corresponding to
+said to be */directed separated (d-separated)/*, or /blocked/, denoted
+as $d-sep_G(X;Y|Z)$. The set of independencies corresponding to
 d-separation is denoted as $I(G)$, as $I(G) = \{(X \bot Y | Z) :
 d-sep_G(X;Y|Z)\}$, and it is called the */global Markov
 independencies/*. This time, we use I instead of $I_l$, without a
@@ -280,6 +308,25 @@ to the independencies of the distribution, $I(P)$. In other words,
 d-separation precisely encodes all independencies, i.e. $I(G) = I(P)$.
 (Note: the completeness seems to be not true, and there is a weaker
 definition of completeness).
+
+#+BEGIN_QUOTE
+*(Probabilistic implications of d-separation)* If sets X and Y are
+d-separated by Z in a DAG G, then X is independent of Y conditional on
+Z in every distribution compatible with G. Conversely, if X and Y are
+not d-separated by Z in a DAG G, then X and Y are dependent
+conditional on Z in at least one distribution compatible with G.
+
+*(Ordered Markov Condition)* A necessary and sufficient condition for
+a probability distribution P to be Markov relative a DAG G is that,
+conditional on its parents in G, each variable be independent of all
+its predecessors in some ordering of the variables that agrees with
+the arrows of G.
+
+*(Parental Markov Condition)* A necessary and sufficient condition for
+a probability distribution P to be Markov relative a DAG G is that
+every variable be independent of all its nondescendants (in G),
+conditional on its parents.
+#+END_QUOTE
 
 Actually, very different BN structure can actually encode the same set
 of I(G). If they do, they are called */I-Equivalent/*. And it is
@@ -292,8 +339,8 @@ I-equivalence class can be represented as a /class PDAG/.
 
 We have a necessary condition for I-equivalent.
 #+BEGIN_QUOTE
-If G_1 and G_2 have the same skeleton and the same set of
-v-structures, then they are I-equivalent.
+*(Observational Equivalence)* If G_1 and G_2 have the same skeleton
+and the same set of v-structures, then they are I-equivalent.
 #+END_QUOTE
 
 However, the reverse is not true: if they are I-equivalent, they may
@@ -713,6 +760,179 @@ function, thus the process is guaranteed to converge.
 In terms of structure learning, the dominate approach here is score
 based one. We apply /laplace approximation/, and use the /Laplace
 Score/.
+
+
+* Causality
+The advantages of building DAG around causal: first, the judgments
+required in the construction of the model are more meaningful, more
+accessible, and hence more reliable. Second, the ability to represent
+and respond to external or spontaneous changes.
+
+** Stochastic Representation
+The basic representation of causal model is the *causal Bayesian
+network*.  We can devise the Bayesian network by quite simple
+steps. First, by the chain rule, the joint probability is $P(x_1, ...,
+x_N) = \prod_j P(x_j | x_1, ..., x_{j-1})$. Then, suppose that $X_j$
+is only sensitive to some of the a small subset $PA_j$ of those
+predecessors, we have $P(x_j | x_1, ..., x_{j-1}) = P(x_j | pa_j)$. A
+minimal set $PA_j$ satisfying this is called the /Markovian parents/
+of $X_j$. It is shown by Pearl in 1988 that such $PA_j$ is unique if P
+is strictly positive. Then, combine these two equations, we have
+$P(x_1, ..., x_n) = \prod_i P(x_i | pa_i)$. Note that, although the
+chain rule is order specific, this equation is no longer
+order-specific. A distribution P is said to be /Markov compatible/
+with a DAG G, or P is /Markov relative/ to G, if P can be factorized
+by this equation. The Markov compatibility is a necessary and
+sufficient condition for a DAG G to explain a body of data represented
+by P.
+
+The action $do(X=x)$ means, on the graph, to delete the ingoing links
+to X, and set the value of X to x, and nothing else. This results in a
+new distribution, $P_x(v)$, rather than simply the original
+distribution conditioned on $X=x$. We have some intuitive properties
+for this new *intervention distribution*:
+- $P(v_i | pa_i) = P_{pa_i}(v_i)$
+- $P_{pa_i, s}(v_i) = P_{pa_i}(v_i)$ for all S that is disjoint of
+  $\{V_i, PA_i\}$.
+
+To test whether a variable $X_i$ has a causal influence on $X_j$, we
+simply compute the marginal distribution of $X_j$ under the action
+$do(X_i=x_i)$, i.e. $P_{x_i}(x_j)$ for all values $x_i \in Val(X_i)$,
+and test whether the distribution is sensitive to $x_i$.
+
+** Functional Causal Model
+A */functional causal model/* is another representation of the causal
+model, consisting of a set of equations of the form $x_i = f_i(pa_i,
+u_i)$, where $pa_i$ means parents, i.e. the immediate causes of $X_i$,
+$U_i$ represents the errors, i.e. the disturbances, or
+correlations. This general form is nonlinear, nonparametric. The
+/linear Structural Equation Models (SEMs)/ are more specific: $x_i =
+\sum_{k\ne i} \alpha_{ik} x_k + u_i$.
+
+Given a functional causal model, we can draw a graph, with arrows from
+each member of PA toward $X_i$. The resulting graph is called a
+/causal diagram/. If the causal diagram is acyclic, then the model is
+called /semi-Markovian/. If, in addition to acyclicity, the error
+terms are mutually independent (i.e. each variable is independent of
+all its non-descendants, conditional on its parents, this is also
+called the /Markovian assumption/), the model is called /Markovian/.
+
+The functional causal model can also represent the *intervention*, by
+alternating a subset of functions, and most of the time, this
+modification is simpler, e.g. change $x_3 = f_3(x_1, u_3)$ to be $x_3
+= on$. The functional model's representation of interventions offers
+greater flexibility and generality than that of a stochastic
+model:
+- the analysis of intervention can be extended to cyclic model
+- The interventions involving the modification of equational
+  parameters are more readily comprehended
+- The analysis of causal effects in non-Markovian models (again
+  cyclic) will be greatly simplified
+- permits the analysis of context-specific actions and policies
+
+Actually, the biggest shine part of functional models comes at the
+analysis of *couterfactuals*. The difficulty of counterfactual queries
+in stochastic models lies in that given no data, it is impossible to
+predict non-treatment case. But, the true insights of importance of
+counterfactual queries rely in "integrating substantive knowledge with
+statistical data so as to refine the former and interpret the
+latter". To see that we can answer counterfactual queries, an example
+is given by Pearl:
+
+#+BEGIN_QUOTE
+Most people would agree that President Clinton's place in history
+would be different had he not met Monica Lewinsky, but only a few
+would assert that his place in history would change had he not eaten
+breakfast yesterday
+#+END_QUOTE
+
+The stochastic causal models are insufficient for computing
+probabilities of counterfactuals. But, a functional causal model
+constitutes a /mathematical object/ sufficient for the computation and
+definition of such probabilities. Generally to answer a counterfactual
+query, three steps are generalized to any causal models:
+1. abduction: update the probability $P(u)$ to obtain $P(u|e)$
+2. action: do(X=x)
+3. prediction: use the modified model to compute the probability of
+   $Y=y$
+The real reason why stochastic causal models are insufficient is the U
+variables do not appear explicitly in stochastic models, thus we
+cannot apply abduction step to update $P(u)$ with evidence $e$.
+
+** Causal Effect
+For two disjoint set X and Y, the */causal effect/* of X on Y is
+defined as P(y | do(x)), a function from X to the space of probability
+distribution on Y. The */causal effect identifiability/* is defined,
+such that the causal effect of X on Y is identifiable from a graph G
+if the quantity $P(y | do(x))$ can be computed uniquely from any
+positive distribution of the observed variables. It is well known
+that, the causal effect is identifiable if X,Y and all parents of X
+are observed. Thus, for Markovian model, the causal effects are
+identifiable.
+
+For semi-Markovian model, there is /confounders/, or /covariates/,
+/concomitants/. There exists some graphical test to decide whether a
+set Z of observed variables is sufficient for identifying $P(y |
+do(x))$. The first one being the /back-door criterion/:
+
+#+BEGIN_QUOTE
+(Back-door) A set of variables Z satisfies the back-door criterion,
+relative to an ordered pair ($X_i$, $X_j$) in DAG G if
+1. no node in Z is descendant of $X_i$, and
+2. Z blocks every path between $X_i$ and $X_j$ *that contains an arrow
+   into $X_i$*
+For the disjoint sets X and Y, the set Z is said to satisfy the
+back-door criterion relative to (X,Y) if it satisfies the criterion
+for any pairs $(X_i,Y_i) \in (X,Y)$
+
+If Z satisfies back-door criterion relative to (X,Y), the causal
+effect of X on Y is identifiable, as $P(y|do(x)) = \sum_z P(y | x, z)
+P(z)$.
+#+END_QUOTE
+
+The second one being the /front-door criterion/:
+
+#+BEGIN_QUOTE
+(Front-door) A set of variables Z satisfies the font-door criterion,
+relative to an ordered pair of variables (X,Y) if
+1. Z intercepts all directed paths from X to Y
+2. there is no back-door path from X to Z
+3. all back-door paths from Z to Y are blocked by X
+
+If Z satisfies the front-door criterion relative to (X,Y) and if
+$P(x,z)>0$, then the causal effect of X on Y is identifiable as:
+$P(y|do(x)) = \sum_z P(z | x) \sum_{x'} P(y|x',z)P(x')$.
+#+END_QUOTE
+
+Typically we use *do-calculus* to transform the intervention from one
+form to another, thus it can syntactically solve intervention
+queries. The do-calculus is a set of inference rules.
+
+Some more graphical notation: $G_{\bar{X}}$ is the graph obtained by
+deleting from G all arrows pointing to nodes in X, $G_{\underline{x}}$
+the graph obtained by deleting from G all arrows emerging from nodes
+in X. $P(y | \hat{x}, z) = P(y, z | \hat{x}) / P(z | \hat{x})$ is the
+probability of Y=y given X is held constant at x, and that under this
+condition Z=z is observed.
+
+- Insertion/deletion of observations: $P(y | \hat{x}, z, w) = P(y |
+  \hat{x}, w)$ if $(Y \bot Z | X, W)_{G_{\hat{x}}}$. This rule
+  reaffirms d-separation.
+- Action/observation exchange: $P(y | \hat{x}, \hat{z}, w) = P(y |
+  \hat{x}, z, w)$ if $(Y \bot Z | X,
+  W)_{G_{\hat{x}\underline{Z}}}$. This rule provides a condition for
+  an external intervention $do(Z=z)$ to have the same effect on Y as
+  the passive observation $Z=z$
+- Insertion/deletion of actions: $P(y|\hat{x}, \hat{z}, w) = P(y |
+  \hat{x}, w)$ if $(Y \bot Z | X, W)_{G_{\hat{X}, \hat{Z(W)}}}$ where
+  Z(W) is the set of Z-nodes that are not ancestors of any W-node in
+  $G_{\hat{X}}$. This rule introduces or deletes an external
+  intervention $do(Z=z)$
+
+A causal effect is identifiable if there exists a finite sequence of
+transformations in the rules to reduce it to a standard probability
+expressions involving observed quantities.
+
 
 
 * Search Algorithm
