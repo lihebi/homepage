@@ -870,10 +870,9 @@ that, the causal effect is identifiable if X,Y and all parents of X
 are observed. Thus, for Markovian model, the causal effects are
 identifiable.
 
-For semi-Markovian model, there is /confounders/, or /covariates/,
-/concomitants/. There exists some graphical test to decide whether a
-set Z of observed variables is sufficient for identifying $P(y |
-do(x))$. The first one being the /back-door criterion/:
+For semi-Markovian model, there exists some graphical test to decide
+whether a set Z of observed variables is sufficient for identifying
+$P(y | do(x))$. The first one being the /back-door criterion/:
 
 #+BEGIN_QUOTE
 (Back-door) A set of variables Z satisfies the back-door criterion,
@@ -933,6 +932,47 @@ A causal effect is identifiable if there exists a finite sequence of
 transformations in the rules to reduce it to a standard probability
 expressions involving observed quantities.
 
+The $P(y|do(x))$ models the total effect of X on Y. The /direct
+effect/ of X on Y is given by $P(y|do(x), do(s_{XY}))$, where $S_{XY}$
+is the set of all observed variables except X and Y. This effect is
+meant to quantify the effect that is not mediated by other variables
+in the model, or more accurately, the sensitivity of Y to change X
+while all other factors in the analysis are held fixed (to any
+value??).
+
+** Confounding
+
+If a third variable Z can influence both X and Y, then X and Y are
+said to be confounded, and Z is called a /confounder/ of X and Y, or
+/covariates/, /concomitants/.
+
+There is a Simpson's Paradox for confounders. Basically, it is that an
+event C increases the probability of E in a given population p, and at
+the same time, decreases the probability of E in every subpopulation
+of p. In equation, it says:
+- $P(E|C) > P(E|\not C)$: increase the probability
+- $P(E|C,F) < P(E| \not C, F)$: decrease the probability whenever
+  condition on F
+- $P(E|C,\not F) < P(E | \not C, \not F)$, or condition on $\not F$
+
+This essentially capture the misunderstanding between action and
+observation. A real world example from HackerNews: every bug you fix
+in your code increases your chances of shipping on time, but provides
+evidence that you won't. In this case, E is the event of deliver on
+time, C is the event of bug fix.
+
+The problem is the first statement $P(E|C) > P(E|\not C)$. C is not an
+evidence for E, but rather a positive causal factor for E. So proper
+statement should be written as $P(E | do(C)) > P(E | do(\not C))$.
+
+The paradox is resolved, and we result in a /Sure-Thing Principle/: an
+action C that increases the probability of an event E in each
+sub-population must also increase the probability of E in the
+population as a whole, provided that the action does not change the
+distribution of the sub-populations.
+
+Finally, a formal causal definition of confounding comes that, X and Y
+are /not confounded/ in causal model M iff $P(y|do(x)) = P(y|x)$.
 
 
 * Search Algorithm
