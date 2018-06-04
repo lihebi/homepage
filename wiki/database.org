@@ -77,7 +77,9 @@ select * from greeting;
 #+END_SRC
 
 ** Basic Statements
-*** create & insert & delete
+
+create & insert & delete
+
 #+BEGIN_SRC sqlite
   create table greeting(one varchar(10), two varchar(10));
   insert into greeting values('Hello', 'world!');
@@ -88,7 +90,8 @@ select * from greeting;
   delete from tablename; -- same as:
   delete * from tablename;
 #+END_SRC
-*** select
+
+select
 #+BEGIN_SRC sqlite
   select * from tablename;
   select col1,col2 from tablename;
@@ -105,7 +108,7 @@ select * from greeting;
   select * from tablename limit 3;
 #+END_SRC
 
-*** Aliasing
+Aliasing
 #+BEGIN_SRC sqlite
 SELECT o.OrderID, o.OrderDate, c.CustomerName
 FROM Customers AS c, Orders AS o
@@ -122,8 +125,6 @@ Some useful ones:
 - =.tables ?TABLE?= show the tables (optionally only the tables that match the pattern =?TABLE?=).
   There's no statements like =show tables;= in MySQL.
 - =.schema ?TABLE?=: similar to =describe tablename;=
-
-
 
 *** C interface
 
@@ -172,3 +173,28 @@ Query
   }
   sqlite3_finalize(stmt);
 #+END_SRC
+
+*** Python interface
+
+#+BEGIN_SRC python
+import sqlite3
+conn = sqlite3.connect('example.db')
+#+END_SRC
+
+There is an =execute= method for the connection object, but that is
+not standard, and is only a shortcut for creating the cursor, call the
+cursor's =execute= method, and return the cursor. Thus, we'd better
+just create the cursor ourselves.
+
+#+BEGIN_SRC python
+c = conn.cursor()
+c.execute('select ...')
+#+END_SRC
+
+The result can be fetched by =fetchone=, =fetchmany(int)= or
+=fetchall=. =fetchone= will return the next row of query result, as a
+"sequence". =fetchmany= return multiple, in a list. =fetchall= return
+all results as a list. Typically, just fetch all. The fetch will
+remove the row from the cursor. The cursor can be used to execute
+another query, which will override the current result in the cursor.
+
