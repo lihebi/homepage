@@ -2,97 +2,384 @@
 
 * Graphical Model
 
+** Graph Background
+We typically denote undirected graph as H, directed graph as G, and a
+general graph as K.
+- For two nodes connected by any edge, we have neighbor (Nb) relation
+- A graph in which every pair of nodes is connected by an edge is
+  called complete
+
+For directed graph:
+- For a direct edge, we have parent (Pa) and child (Ch) relation
+- The boundary of X, denoted as $Boundary_X$, is $Pa_X \cup Nb_X$
+- A family in a graph is a node and its all parents
+- A node is root if no parent
+- A node is sink if it has no children
+- A connected DAG in which every node has at most one parent is called
+  a tree
+- A connected DAG in which every node has at most one child is called
+  a chain
+
+For undirected graph, two nodes are /adjacent/ if there is an edge
+joining them, denoted as $X \sim Y$. A /path/ is a set of vertices
+that are adjacent sequentially. A /complete graph/ is a graph where
+every pair of vertices is joined by an edge. A /subgraph/ is a subset
+of vertices together with their edges. A /clique/ is a complete
+subgraph. It is called /maximal/ if it is a clique and no other
+vertices can be added to it and still yield a clique.
+
+For directed graph, a path can follow any edge, but must not reverse
+direction. However, a trail can follow either direction. Some defines
+the path as a trail, i.e. can go either along or against the arrows,
+and define the directed path for those that go along arrows. If there
+exists a path between two vertices, they are said to be connected,
+otherwise disconnected.
+
+An acyclic graph containing both directed and undirected edges is
+called a /partially directed acyclic graph (PDAG)/. Such a PDAG can be
+cecomposed into chain components, where the edges between components
+must be directed. The hybrid network is the one that has both
+continuous and discrete probabilities.
+
+The /skeleton/ of G is the corresponding undirected graph, i.e. strip
+away all arrowheads.
+
+** Probability Background
+We define the /outcome space/ as the space of possible outcomes,
+denoted as $\Omega$. We also define the /events/ $S$. Each event
+$\alpha \in S$ is a subset of $\Omega$. For example, for a dice
+throwing, $\Omega=\{1,2,3,4,5,6\}$, $\{1\}$ and $\{2,4,6\}$ are
+events.
+
+Then, we can formally define a */probability distribution/* P over
+$(\Omega, S)$ as a mapping from events in $S$ to real values that
+satisfies the following conditions:
+- $P(\alpha) \ge 0$ for all $\alpha \in S$
+- $P(\Omega)=1$
+- If $\alpha,\beta \in S$ and $\alpha \cap \beta = \emptyset$, then
+  $P(\alpha \cup \beta) = P(\alpha) + P(\beta)$
+
+This definition also implies several interesting properties:
+- $P(\emptyset) = 0$
+- $P(\alpha \cup \beta) = P(\alpha) + P(\beta) - P(\alpha \cup \beta)$
+
+There are two views of probability distribution. The /frequentist
+interpretation/ views it as the frequencies of events, and the
+/subjective interpretation/ views it as the degrees of belief.
+
+We define *conditional probability distribution (CPD)* as $P(\beta |
+\alpha) = \frac{P(\alpha \cap \beta)}{P(\alpha)}$. From this, we can
+get:
+- chain rule: $P(\alpha_1 \cap ... \cap \alpha_k) = P(\alpha_1)
+  P(\alpha_2 | \alpha_1) ... P(\alpha_k | \alpha_1 \cap ... \cap
+  \alpha_{k-1})$
+- bayes' rule: $P(\beta|\alpha) =
+  \frac{P(\alpha|\beta)P(\beta)}{P(\alpha)}$
+
+So far, we use events. The use of /events/ are cumbersome in some
+case. For example, we need to use =GradeA=, =GradeB=, =GradeC=, etc to
+represent the events for different grades. Thus, we introduce */random
+variables (RV)/* as a way of reporting an attribute of the
+outcome. Formally, a random variable is defined by a function that
+associates with each outcome in $\Omega$ a value. We use $Val(X)$ to
+denote the set of values a random variable $X$ can take. We use upper
+case $X$ to denote the random variables, use lower case $x$ to denote
+a generic value of $X$, and use $x^1, ..., x^k$ to denote the possible
+values. We use bold typeface *X* to denote a set of random variables,
+and lowercase bold typeface *x* to denote an assignment to all
+variables in the set. A distribution over random variables with $k$
+values are called /Multinomial Distribution/, one over binary random
+variables are called /Bernoulli Distribution/.
+
+Once we define the random variables, we can define */marginal
+distribution/* over X as the distribution over events that can be
+described using X, denoted by $P(X)$. We may also be interested in the
+distribution over multiple random variables. In general, a */joint
+distribution/* over a set $X = \{X_1, ..., X_n\}$, denoted as $P(X_1,
+..., X_n)$, is the distribution that assigns probabilities to events
+that can be described using these random variables. We use $\xi$ to
+refer to a full assignment to the variables in $X$. The conditional
+probability in terms of random variables are intuitive.
+
+Next, we introduce *independence*. First in events notation, we say
+that
+
+#+BEGIN_QUOTE
+an event $\alpha$ is /independent/ of event $\beta$ in P, denoted as
+$P \models (\alpha \bot \beta)$, if $P(\alpha | \beta) = P(\alpha)$ or
+if $P(\beta) = 0$
+#+END_QUOTE
+
+An alternative definition
+
+#+BEGIN_QUOTE
+$P \models (\alpha \bot \beta)$ iff $P(\alpha \cap \beta) = P(\alpha)
+P(\beta)$
+#+END_QUOTE
+For conditional independence, we say that
+
+#+BEGIN_QUOTE
+an event $\alpha$ is /conditionally independent/ of event $\beta$
+given event $\gamma$ in P, denoted as $P \models (\alpha \bot \beta |
+\gamma)$, if $P(\alpha | \beta \cap \gamma) = P(\alpha | \gamma)$ or
+if $P(\beta \cap \gamma) = 0$
+#+END_QUOTE
+
+And the alternative definition as well:
+#+BEGIN_QUOTE
+$P \models (\alpha \bot \beta | \gamma)$ iff $P(\alpha \cap \beta |
+\gamma) = P(\alpha | \gamma) P(\beta | \gamma)$
+#+END_QUOTE
+
+Of course, we want to define in terms of random variables as well:
+
+#+BEGIN_QUOTE
+Let *X*, *Y*, *Z* be sets of random variables. We say *X* is
+conditional independent of *Y* given *Z*, if $P \models (X=x \bot
+Y=y | Z=z)$ for /all/ values x,y,z. When $Z=\emptyset$, we simply
+write $(X \bot Y)$, and say X and Y are marginally independent.
+#+END_QUOTE
+
+The alternative for this:
+#+BEGIN_QUOTE
+$P \models (X \bot Y | Z)$ iff $P(X,Y | Z) = P(X|Z) P(Y|Z)$
+#+END_QUOTE
+
+The conditional independence says that, learning the value of Y does
+not provide additional information about X, once we know Z.  We have
+some properties hold in general:
+- /Symmetry/: $(X \bot Y | Z) \Rightarrow (Y \bot X | Z)$
+- /Decomposition/: $(X\bot Y,W | Z) \Rightarrow (X \bot Y | Z)$
+- /Weak union/: $(X \bot Y,W |Z) \Rightarrow (X\bot Y | Z,W)$
+- /Contraction/: $(X \bot W | Z, Y) \& (X \bot Y|Z) \Rightarrow (X\bot
+  Y,W|Z)$
+
+There is one more property, /intersection/, that holds in /positive
+distribution/, where $P(\alpha) > 0$ for non-empty events. The
+property says, for mutually disjoint sets X,Y,Z,W, we have:
+- /intersection/: $X\bot Y|Z,W \& (X\bot W|Z,Y) \Rightarrow (X \bot
+  Y,W|Z)$.
+All these properties are called /graphoid axioms/.
+
+After defining probability distribution, we are interested in
+answering */probability queries/*. We have /evidence variables/ E and
+/query variables/ Y, and we aims to compute $P(Y|E=e)$, and this is
+called the Posterior/, also called /conditional probability/ or
+/posterior probability/. It seems also to be called /probabilistic
+inference/, referring to the computation of posterior probabilities
+given evidence.
+
+A second type of query is MAP query, also called /Most Probable
+Explanation (MPE)/. It aims to find a high-probable joint assignment
+to some subset of variables. The /MAP assignment/ is the most likely
+assignment to all of the non-evidence variables. Formally, let
+$W=X-E$, our task is to find $MAP(W|e) = argmax_w P(w,e)$
+
+For *continuous random variables*, /probability density function
+(PDF)/ is used for continuous random variables, because the vector is
+infinite. I record some distributions here:
+- /Uniform distribution/ over [a,b], denoted as $X \sim Unif[a,b]$, if
+  $p(x) = \frac{1}{b-1}$ in [a,b] otherwise 0.
+- /Gaussian distribution/ with mean $\mu$ and variance $\sigma^2$,
+  denoted as $X \sim N(\mu; \sigma^2)(x)$, if
+  $p(X)=\frac{1}{\sqrt{2\pi} \sigma} e^{-\frac{(x-\mu)^2}{2
+  \sigma^2}}$
+
+The /linearity of expectation/ property states that
+$E[X+y]=E[X]+E[Y]$. There is no general product form, but if X and Y
+are independent, we have $E[X*y]=E[X]*E[Y]$. The variance is defined
+as $Var_P[X] = E_P[(X-E_P[X])^2]$, or $Var[X] = E[X^2] - (E[X])^2$. We
+don't have even the linear property, but if X and Y are independent,
+then $Var[X+Y]=Var[X]+Var[Y]$. The variance generally scales as a
+quadratic function of X: $Var[aX+b]=a^2Var[X]$. The standard deviation
+is $\sigma_X=\sqrt{Var[X]}$.
+
+
+** Representation
+
+We have two views of the graphical model. On one hand, we view it as a
+representation of a set of independence that holds in the
+distribution. On the other, the graph defines a skeleton for
+factorizing a distribution: rather than represent the entire joint
+distribution, we break up the distribution into smaller factors
+locally, and the overall joint distribution can be represented as the
+product of these factors.  This two perspectives of graphical model
+are equivalent in a deep sense.
+
 /Undirected graphical model/ is also called /Markov random field/ or
 /Markov network/. /Directed graphical model/ is called /Bayesian
-network/.
+network/. They differ in the set of independence they can encode, and
+in the factorization of the distribution they can induce.
 
-Two types of tasks are popular in the literature. /Learning/ refers to
-the estimation of edge parameters from data. /Inference/ refers to the
-computation of marginal vertex probabilities and expectations from
-their joint distribution.
+The general model is the /Naive Bayes Model/, or /Idiot Bayes Model/,
+where we assume the /naive Bayes Assumption/ that all features are
+conditionally independent given its class. Thus we have the
+factorization $P(C,X_1,...,X_n) = P(C) \prod_{i=1}^n P(X_i|C)$.
 
-Some graph theory background. For undirected graph, two nodes are
-/adjacent/ if there is an edge joining them, denoted as $X \sim Y$. A
-/path/ is a set of vertices that are adjacent sequentially. A
-/complete graph/ is a graph where every pair of vertices is joined by
-an edge. A /subgraph/ is a subset of vertices together with their
-edges. A /clique/ is a complete subgraph. It is called /maximal/ if it
-is a clique and no other vertices can be added to it and still yield a
-clique.
+** Bayesian Network (BN)
+The naive Bayes model has too strong assumption. The Bayesian Network
+can encode the conditional independence relationship in a finer
+granularity. It can be viewed in two different ways, representing a
+joint distribution, and a compact representation of a set of
+conditional independence assumptions. Both views are equivalent.
 
-Some probability background.  /Prior/ is also called /unconditional
-probabilities/ or /prior probabilities/.  /Posterior/ is also called
-/conditional probability/ or /posterior probability/.  /Evidence/ is
-the results observed, should be synonymous for observation.
-/Probability distribution/ is the name for discrete random variables,
-/probability density function/ is used for continuous random
-variables, because the vector is infinite.  /Joint probability
-distribution/ is the P for two variables with some interaction.  /full
-joint probability distribution/ is the joint distribution for all
-variables.  /marginalization/ is also called /summing out/, because it
-sums the conditional probabilities. The process of computing the
-unconditional probability, aka marginal probability.  /Probabilistic
-inference/ refers to the computation of posterior probabilities given
-evidence.
-
-Product rule
-
-$$P(a \wedge b) = P(a|b) P(b)$$
-
-inclusion-exclusion principle
-
-$$P(a\vee b) = P(a) + P(b) - P(a \wedge b)$$
-
-Bayes rule:
-
-$$P(b|a) = \frac{P(a|b)P(b)}{P(a)}$$
-
-conditioning rule:
-
-$$P(Y) = \sum_{z} P(Y|z)P(z)$$
-
-(absolute) independence
-
-$$P(X|Y)=P(X)$$
-
-conditional independence:
-
-$$P(X,Y|Z) = P(X|Z) P(Y|Z)$$
-
-Gausion (normal) distribution: $N(\mu, \sigma^2)(x)$ has the mean
-$\mu$ and the variance $\sigma^2$.
+The Bayesian network has two components: a graph encode the relation,
+and its /Conditional Probability Distribution (CPD)/.
 
 
-** Markov Network
+*** Local Independence
+The */local independence/* encoded in the Bayesian Network, denoted by
+$I_l(G)$, is
 
-In a Markov graph, the absence of an edge implies that the
-corresponding random variables are conditionally independent given the
-variables given /all/ other variables. This is also known as /pairwise
-Markov independence of G/:
+#+BEGIN_QUOTE
+For each variable $X_i$, we have $(X_i \bot NonDescendants_{X_i} |
+Pa_{X_i}^G)$
+#+END_QUOTE
 
-$$ \neg X \sim Y \Leftrightarrow X \bot Y | rest$$
+In other words, a node is conditionally independent of its
+non-descendants given its parent.
 
-A,B,C are subgraphs. C is said to /separate/ A and B if every path
-between A and B intersects a node in C. These separators have nice
-property that they break the graph into conditionally independent
-pieces, this is known as /global Markov properties of G/:
 
-#+begin_quote
-if C separates A and B, then $A \bot B | C$
-#+end_quote
+Now, we give formal semantic of a Bayesian network, through the notion
+of /I-map/.  We use the notation $I(P)$ to denote the set of
+independence assertions the hold in the distribution P (ground
+truth). Then we can get that the local independence $I_l(G) \subseteq
+I(P)$. In other words, the graph G encodes a subset of independence
+that is true in the distribution. We will call *G as an /independency
+map (I-map)/ for P*. Clearly from the definition, G must not mislead
+us regarding the independencies in P. The I-map concept is important
+because, when we use G to encode a set of conditional independence
+assumptions, every distribution for which G is an I-map, must satisfy
+these assumptions.  
 
-The pairwise and global Markov properties of a graph are equivalent.
+If P can be expressed as a product $P(X_1,...,X_n)=\prod_{i=1}^n
+P(X_i | Pa_{X_i}^G)$, we say that */P factorizes according to G/*.
+This equation is called the /chain rule for Bayesian network/, the
+individual factors on the right hand side is called the /local
+probabilistic models/.
 
-** Bayesian Network
+Then, importantly we have the above I-map and factorization are
+equivalent:
+
+#+BEGIN_QUOTE
+G is an I-map for P iff P factorizes according to G.
+#+END_QUOTE
+
+*** Global Independence
+Besides local independence, we can read off other independence from
+Bayesian Network.
+
+There are four possible trails from X and Y via Z. When influence can
+flow from X to Y via Z, we say the trail is active.
+- /Causal trail/, or /causal chain/, =X->Z->Y= encode the indirect
+  causal effect, is active iff Z is not observed
+- /Evidential trail/ =Y->Z->X= encodes the indirect evidential effect,
+  is active iff Z is not observed
+- /Common Cause/, or /causal forks/, =Z->{X,Y}=, is active iff Z is
+  not observed
+- /Common Effect/, or /inverted forks/, ={X,Y}->Z= (also called
+  /v-structure/), is active iff either Z or one of Z's descendants is
+  observed. Observations on a common consequence of two independent
+  causes tend to render those causes dependent, because information
+  about one of the cause tends to make the other less likely, given
+  that the consequence has occurred. This pattern is known as
+  /selection bias/, or /Berkson's paradox/ in statistics, /explaining
+  away effect/ in AI.
+
+More formally
+#+BEGIN_QUOTE
+Let Z be a subset of observed variables. The trail $X_1
+\rightleftharpoons ... \rightleftharpoons X_n$ is active given Z if
+- whenever we have a v-structure, $X_{i-1} \rightarrow X_i \leftarrow
+  X_{i+1}$, then $X_i$ or one of its descendants are in Z
+- no other node along the trail is in Z
+#+END_QUOTE
+
+If there are more trails between X and Y, the influence can flow as
+long as any trail is active. More generally, if there are no active
+trail between any pair of nodes in two sets X and Y given Z, they are
+said to be */directed separated (d-separated)/*, or /blocked/, denoted
+as $d-sep_G(X;Y|Z)$. The set of independencies corresponding to
+d-separation is denoted as $I(G)$, as $I(G) = \{(X \bot Y | Z) :
+d-sep_G(X;Y|Z)\}$, and it is called the */global Markov
+independencies/*. This time, we use I instead of $I_l$, without a
+subscript, because actually we can prove it to be sound and complete
+to the independencies of the distribution, $I(P)$. In other words,
+d-separation precisely encodes all independencies, i.e. $I(G) = I(P)$.
+(Note: the completeness seems to be not true, and there is a weaker
+definition of completeness).
+
+#+BEGIN_QUOTE
+*(Probabilistic implications of d-separation)* If sets X and Y are
+d-separated by Z in a DAG G, then X is independent of Y conditional on
+Z in every distribution compatible with G. Conversely, if X and Y are
+not d-separated by Z in a DAG G, then X and Y are dependent
+conditional on Z in at least one distribution compatible with G.
+
+*(Ordered Markov Condition)* A necessary and sufficient condition for
+a probability distribution P to be Markov relative a DAG G is that,
+conditional on its parents in G, each variable be independent of all
+its predecessors in some ordering of the variables that agrees with
+the arrows of G.
+
+*(Parental Markov Condition)* A necessary and sufficient condition for
+a probability distribution P to be Markov relative a DAG G is that
+every variable be independent of all its nondescendants (in G),
+conditional on its parents.
+#+END_QUOTE
+
+Actually, very different BN structure can actually encode the same set
+of I(G). If they do, they are called */I-Equivalent/*. And it is
+impossible to decide which structure is true: there is no intrinsic
+property of P that would allow us to associate it with one graph
+rather than an equivalent one. In particular, although we can
+determine whether X and Y are correlated, there is no way to tell
+whether the correct structure is =X->Y= or =Y->X=. An entire
+I-equivalence class can be represented as a /class PDAG/.
+
+We have a necessary condition for I-equivalent.
+#+BEGIN_QUOTE
+*(Observational Equivalence)* If G_1 and G_2 have the same skeleton
+and the same set of v-structures, then they are I-equivalent.
+#+END_QUOTE
+
+However, the reverse is not true: if they are I-equivalent, they may
+have different v-structures. A intuitive example is that, since a
+complete graph encodes empty set of conditional independence
+assertions, any two complete graphs are I-equivalent. But, although
+they have the same skeleton, they can have different v-structures. We
+can strengthen the condition to provide a necessary and sufficient
+condition, by introducing /immorality/:
+
+#+BEGIN_QUOTE
+A v-structure =X->Z<-Y= is an immorality if there is no direct edge
+between X and Y.  (Such an edge is called a /covering edge for the
+v-structure/ if exists).
+
+G_1 and G_2 have the same skeleton and the same set of immoralities,
+iff they are I-equivalent.
+#+END_QUOTE
+
+Clearly we would like to construct a graph G that is an I-map for P,
+so that G can encode some independence assertions in P. However, there
+are many I-equivalent graphs, which one do we use? The complete graph
+is I-map for any distribution, thus it is a candidates. But since it
+is fully connected, it encodes no conditional indepencencies, thus not
+interesting at all. What we want is actually a /minimal I-map/, where
+removal of a single edge from the graph will render it not an I-map of
+P.  However, the minimal I-map may fail to capture all independencies
+in P for sure. What we want is called a /perfect map (P-map)/ encoded
+in graph K, where $I(K)=I(P)$. However, not every distribution has a
+P-map.
+
+*** Other
+When choosing prior, it is important to distinguish the extremely
+unlikely and impossible, because one can never condition away a zero
+probability, no matter how much evidence we see.
 
 #+begin_quote
 Node X is conditionally independent of all other nodes in the network,
 given its markov blanket. (parents, children, and children's parents).
-#+end_quote
-
-#+begin_quote
-Node X is conditionally independent of its non-descendants given its
-parent.
 #+end_quote
 
 /Conditional probability table (CPT)/ is a table in which each row
@@ -105,6 +392,588 @@ functions, with a finite number of parameters, the most commonly used
 is the Gausion (normal) distribution.  Another solution is
 non-parameter one.  A network with both discrete and continuous
 variables is called hybrid Bayesian network.
+
+
+** Markov Network
+
+The Bayesian network is parameterized by a CPD, representing the
+distribution over one node given others. However, this does not make
+sense in an undirected model, in which we want a symmetric
+parameterization, and the probability should capture the degree to
+which A and B agree or disagree. We define a */factor/* $\phi$ to be a
+function from $Val(D)$ to IR, where D is a set of random variables. As
+with Bayesian network, we want to represent the distribution by
+products of local probability, thus we want to compute $P(a,b,c,d)$ as
+$\phi_1(a,b) \phi_2(b,c) \phi_3(c,d) \phi_4(d,a)$. However, it is by
+no means to be normalized, thus we need to normalize it. The
+normalization is not a constant obviously, but a function. In
+particular, $P(a,b,c,d) = \frac{1}{Z} \phi_1(a,b) \phi_2(b,c)
+\phi_3(c,d) \phi_4(d,a)$, where $Z=\sum_{a,b,c,d} \phi_1(a,b)
+\phi_2(b,c) \phi_3(c,d) \phi_4(d,a)$ is called /partition function/.
+The factors product $\phi_1 (X,Y) \phi_2(Y,Z)$ is defined such that
+the common parts in Y are matched, similar to database joins. A factor
+is only one contribution to the overall joint distribution, the full
+joint distribution must take into consideration of all factors
+involved. A concept called /pairwise Markov Network/ is one where all
+the factors are over single variables or pairs of variables. In
+visual, it is structured as a grid.
+
+When we want to make some assignment to some variables $U=u$, it is
+called /condition a distribution/, or */factor reduction/*, and the
+operation is to remove the entries that are inconsistent with the
+event $U=u$, and re-normalize the factors. Using the same idea, given
+$U=u$ as a context, the /reduced Markov Network/ $H[u]$ of the Markov
+Network $H$ is the one over nodes $W=X-U$, and keeps the same edges,
+i.e. we have an edge =X-Y= if there is an edge =X-Y= in H.
+
+*** Independence
+
+The Markov Network also encodes a set of independence assertions,
+where the influence flow along undirected path. Let Z be a set of
+observed variables, a path is active given Z if none of the nodes in
+the path is in Z. Thus, this can be used to separate the
+graph. Formally, Z separates X and Y in H, denoted $sep_H(X;Y|Z)$, if
+there is no active path between any nodes in X and Y given Z, denoted
+as $I(H) = \{(X \bot Y | Z) : sep_H(X;Y|Z)\}$. This is the *global
+independence*, just as the d-separation defines the global
+independence for Bayesian network.  This separation criterion is sound
+for detecting independence properties in distributions over
+H. However, it is not complete, and as in Bayesian network, there is a
+weaker definition of completeness that holds. The I-map definition and
+the relation with factorization is similar to that of Bayesian
+network. If P is a Gibbs distribution that factorizes over H, then H
+is an I-map for P. The reverse is true only for positive
+distributions. In other words, for positive distributions, the global
+independencies imply that the distribution factorizes according to the
+network structure, thus for this class of distributions, we have that,
+a distribution P factorizes over a Markov network H iff H is an I-map
+of P.
+
+Bayesian network has a local independence, so as Markov network, and
+two of them, but only for positive distributions. The non-positive
+distributions allow for deterministic dependencies between variables,
+and such deterministic interactions can "fool" local dependence tests.
+
+The first and weakest is the */local Markov Assumption/*. It comes
+from the intuition that if two variables are directly connected, they
+"have the potential" of being directly correlated in a way that is not
+mediated by other variables. Conversely when two variables are not
+directly linked, there must be some way to render them conditionally
+independent. Specifically, the absence of an edge implies that the
+corresponding random variables are conditionally independent given the
+variables given /all/ other variables. This is known as the */pairwise
+independence/*, $I_p(H)$, to be defined precisely $I_p(H) = \{(X \bot
+Y | \chi - {X,Y}) : X-Y \not\in H\}$.
+
+The second local independence is defined using /Markov blanket/ of X
+in H, denoted as MB_H(X), defined as the neighbors of X in H. Then,
+the */local independencies/* associated with H is $I_l(H) = \{(X \bot
+\chi - {X} - MB_{H}(X) | MB_{H}(X)) : X \in \chi\}$. In other words, X
+is independent of the rest of the nodes in the graph given its
+immediate neighbors.
+
+For general distributions, $I_p(H)$ is strictly weaker than $I_l(H)$,
+and strictly weaker than $I(H)$. For positive distributions, all three
+definitions are equivalent. This can be specified by three
+propositions:
+- If $P \models I_l(H)$, then $P \models I_p(H)$
+- If $P \models I(H)$, then $P \models I_l(H)$
+- Let P be a positive distribution, if $P \models I_p(H)$, then $P
+  \models I(H)$
+
+The Markov network is often over-parameterized. It is easier to obtain
+a Markov network from a Bayesian network, but much harder for the
+reverse.
+
+
+** TODO Inference
+/Inference/ refers to answering probabilistic queries, the computation
+of marginal vertex probabilities and expectations from their joint
+distribution. In particular, we study the computing of posterior
+probability of some variables given evidence on others.
+
+** Structure and Parameter Learning
+/Learning/ refers to the estimation of edge parameters from data, and
+learning the structure skeleton.  Fundamental assumptions in learning
+is the /Independent and Identical Distribution (IID)/, meaning that
+the data samples are sampled independently from the same distribution.
+
+The central idea of learning is the */likelihood/* of the data, given
+the model, denoted as $P(D: M)$. The log of it is the log-likelihood
+$l(D: M) = log P(D: M)$. The negated forms are called the loss and
+log-loss, reflecting the cost per instance of using the model. The
+/hamming loss/ counts the number of variables in which the model
+differs from the ground truth.
+
+Generally the amount of data required to estimate parameters grows
+linearly with the number of parameters. And since the network
+connectivity can be exponential to the number of variables, the amount
+of data can grow exponentially with the variables, or the network
+connectivity.  The bias-variance trade-off also applies here
+obviously. Restricting our model class is one way to reduce
+overfitting, it prevents us from selecting a model that precisely
+captures the training data. However, we are giving more bias.  The
+less restricted ones generally cause large variance.
+
+Different types of *objectives* defines different kind of training. If
+we use P(Y,X) as the objective, it is called /generative training/,
+because we train the model to generate all the variables, both the
+predict variable and the feature variable. Alternatively, the
+/discriminative training/ uses $P(Y|X)$ as the objective, thus only
+model the result. Generally speaking, generative models have a higher
+bias, because they make more assumptions about the form of the
+distribution, but obviously this training works better on limited
+data. The generative models offer a more natural interpretation of a
+domain, and are better able to deal with missing values and unlabeled
+data.
+
+The training will contain three axes of problems, namely whether the
+output is Bayesian or Markov network, the constraints we know about
+the model prior to learning, and whether the data are fully
+observable.
+
+*** Parameter Estimation for Bayesian Network
+In this setting, we consider the fixed structure, and the data set are
+fully observed, what we need is to estimate the parameters on top of
+the structure.
+
+The central idea is */Maximum Likelihood Estimation (MLE)/*. The model
+is parameterized by $\theta$, the likelihood function is a function of
+$\theta$ and the observed data instance, characterizing the
+probability of the observed data under this model. Of course, we want
+this probability to be high, so that the model is more likely given
+the data. The value of $\theta$ that maximizes the likelihood is
+called the /maximum likelihood estimator/.
+
+Another concept is called the /sufficient statistic/. It measures what
+features are required for estimating the likelihood, rendering other
+features useless. For example in coin tossing, the number of heads and
+number of tails are sufficient, while the order of tossing is
+useless. Formally, the sufficient statistic is a function from
+instance of $\chi$ to IR, such that $L(\theta: D) = L(\theta: D')$.
+
+The key property to solve the MLE problem in Bayesian network is to
+decompose the likelihood function into products of /local likelihood
+function/, measuring how well the variable is predicted given its
+parents. This decomposition is called the /global decomposition/ of
+the likelihood function. We can then maximize each local likelihood
+independently.
+
+One problem of the MLE approach is the lack of modeling of
+confidence. When we observe 3 heads out of 10 tosses, we are not
+convinced by the bias. But once we observe 3,000 heads out of 10,000
+tosses, we tend to be convinced that the coin is tricked. But the MLE
+will parameterize the model as the same. We introduce */Bayesian
+parameter estimation/*. The fundamental fact is that, we have a lot
+more prior knowledge. We assumed the tosses are independent of each
+other, however, this assumption was made when $\theta$ is fixed. If we
+do not know $\theta$ in advance, then the tosses are not marginally
+independent, because each toss tells us something about the parameter
+$\theta$, and thereby the probability of the next toss. Thus, we can
+only assume that the tosses are conditionally independent given
+$\theta$. In this setting, we treat $\theta$ as a random variable.
+
+More formally, now the posterior distribution over $\theta$ is
+$P(\theta | x[1], ..., x[M]) = \frac{P(x[1], ..., x[M] | \theta)
+P(\theta)}{P(x[1], ..., x{M})}$, where the denominator is a
+normalizing factor. We can see that the new posterior is the product
+of prior and the likelihood. If we have only a uniform prior
+($P(\theta) = 1 for \theta \in [0,1]$), the posterior is just he
+likelihood function. However, it is still different from the MLE. The
+main philosophical difference is in the use of posterior: instead of
+selecting from the posterior a single value for the parameter
+$\theta$, we use it, in its entirety, for predicting the probability
+over the next toss.
+
+The interesting part is choosing the prior. We want to choose the
+prior distribution that is compact, and efficient for update.
+
+#+BEGIN_QUOTE
+A /Beta Distribution/ is parameterized by two hyperparameters,
+$\alpha_1$ and $\alpha_0$: $\theta \sim Beta(\alpha_1, \alpha_0)$ if
+$p(\theta) = \gamma \theta^{\alpha_1 - 1} (1-\theta)^{\alpha_0 - 1}$,
+where $\gamma$ is a normalizing constant, defined as $\gamma =
+\frac{\Gamma(\alpha_1 + \alpha_0)}{\Gamma(\alpha_1)\Gamma(\alpha_0)}$,
+and $\Gamma(x) = \int_0^\infty t^{x-1}e^{-t}dt$ is the Gamma function.
+#+END_QUOTE
+
+What's good about /Beta Distribution/ is that, when we get more data,
+we get the new posterior is exactly $Beta(\alpha_1 + M[1], \alpha_0 +
+M[0])$, where M[1] is the number of heads, M[0] being the number of
+tails. The key property is that if the prior is a Beta distribution,
+then the posterior is also a Beta distribution. The distribution
+satisfying this is called to be conjugate to the Bernouli likelihood
+function.  Another such prior is /Dirichlet distribution/, which
+generalizes the Beta distribution with K hyperparameters: $\theta \sim
+Dirichlet(\alpha_1, ..., \alpha_k)$ if $P(\theta) \propto \prod_k
+\theta_k^{\alpha_k - 1}$
+
+*** Structure Learning in Bayesian Network
+If we include more edges, the model often contains spurious edges. If
+we include fewer edges, we may miss dependencies. When the data is
+limited, it is better to prefer a sparse structure.
+
+*/Constraint-based structure learning/* try to test conditional
+dependence and independence in the data, then find a network that best
+explains these dependencies and independencies. The downside is the
+sensitivity to failures in individual independence tests. Since their
+are multiple networks having the same I-map, we often learn the
+I-equivalent class rather than a single network. For performance
+consideration, we often assume the network has bounded indegree, and
+our independence test procedure can perfectly answer any independence
+query involving a bounded number of variables. If the network is more
+complex, we cannot hope to learn it with a small (polynomial) number
+of independence queries.
+
+The part of independence test deserves more space, while the building
+of the network is somehow trivial. The independence test concerns the
+problem of given joint samples of two variables X and Y, determine
+whether X and Y are independent. We often use /hypothesis
+testing/. The null hypothesis $H_0$ says the data were sampled from a
+distribution $P(X,Y)=P(X)P(Y)$, in other words, X and Y are
+independent. We want to design a procedure (called the decision rule)
+to decide to accept or reject the null hypothesis. This problem has
+two part:
+1. design the decision rule: the key idea is to define a measure of
+   deviance from the null hypothesis. A common measure is $\chi^2$
+   statistic $d_{\chi^2} (D) = \sum_{x,y} \frac{(M[x,y] - M P(x)
+   P(y))}{M P(x) P(y)}$, where $M[x,y]$ is the actual count in the
+   observation, $M P(x) P(y)$ is the expected count, and the
+   denominator is a normalizing constant. Intuitively it measures in
+   terms of number of mismatched data. Another deviance measure is
+   /mutual information/. Once we have the deviance measure, we can
+   design the rule as the distance is under a threshold. There is also
+   a $\chi^2$ statistic for conditional independence.
+2. evaluate the decision rule: The approach is to compute the
+   probability of /false rejection/, i.e. the probability of seeing
+   each particular data set if the hypothesis happens to be correct,
+   $P(\{D:R(D)=Reject\} | H_0, M)$, denoted as $p$. The $1-p$ is the
+   confidence in rejecting the hypothesis. This is called /p-value/,
+   and we often use 0.95 confidence interval, or significance level,
+   i.e. p-value of 0.05 or less.
+
+Another family of approach is */score-based structure learning/*,
+which assign a scoring function to rate how well a model fits the
+observed data, and turn the problem of structure learning into a model
+selection one, and find the one with highest possible score. However,
+the problem is NP-hard, and we need to find heuristic search
+techniques. The advantage is that it is less sensitive to individual
+failures, and estimate the structure as a whole.
+
+The design of score is central to this approach, different scores also
+have different strategies for search. The most fundamental score is
+the */Likelihood score/*, denoted as $score_L(G, D)$, and this score
+can be decomposed to local scores with parent-children
+relation. Indeed, the likelihood of a network measures the strength of
+the dependencies between variables are their parents, in other words,
+we prefer networks where the parents of each variable are informative
+about it. However, this is typically not used, because in almost all
+cases, the maximum likelihood network will be a fully connected one,
+i.e. it this score overfits the training data.
+
+To take into consideration the prior to avoid overfitting, we design
+the */Bayesian score/*, as $score_B(G:D) = log P(D|G) + log P(G)$. As
+we get more data, Bayesian score prefers the structure $G_{X
+\rightarrow Y}$ where X and Y are dependent. When the dependency
+between them is strong, this preference arises very quickly. But as
+the dependency becomes weaker, more data are required to justify this
+selection. Going deeper, the Bayesian score seems to be biased toward
+simpler structures, but as it gets more data, it is willing to
+recognize that a more complex structure is necessary. Therefore, it
+reduces the extent of overfitting. /Bayesian information criterion
+(BIC)/ score, denoted as $score_{BIC}(G:D)$, is an approximation to
+Bayesian score.  One important property is the score decomposability,
+and it allows us to conduct local search of local score for local
+structure, and local change to structure does not change the scores of
+the other parts. There is a condition for a Bayesian score to be
+decomposable.  The popular actual prior distributions are K2 (software
+name) prior, BDe prior.
+
+The search space of the models are huge, rendering the problem of
+searching the highest scored network NP-hard. Thus we need to define
+heuristic search. One fundamental step is to restrict the search
+space. In stead of enumerating all models, we define some moves
+between candidate solutions, i.e. an operation to mutate structure to
+another. The operations include edge addition, edge deletion, and edge
+reversal. These operations result in changing only one local score
+term. Thus, we can apply local search strategies, like greedy hill
+climbing, first-ascent hill climbing, basin flooding and tabu search
+for addressing local maxima, etc. The decomposibility of the score
+function is the key to reducing the computation cost.
+
+A third approach is */Bayesian model averaging/*, where instead of one
+model, it generates an ensemble of possible structures.
+
+*** Learning Markov Network
+
+The likelihood function of Markov network contains the partition
+function, which is a global function over all variables. This prevents
+us from decomposing it. For this reason, the parameter estimation
+seems to have a lot of difficulties. There are no closed-form solution
+for parameters.
+
+For structure learning, the constraint-based approaches seem to be
+easier, the independencies associated with separation in Markov
+network are much simpler than those with d-separation in Bayesian
+network. For score based approach, there are $score_L$, $score_{BIC}$,
+$score_{Laplace}$, and $score_{MAP}$.
+
+*** Hidden Variable
+The previous discussions all assume the data are fully observed.
+Inclusion of hidden variables in the network can greatly simplify the
+structure, reducing the complexity of the network.  When dealing with
+hidden variables, we introduce a set of /observability variables/, for
+each variable $X_i$, a $O_{X_i}$, indicating whether the variable is
+observed or not.
+
+There are three kinds of missing mechanism. $P_{missing}$ is /Missing
+Completely At Random (MCAR)/ if $P_{missing} \models (X \bot
+O_X)$. MCAR assumption is a very strong one, and is sufficient for
+decomposition of likelihood function. $P_{missing}$ is /Missing At
+Random (MAR)/ if $P_{missing} \models (O_X \bot x_{hidden}^y |
+x_{obs}^y)$. The MAR assumption is a license to ignore the observation
+model while learning parameters.
+
+First, consider the parameter estimation problem, where we used
+maximum likelihood approach.  In the presence of partially observed
+data, we lose all of the important properties of the likelihood
+function: its unimodality, its closed-form representation, and the
+decomposition as a product of likelihoods.  One approach is the
+gradient ascent method to go straight to optimize the
+likelihood. However, the lost of important properties makes it very
+hard.
+
+The /Expectation Maximization (EM)/ method is especially designed for
+optimizing the likelihood function in case of missing data: it tries
+to fill in the missing data. Indeed, this is a chicken and egg
+problem: learning the parameters and hypothesizing values for
+unobserved variables, both of them are fairly easy given the solution
+to the other. EM algorithm solve this chicken and egg problem using a
+bootstrap approach: it starts with some arbitrary starting point, and
+repeatedly apply the two steps, until converge. The expectation step
+is to use the current parameter assignment, to complete the data. The
+maximization step treats the completed data as observed, perform
+maximum likelihood estimation, and learn a new set of parameters. The
+algorithm guarantee that each iteration can improve the log-likelihood
+function, thus the process is guaranteed to converge.
+
+In terms of structure learning, the dominate approach here is score
+based one. We apply /laplace approximation/, and use the /Laplace
+Score/.
+
+
+* Causality
+The advantages of building DAG around causal: first, the judgments
+required in the construction of the model are more meaningful, more
+accessible, and hence more reliable. Second, the ability to represent
+and respond to external or spontaneous changes.
+
+** Stochastic Representation
+The basic representation of causal model is the *causal Bayesian
+network*.  We can devise the Bayesian network by quite simple
+steps. First, by the chain rule, the joint probability is $P(x_1, ...,
+x_N) = \prod_j P(x_j | x_1, ..., x_{j-1})$. Then, suppose that $X_j$
+is only sensitive to some of the a small subset $PA_j$ of those
+predecessors, we have $P(x_j | x_1, ..., x_{j-1}) = P(x_j | pa_j)$. A
+minimal set $PA_j$ satisfying this is called the /Markovian parents/
+of $X_j$. It is shown by Pearl in 1988 that such $PA_j$ is unique if P
+is strictly positive. Then, combine these two equations, we have
+$P(x_1, ..., x_n) = \prod_i P(x_i | pa_i)$. Note that, although the
+chain rule is order specific, this equation is no longer
+order-specific. A distribution P is said to be /Markov compatible/
+with a DAG G, or P is /Markov relative/ to G, if P can be factorized
+by this equation. The Markov compatibility is a necessary and
+sufficient condition for a DAG G to explain a body of data represented
+by P.
+
+The action $do(X=x)$ means, on the graph, to delete the ingoing links
+to X, and set the value of X to x, and nothing else. This results in a
+new distribution, $P_x(v)$, rather than simply the original
+distribution conditioned on $X=x$. We have some intuitive properties
+for this new *intervention distribution*:
+- $P(v_i | pa_i) = P_{pa_i}(v_i)$
+- $P_{pa_i, s}(v_i) = P_{pa_i}(v_i)$ for all S that is disjoint of
+  $\{V_i, PA_i\}$.
+
+To test whether a variable $X_i$ has a causal influence on $X_j$, we
+simply compute the marginal distribution of $X_j$ under the action
+$do(X_i=x_i)$, i.e. $P_{x_i}(x_j)$ for all values $x_i \in Val(X_i)$,
+and test whether the distribution is sensitive to $x_i$.
+
+** Functional Causal Model
+A */functional causal model/* is another representation of the causal
+model, consisting of a set of equations of the form $x_i = f_i(pa_i,
+u_i)$, where $pa_i$ means parents, i.e. the immediate causes of $X_i$,
+$U_i$ represents the errors, i.e. the disturbances, or
+correlations. This general form is nonlinear, nonparametric. The
+/linear Structural Equation Models (SEMs)/ are more specific: $x_i =
+\sum_{k\ne i} \alpha_{ik} x_k + u_i$.
+
+Given a functional causal model, we can draw a graph, with arrows from
+each member of PA toward $X_i$. The resulting graph is called a
+/causal diagram/. If the causal diagram is acyclic, then the model is
+called /semi-Markovian/. If, in addition to acyclicity, the error
+terms are mutually independent (i.e. each variable is independent of
+all its non-descendants, conditional on its parents, this is also
+called the /Markovian assumption/), the model is called /Markovian/.
+
+The functional causal model can also represent the *intervention*, by
+alternating a subset of functions, and most of the time, this
+modification is simpler, e.g. change $x_3 = f_3(x_1, u_3)$ to be $x_3
+= on$. The functional model's representation of interventions offers
+greater flexibility and generality than that of a stochastic
+model:
+- the analysis of intervention can be extended to cyclic model
+- The interventions involving the modification of equational
+  parameters are more readily comprehended
+- The analysis of causal effects in non-Markovian models (again
+  cyclic) will be greatly simplified
+- permits the analysis of context-specific actions and policies
+
+Actually, the biggest shine part of functional models comes at the
+analysis of *couterfactuals*. The difficulty of counterfactual queries
+in stochastic models lies in that given no data, it is impossible to
+predict non-treatment case. But, the true insights of importance of
+counterfactual queries rely in "integrating substantive knowledge with
+statistical data so as to refine the former and interpret the
+latter". To see that we can answer counterfactual queries, an example
+is given by Pearl:
+
+#+BEGIN_QUOTE
+Most people would agree that President Clinton's place in history
+would be different had he not met Monica Lewinsky, but only a few
+would assert that his place in history would change had he not eaten
+breakfast yesterday
+#+END_QUOTE
+
+The stochastic causal models are insufficient for computing
+probabilities of counterfactuals. But, a functional causal model
+constitutes a /mathematical object/ sufficient for the computation and
+definition of such probabilities. Generally to answer a counterfactual
+query, three steps are generalized to any causal models:
+1. abduction: update the probability $P(u)$ to obtain $P(u|e)$
+2. action: do(X=x)
+3. prediction: use the modified model to compute the probability of
+   $Y=y$
+The real reason why stochastic causal models are insufficient is the U
+variables do not appear explicitly in stochastic models, thus we
+cannot apply abduction step to update $P(u)$ with evidence $e$.
+
+** Causal Effect
+For two disjoint set X and Y, the */causal effect/* of X on Y is
+defined as P(y | do(x)), a function from X to the space of probability
+distribution on Y. The */causal effect identifiability/* is defined,
+such that the causal effect of X on Y is identifiable from a graph G
+if the quantity $P(y | do(x))$ can be computed uniquely from any
+positive distribution of the observed variables. It is well known
+that, the causal effect is identifiable if X,Y and all parents of X
+are observed. Thus, for Markovian model, the causal effects are
+identifiable.
+
+For semi-Markovian model, there exists some graphical test to decide
+whether a set Z of observed variables is sufficient for identifying
+$P(y | do(x))$. The first one being the /back-door criterion/:
+
+#+BEGIN_QUOTE
+(Back-door) A set of variables Z satisfies the back-door criterion,
+relative to an ordered pair ($X_i$, $X_j$) in DAG G if
+1. no node in Z is descendant of $X_i$, and
+2. Z blocks every path between $X_i$ and $X_j$ *that contains an arrow
+   into $X_i$*
+For the disjoint sets X and Y, the set Z is said to satisfy the
+back-door criterion relative to (X,Y) if it satisfies the criterion
+for any pairs $(X_i,Y_i) \in (X,Y)$
+
+If Z satisfies back-door criterion relative to (X,Y), the causal
+effect of X on Y is identifiable, as $P(y|do(x)) = \sum_z P(y | x, z)
+P(z)$.
+#+END_QUOTE
+
+The second one being the /front-door criterion/:
+
+#+BEGIN_QUOTE
+(Front-door) A set of variables Z satisfies the font-door criterion,
+relative to an ordered pair of variables (X,Y) if
+1. Z intercepts all directed paths from X to Y
+2. there is no back-door path from X to Z
+3. all back-door paths from Z to Y are blocked by X
+
+If Z satisfies the front-door criterion relative to (X,Y) and if
+$P(x,z)>0$, then the causal effect of X on Y is identifiable as:
+$P(y|do(x)) = \sum_z P(z | x) \sum_{x'} P(y|x',z)P(x')$.
+#+END_QUOTE
+
+Typically we use *do-calculus* to transform the intervention from one
+form to another, thus it can syntactically solve intervention
+queries. The do-calculus is a set of inference rules.
+
+Some more graphical notation: $G_{\bar{X}}$ is the graph obtained by
+deleting from G all arrows pointing to nodes in X, $G_{\underline{x}}$
+the graph obtained by deleting from G all arrows emerging from nodes
+in X. $P(y | \hat{x}, z) = P(y, z | \hat{x}) / P(z | \hat{x})$ is the
+probability of Y=y given X is held constant at x, and that under this
+condition Z=z is observed.
+
+- Insertion/deletion of observations: $P(y | \hat{x}, z, w) = P(y |
+  \hat{x}, w)$ if $(Y \bot Z | X, W)_{G_{\hat{x}}}$. This rule
+  reaffirms d-separation.
+- Action/observation exchange: $P(y | \hat{x}, \hat{z}, w) = P(y |
+  \hat{x}, z, w)$ if $(Y \bot Z | X,
+  W)_{G_{\hat{x}\underline{Z}}}$. This rule provides a condition for
+  an external intervention $do(Z=z)$ to have the same effect on Y as
+  the passive observation $Z=z$
+- Insertion/deletion of actions: $P(y|\hat{x}, \hat{z}, w) = P(y |
+  \hat{x}, w)$ if $(Y \bot Z | X, W)_{G_{\hat{X}, \hat{Z(W)}}}$ where
+  Z(W) is the set of Z-nodes that are not ancestors of any W-node in
+  $G_{\hat{X}}$. This rule introduces or deletes an external
+  intervention $do(Z=z)$
+
+A causal effect is identifiable if there exists a finite sequence of
+transformations in the rules to reduce it to a standard probability
+expressions involving observed quantities.
+
+The $P(y|do(x))$ models the total effect of X on Y. The /direct
+effect/ of X on Y is given by $P(y|do(x), do(s_{XY}))$, where $S_{XY}$
+is the set of all observed variables except X and Y. This effect is
+meant to quantify the effect that is not mediated by other variables
+in the model, or more accurately, the sensitivity of Y to change X
+while all other factors in the analysis are held fixed (to any
+value??).
+
+** Confounding
+
+If a third variable Z can influence both X and Y, then X and Y are
+said to be confounded, and Z is called a /confounder/ of X and Y, or
+/covariates/, /concomitants/.
+
+There is a Simpson's Paradox for confounders. Basically, it is that an
+event C increases the probability of E in a given population p, and at
+the same time, decreases the probability of E in every subpopulation
+of p. In equation, it says:
+- $P(E|C) > P(E|\not C)$: increase the probability
+- $P(E|C,F) < P(E| \not C, F)$: decrease the probability whenever
+  condition on F
+- $P(E|C,\not F) < P(E | \not C, \not F)$, or condition on $\not F$
+
+This essentially capture the misunderstanding between action and
+observation. A real world example from HackerNews: every bug you fix
+in your code increases your chances of shipping on time, but provides
+evidence that you won't. In this case, E is the event of deliver on
+time, C is the event of bug fix.
+
+The problem is the first statement $P(E|C) > P(E|\not C)$. C is not an
+evidence for E, but rather a positive causal factor for E. So proper
+statement should be written as $P(E | do(C)) > P(E | do(\not C))$.
+
+The paradox is resolved, and we result in a /Sure-Thing Principle/: an
+action C that increases the probability of an event E in each
+sub-population must also increase the probability of E in the
+population as a whole, provided that the action does not change the
+distribution of the sub-populations.
+
+Finally, a formal causal definition of confounding comes that, X and Y
+are /not confounded/ in causal model M iff $P(y|do(x)) = P(y|x)$.
+
 
 * Search Algorithm
 
@@ -177,6 +1046,25 @@ Stop when the goal nodes has the lowest cost function value.
 
 
 ** local search
+Concepts:
+- plateau: a large set of neighbors having the same score
+
+Searches
+- first-ascent hill climbing: once it finds one that leads to a better
+  score, it applies it without considering other directions
+
+Overcome local maxima:
+- basin flooding: keep track of all previous results, and consider any
+  operator leading to result that has not been visited
+- tabu search: keep a list or recent operators applied, and in each
+  subsequent step, do not consider operators that reverse the effect
+  of recently applied operators.
+- data-perturbation: similar to random restarts. Perturb the search in
+  a way that will allow it to overcome local obstacles and make
+  progress toward the global maxima. Different from random restart
+  where perturbation change the network, the data-perturbation changes
+  the training data.
+
 *** hill climbing
 Find an initial solution, which is much worse than optimal one.
 Attempts to find a better solution by incrementally changing a
@@ -199,6 +1087,7 @@ always goes to smaller state if found.  But this is not required.
 
 *** gradient descent
 Go alone the decrease of the gradient.
+
 
 * Similarity metrics
 /Jaccard index/, also known as the /Jaccard similarity coefficient/,

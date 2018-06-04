@@ -10,10 +10,12 @@
   - [[file:art/reading.org][Reading]]
   - [[file:art/poem.org][诗词曲]]
 - wiki
+  - [[file:wiki/algorithm.org][Algorithm]]
   - [[file:wiki/ai.org][Artificial Intelligence]]
   - [[file:wiki/common-lisp.org][Common Lisp]]
   - [[file:wiki/database.org][Data base]]
   - [[file:wiki/deep-learning.org][Deep Learning]]
+  - [[file:wiki/draft.org][Draft]]
   - [[file:wiki/emacs.org][Emacs]]
   - [[file:wiki/functional.org][Functional Programming]]
   - [[file:wiki/linux.org][Linux]]
@@ -21,3 +23,4 @@
   - [[file:wiki/machine-learning.org][Machine Learning]]
   - [[file:wiki/python.org][Python]]
   - [[file:wiki/racket.org][Racket]]
+  - [[file:wiki/writing.org][Techniques for Writing]]

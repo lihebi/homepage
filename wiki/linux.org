@@ -48,6 +48,294 @@ qemu-system-x86_64 -enable-kvm -m 1024 disk_image
 
 
 
+* Git
+
+Withdraw remote commit is actually fairly easy. First, reset local
+commit, then force pushing.
+
+#+BEGIN_EXAMPLE
+git reset --hard <commit-hash>
+git push -f origin master
+#+END_EXAMPLE
+
+By contrast, =git-revert= will create a new commit to undo the
+previous commits.
+
+** TODO gitolite
+
+** Server
+
+There are several protocols. The smart HTTP protocol seems to be the
+way to go, because it supports both anonymous and authentication.
+
+But local and SSH is easy. For local, you can just clone using the
+=/abs/path/to/file= as URL. For ssh, use
+=user@server:/path/to/proj.git=.
+
+Now let me talk about setting up smart HTTP with lighttpd and cgit.
+
+in =/etc/lighttpd/lighttpd.conf=
+
+#+begin_example conf
+server.port             = 80
+server.username         = "http"
+server.groupname        = "http"
+
+server.document-root    = "/srv/http"
+
+server.modules += ( "mod_auth", "mod_cgi", "mod_alias", "mod_setenv" )
+
+alias.url += ( "/git" => "/usr/lib/git-core/git-http-backend" )
+$HTTP["url"] =~ "^/git" {
+  cgi.assign = ("" => "")
+  setenv.add-environment = (
+  "GIT_PROJECT_ROOT" => "/srv/git",
+  "GIT_HTTP_EXPORT_ALL" => ""
+  )
+}
+$HTTP["querystring"] =~ "service=git-receive-pack" {
+        include "git-auth.conf"
+}
+$HTTP["url"] =~ "^/git/.*/git-receive-pack$" {
+        include "git-auth.conf"
+}
+
+# alias.url += ( "/cgit" => "/usr/share/webapps/cgit/cgit.cgi" )                                           
+# alias.url += ( "/cgit" => "/usr/lib/cgit/cgit.cgi" )                                                     
+url.redirect += ("^/$" => "/cgit/")
+$HTTP["url"] =~ "^/cgit" {
+    server.document-root = "/usr/share/webapps"
+    server.indexfiles = ("cgit.cgi")
+    cgi.assign = ("cgit.cgi" => "")
+    mimetype.assign = ( ".css" => "text/css" )
+}
+#+end_example
+
+=/etc/lighttpd/git-auth.conf=
+
+#+begin_example
+auth.require = (
+        "/" => (
+                "method" => "basic",
+                "realm" => "Git Access",
+                "require" => "valid-user"
+               )
+)
+
+auth.backend = "plain"
+auth.backend.plain.userfile = "/etc/lighttpd-plain.user"
+#+end_example
+
+In =/etc/lighttpd-plain.user=
+#+begin_example
+hebi:myplainpassword
+#+end_example
+
+My =/etc/cgitrc=:
+#+begin_example
+#
+# cgit config
+#
+
+# css=/cgit.css
+# logo=/cgit.png
+
+# Following lines work with the above Apache config
+#css=/cgit-css/cgit.css
+#logo=/cgit-css/cgit.png
+
+# Following lines work with the above Lighttpd config
+css=/cgit/cgit.css
+logo=/cgit/cgit.png
+
+# if you do not want that webcrawler (like google) index your site
+robots=noindex, nofollow
+
+# if cgit messes up links, use a virtual-root. For example has cgit.example.org/ this value:
+# virtual-root=/cgit
+
+
+# Include some more info about example.com on the index page
+# root-readme=/var/www/htdocs/about.html
+root-readme=/srv/http/index.html
+
+#
+# List of repositories.
+# This list could be kept in a different file (e.g. '/etc/cgitrepos')
+# and included like this:
+#   include=/etc/cgitrepos
+#
+
+clone-url=http://git.lihebi.com/git/$CGIT_REPO_URL.git
+readme=:README.org
+readme=:README.md
+readme=:readme.md
+readme=:README.mkd
+readme=:readme.mkd
+readme=:README.rst
+readme=:readme.rst
+readme=:README.html
+readme=:readme.html
+readme=:README.htm                                                                             
+readme=:readme.htm                                                                             
+readme=:README.txt                                                                             
+readme=:readme.txt                                                                             
+readme=:README                                                                                 
+readme=:readme
+
+section=hebi
+
+repo.url=hebicc
+repo.path=/srv/git/hebicc.git
+repo.desc=Hebi CC
+
+repo.url=cgit/hebicc
+repo.path=/srv/git/hebicc.git
+repo.desc=Hebi CC
+
+repo.url=test
+repo.path=/srv/git/test.git
+repo.desc=Test
+
+repo.url=pdf
+repo.path=/srv/git/pdf.git
+repo.desc=pdf
+
+
+# The next repositories will be displayed under the 'extras' heading
+section=extras
+
+
+repo.url=baz
+repo.path=/pub/git/baz.git
+repo.desc=a set of extensions for bar users
+
+repo.url=wiz
+repo.path=/pub/git/wiz.git
+repo.desc=the wizard of foo
+
+
+repo.url=foo
+repo.path=/pub/git/foo.git
+repo.desc=the master foo repository
+repo.owner=fooman@example.com
+repo.readme=info/web/about.html
+
+# Add some mirrored repositories
+section=mirrors
+
+repo.url=git
+repo.path=/pub/git/git.git
+repo.desc=the dscm
+
+# For a non-bare repository
+# repo.url=MyOtherRepo
+# repo.path=/srv/git/MyOtherRepo/.git
+# repo.desc=That's my other git repository
+
+# scan-path=/srv/git/
+#+end_example
+
+The =/srv/git= must be of group =http=, and the group write mask must
+be set for push.
+
+
+I can clone via =http://git.lihebi.com/git/repo.git=. The cgit page is
+at =http://git.lihebi.com/cgit=.
+
+In practice, I cannot push a lot of pdf files, it seems to be the
+problem of lighttpd configuration for max body size, but haven't look
+into that yet. Cloning does not have such problem though.
+
+
+** Configuration
+
+#+BEGIN_EXAMPLE
+git config --global user.email 'xxx@xxx'
+git config --global user.name 'xxx'
+git config --global credential.helper cache # cache 15 min by default
+git config --global credential.helper 'cache --timeout=3600' # set in sec
+#+END_EXAMPLE
+
+** Usage Tips
+show the diff together when inspecting log
+#+BEGIN_EXAMPLE
+git lg -p
+#+END_EXAMPLE
+
+** Individual tools
+
+*** git-bisect
+This command uses a binary search algorithm to find which commit in your project's history introduced a bug.
+
+1. The initial input: the "good" and "bad" commit.
+2. bisect select a commit, check it out, and ASK YOU whether it is good or bad.
+3. iterate step 2
+
+**** start
+
+#+BEGIN_EXAMPLE
+  $ git bisect start
+  $ git bisect bad                 # Current version is bad
+  $ git bisect good v2.6.13-rc2    # v2.6.13-rc2 is known to be good
+#+END_EXAMPLE
+**** answer the question
+Each time testing a commit, answer the question by:
+#+BEGIN_EXAMPLE
+  $ git bisect good # or bad
+#+END_EXAMPLE
+**** multiple good
+If you know beforehand more than one good commit,
+you can narrow the bisect space down by specifying all of the good commits immediately after the bad commit when issuing the bisect start command
+
+- v2.6.20-rc6 is bad
+- v2.6.20-rc4 and v2.6.20-rc1 are good
+#+BEGIN_EXAMPLE
+  $ git bisect start v2.6.20-rc6 v2.6.20-rc4 v2.6.20-rc1 --
+#+END_EXAMPLE
+**** run script
+If you have a script that can tell if the current source code is good or bad, you can bisect by issuing the command:
+#+BEGIN_EXAMPLE
+  $ git bisect run my_script arguments
+#+END_EXAMPLE
+
+**** Some work flows
+Automatically bisect a broken build between v1.2 and HEAD:
+In this case, only find the one that cause compile failure.
+#+BEGIN_EXAMPLE
+  $ git bisect start HEAD v1.2 --      # HEAD is bad, v1.2 is good
+  $ git bisect run make                # "make" builds the app
+  $ git bisect reset                   # quit the bisect session
+#+END_EXAMPLE
+
+
+Automatically bisect a test failure between origin and HEAD:
+This time, use the =make test= work flow
+#+BEGIN_EXAMPLE
+  $ git bisect start HEAD origin --    # HEAD is bad, origin is good
+  $ git bisect run make test           # "make test" builds and tests
+  $ git bisect reset                   # quit the bisect session
+#+END_EXAMPLE
+
+Automatically bisect a broken test case:
+Use a custom script.
+#+BEGIN_EXAMPLE
+  $ cat ~/test.sh
+  #!/bin/sh
+  make || exit 125                     # this skips broken builds
+  ~/check_test_case.sh                 # does the test case pass?
+  $ git bisect start HEAD HEAD~10 --   # culprit is among the last 10
+  $ git bisect run ~/test.sh
+  $ git bisect reset                   # quit the bisect session
+#+END_EXAMPLE
+
+*** git-blame
+Annotates each line in the given file with information from the revision which last modified the line.
+
+
+
+
+
 * Network
 When using docker container, host system cannot resolve the name of
 container to the specific IP. I have to specify it manually. To
@@ -66,6 +354,8 @@ ip addr show <dev>
 ip link # show links
 ip link show <dev>
 #+end_example
+
+To kill apps listening on a port, use =sudo fuser -k 8080/tcp=.
 
 ** Wireless Networking
 
@@ -665,6 +955,9 @@ remove the kernel module:
 #+begin_example
 rmmod pcspkr
 #+end_example
+
+To use ssh key for connecting to remote ssh daemon, on the host
+machine, run =ssh-keygen=. Then =ssh-copy-id user@server=.
 
 ** Audio
 

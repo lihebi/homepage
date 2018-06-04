@@ -15,6 +15,10 @@
 In emacs, <DEL> means backspace, <delete> means the delete key.
 #+END_QUOTE
 
+If sometimes emacs runs slow, you can =profiler-start=, and do the
+slow operations, and =profiler-report=. When finished, stop it by
+=profiler-stop= to avoid overhead.
+
 
 * buffer
   - =list-face-displays=
