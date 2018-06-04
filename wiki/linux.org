@@ -355,6 +355,8 @@ ip link # show links
 ip link show <dev>
 #+end_example
 
+To kill apps listening on a port, use =sudo fuser -k 8080/tcp=.
+
 ** Wireless Networking
 
 DHCP is not enabled by default. It is the philloshophy for Arch:
