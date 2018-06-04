@@ -9,6 +9,7 @@
   line wrap at the end of the screen. This might be annoying, and
   toggle this will truncate the line.
 - =browse-url-of-file=: open current file in browser
+- =org-toggle-inline-images (C-c C-x C-v)=
 
 #+BEGIN_QUOTE
 In emacs, <DEL> means backspace, <delete> means the delete key.
