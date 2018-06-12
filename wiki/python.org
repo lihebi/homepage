@@ -780,6 +780,35 @@ Finally, =help= option can be used to provide help string, and it can
 be printed out using =parser.print_help()=.  To test the parser, you
 can use =parser.parse_args(['-f', '1', 'bar'])=.
 
+** Regular Expression
+
+construction
+#+BEGIN_SRC python
+import re
+pattern = re.compile('\d+.*$')
+#+END_SRC
+
+match
+#+BEGIN_SRC python
+s = 'this is a test string'
+pattern.match(s) # return True or False
+
+#+END_SRC
+
+search
+#+BEGIN_SRC python
+pattern.findall(s)
+#+END_SRC
+
+shorthand
+#+BEGIN_SRC python
+m = re.match("[pattern]", "string")
+m.group()
+m = re.search("[pattern]", "string")
+m.group()
+re.search("pattern", "string", re.IGNORECASE)
+m = re.findall("[pattern]", "string")
+#+END_SRC
 
 ** Concurrent
 
