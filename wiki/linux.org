@@ -27,6 +27,10 @@ sudo /Applications/Install\ OS\ X\ Mavericks.app/Contents/Resources/createinstal
 #+END_EXAMPLE
 
 ** Virtualization
+Make sure the kernel module =kvm= and =virtio= is loaded. Make sure
+the CPU virtualization is enabled in BIOS.
+
+
 Using =qemu=, first create hard disk image file:
 
 #+begin_example
@@ -45,6 +49,8 @@ Finally, run the system with
 #+begin_example
 qemu-system-x86_64 -enable-kvm -m 1024 disk_image
 #+end_example
+
+Alternatively, you can use =virt-manager= as a GUI front-end.
 
 
 
