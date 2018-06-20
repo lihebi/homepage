@@ -1,0 +1,33 @@
+#+TITLE: Draft
+
+* Remarkable
+
+
+https://github.com/reHackable/maxio
+
+* Android
+
+H2O APN setting
+
+- Name: ATT Nextgenphone
+- APN: att.mvno
+- Port: 80
+- MMSC: http://mmsc.mobile.att.net
+- MMS Proxy: 66.209.11.33
+- MMS Port: 80
+- MCC: 310
+- MNC: 410
+- APN Type: default, mms, supl, fota, hipri
+- APN Protocol: IPv4/IPv6
+
+Unset but with value:
+- MVNO Type: None
+- Bearer: Unspecified
+
+Everything else Not set, including
+- Proxy
+- Username
+- Password
+- Server
+- Authentication Type
+- MVNO Value
