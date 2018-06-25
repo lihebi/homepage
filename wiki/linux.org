@@ -52,6 +52,110 @@ qemu-system-x86_64 -enable-kvm -m 1024 disk_image
 
 Alternatively, you can use =virt-manager= as a GUI front-end.
 
+* GuixSD
+
+Actually the installation process is very joyful, except that no wifi
+driver available.
+
+Download the image and
+#+BEGIN_EXAMPLE
+xz -d guixsd-install-0.14.0.system.iso.xz
+dd if=guixsd-install-0.14.0.x86_64-linux.iso of=/dev/sdX
+sync
+#+END_EXAMPLE
+
+Boot the system. The network interface can be seen via =ifconfig -a=
+or =ip a=. You need to first bring the interface up:
+
+#+BEGIN_EXAMPLE
+ifconfig interface up
+#+END_EXAMPLE
+
+Then get the IP address via
+#+BEGIN_EXAMPLE
+dhclient -v interface
+#+END_EXAMPLE
+
+Then start the ssh daemon to continue install remotely (remember to
+set password)
+
+#+BEGIN_EXAMPLE
+herd start ssh-daemon
+#+END_EXAMPLE
+
+Partitioning the disk is the same for linux distributions. The
+following is the setup for GPT.
+
+#+BEGIN_EXAMPLE
+parted /dev/sda mklabel gpt
+parted /dev/sda mkpart ESP fat32 1MiB 513MiB
+parted /dev/sda set 1 boot on
+parted /dev/sda mkpart primary linux-swap 513MiB 5GiB
+parted /dev/sda mkpart primary ext4 5GiB 100%
+#+END_EXAMPLE
+
+Then, format the disks
+#+BEGIN_EXAMPLE
+mkfs.fat -F32 /dev/sda1
+mkfs.ext4 -L my-root /dev/sda2
+#+END_EXAMPLE
+
+The label here is important, because it can be used in the config
+files, or the mount command below. Note that the ESP partition is
+mounted on =/mnt/boot/efi=, instead of =/mnt/boot=. Actually there are
+two suggested mount position for ESP partition on arch wiki, and
+=/mnt/boot/efi= should be preferred.
+
+#+BEGIN_EXAMPLE
+mount LABEL=my-root /mnt/
+mkdir -p /mnt/boot/efi
+mount /dev/sda1 /mnt/boot/efi
+#+END_EXAMPLE
+
+Then, start cow-store, making the /gnu/store copy-on-write
+
+#+BEGIN_EXAMPLE
+herd start cow-store /mnt
+#+END_EXAMPLE
+
+Move the example configuration file into the target system. The
+intention of the movement is that we will have that config file when
+we reboot the system.
+
+#+BEGIN_EXAMPLE
+mkdir /mnt/etc
+cp /etc/configuration/desktop.scm /mnt/etc/config.scm
+zile /mnt/etc/config.scm
+#+END_EXAMPLE
+
+When edit the file, we need to modify:
+1. On legacy boot, make sure =grub-bootloader= to =/dev/sda=. On UEFI,
+   it should be =grub-efi-bootloader= and =/mnt/boot/efi= (path to the
+   mount point of ESP partition). The official manual says it should
+   be =/boot/efi=, but mine shows error: "grub-install: error: failed
+   to get canonical path of /boot/efi"
+2. make sure =file-system= has the correct label and mount position
+3. If you didn't use encryption, then you need to remove the mapped
+   device section, also probably add =(title 'label)= as indicated
+   [[https://www.gnu.org/software/guix/manual/html_node/Using-the-Configuration-System.html#Using-the-Configuration-System][here]]
+
+Now install the system:
+#+BEGIN_EXAMPLE
+guix system init /mnt/etc/config.scm /mnt/
+#+END_EXAMPLE
+
+The default config install a lot of things, including gnome, and takes
+an hour. I should definitely maintain a copy of my config file.
+
+Done. Reboot.
+
+Whenever you want to update the system:
+#+BEGIN_EXAMPLE
+guix pull
+guix system reconfigure
+#+END_EXAMPLE
+
+
 
 
 * Git
