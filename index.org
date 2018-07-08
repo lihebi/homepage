@@ -1,5 +1,5 @@
-#+TITLE: Hebi Li, the Homepage
-#+OPTIONS: toc:nil
+#+TITLE: Hebi Li
+#+OPTIONS: toc:nil num:0
 
 #+ATTR_HTML: :width 200px
 [[./assets/hebi.png]]
@@ -9,7 +9,10 @@
 # #+end_quote
 
 #+begin_quote
-Life is short, I don't have space for things that don't bring me joy.
+# Life is short, I don't have space for things that don't bring me joy.
+一生有爱 何惧风飞沙
+悲白发留不住芳华 
+# --- 《天下》
 #+end_quote
 
 I'm currently a PhD student in [[https://www.cs.iastate.edu/][CS@ISU]]
@@ -17,8 +20,8 @@ starting 2014 Fall.  I graduated from Electrical Engineering (1010) of
 [[http://en.ustc.edu.cn/][USTC]] in 2014. See details in my
 [[file:cv.pdf][CV(pdf)]].
 
-You can find a list of my coding on
-[[https://github.com/lihebi][GitHub@lihebi]].
+# You can find a list of my coding on
+# [[https://github.com/lihebi][GitHub@lihebi]].
 
 
 * Projects
@@ -82,7 +85,3 @@ Exercise brings me a lot of joy and energy. I finished
 
 #+ATTR_HTML: :width 200px
 [[./assets/marathon.jpg]]
-
-
-bibliographystyle:abbrv
-bibliography:index.bib
