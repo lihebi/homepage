@@ -1,0 +1,3 @@
+#+TITLE: Exponential Growth
+
+This is the only *scalable* way to grow.

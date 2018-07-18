@@ -3,12 +3,19 @@
 - [[file:hebi.org][Extra Index]]
 - [[file:index.org][Hebi Li, the Homepage]]
 - [[file:README.org][Homepage Source Repository]]
-- [[file:thinking.org][Thinking Tmp]]
+- [[file:quotes.org][Quotes]]
 - art
   - [[file:art/README.org][Art]]
   - [[file:art/index.org][Art index]]
   - [[file:art/reading.org][Reading]]
   - [[file:art/poem.org][诗词曲]]
+- essays
+  - [[file:essays/independence.org][Collaboration]]
+  - [[file:essays/exponential-growth.org][Exponential Growth]]
+  - [[file:essays/global-view.org][Global View]]
+  - [[file:essays/research.org][Research]]
+  - [[file:essays/time.org][Time]]
+  - [[file:essays/world.org][World and Space]]
 - wiki
   - [[file:wiki/algorithm.org][Algorithm]]
   - [[file:wiki/ai.org][Artificial Intelligence]]

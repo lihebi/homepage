@@ -63,6 +63,25 @@ I started to use [[file:wiki/linux.org][Linux]] from 2011 when I got
 my first laptop. I started with Vim initially, and catch up with
 [[file:wiki/emacs.org][Emacs]] from 2015.
 
+* Essays
+
+I have this section to write down variety of my thoughts, for anyone
+who wants to know what kind of person I am, and whether they want and
+to get to know me and make friends or the other way around.
+
+The essays are consistently updated.
+
+First, I document the [[file:quotes.org][quotes]] from the great
+minds.
+
+- [[file:essays/research.org][research]]
+- [[file:essays/global-view.org][global view]]
+- the future
+- [[file:essays/exponential-growth.org][exponential growth]]
+- [[file:essays/time.org][life and time]]
+- there is the whole [[file:essays/world.org][world]] out there
+- [[file:essays/independence.org][Independence and collaboration]]
+
 * Misc
 
 I picked up skills for wooden projects and vehicle maintenance in the

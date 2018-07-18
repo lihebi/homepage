@@ -1,0 +1,5 @@
+#+TITLE: Time
+
+#+begin_quote
+Life is short, I don't have space for things that don't bring me joy.
+#+end_quote
