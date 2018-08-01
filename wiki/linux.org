@@ -156,6 +156,34 @@ guix system reconfigure
 #+END_EXAMPLE
 
 
+** Qemu Image
+
+Running GuixSD in Qemu is probably the easiest way. Download the Qemu
+image, uncompress it, and run:
+
+#+BEGIN_EXAMPLE
+qemu-system-x86_64 \
+   -net user -net nic,model=virtio \
+   -enable-kvm -m 256 /path/to/image
+#+END_EXAMPLE
+
+To bring the network up:
+#+BEGIN_EXAMPLE
+ifconfig eth0 up
+dhclient -v eth0
+#+END_EXAMPLE
+
+The system is now online. But =ping= command is not working, and
+that's fine.
+
+#+BEGIN_EXAMPLE
+guix pull
+guix package -u
+#+END_EXAMPLE
+
+
+
+
 
 
 * Git
