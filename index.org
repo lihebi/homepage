@@ -50,14 +50,12 @@ I use writing to refresh knowledge. More articles can be found on at
 Programming has been a big part of my work, I'm particularly
 passionate of writing [[file:wiki/functional.org][functional]]
 programs and climbing the ladder of abstraction. The best language for
-that is [[file:wiki/lisp.org][lisp]]. It is a family of languages,
-with [[file:wiki/common-lisp.org][Common Lisp]] and scheme
-([[file:wiki/racket.org][racket]]) being the popular ones. It is the
-ultimate meta language that is ready for tuning as an ideal tool for
-any tasks, instead of forcing you to think in its way. I believe
-programming and computing has a basis on lisp, both the history and
-future. Other languages, e.g. [[file:wiki/python.org][Python]], are
-helpful for collaborate with people.
+that is [[file:wiki/lisp.org][lisp]]. It is the ultimate meta language
+that is ready for tuning as an ideal tool for any tasks, instead of
+forcing you to think in its way. I believe programming and computing
+has a basis on lisp, both the history and future. Other languages,
+e.g. [[file:wiki/python.org][Python]], are helpful for collaborate
+with people.
 
 I started to use [[file:wiki/linux.org][Linux]] from 2011 when I got
 my first laptop. I started with Vim initially, and catch up with
