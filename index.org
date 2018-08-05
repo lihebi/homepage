@@ -10,9 +10,13 @@
 
 #+begin_quote
 # Life is short, I don't have space for things that don't bring me joy.
-一生有爱 何惧风飞沙
-悲白发留不住芳华 
+# 一生有爱 何惧风飞沙
+# 悲白发留不住芳华 
 # --- 《天下》
+
+# so busy yearning for the moon that he never saw the sixpence at his feet
+
+If you look on the ground in search of a sixpence, you don't look up, and so miss the moon.
 #+end_quote
 
 I'm currently a PhD student in [[https://www.cs.iastate.edu/][CS@ISU]]
@@ -69,8 +73,8 @@ to get to know me and make friends or the other way around.
 
 The essays are consistently updated.
 
-First, I document the [[file:quotes.org][quotes]] from the great
-minds.
+First of all, I document the [[file:quotes.org][quotes]] from the
+great minds.
 
 - [[file:essays/research.org][research]]
 - [[file:essays/global-view.org][global view]]
