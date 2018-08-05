@@ -52,6 +52,14 @@ qemu-system-x86_64 -enable-kvm -m 1024 disk_image
 
 Alternatively, you can use =virt-manager= as a GUI front-end.
 
+To have sound and better resolution:
+#+BEGIN_EXAMPLE
+qemu-system-x86_64 -enable-kvm -m 4096 -vga virtio -soundhw hda -cpu host -smp 8 ubuntu
+#+END_EXAMPLE
+
+TODO: try SPICE.
+
+
 * GuixSD
 
 Actually the installation process is very joyful, except that no wifi
