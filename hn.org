@@ -1,0 +1,8 @@
+#+TITLE: Interesting Hacker News Posts
+
+** BYTE Magazine (archive.org) https://news.ycombinator.com/item?id=17683184
+
+See also
+- https://archive.org/details/creativecomputing
+
+** 4D toys (4dtoys.com) https://news.ycombinator.com/item?id=17685858
