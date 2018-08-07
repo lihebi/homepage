@@ -3,6 +3,7 @@
 - [[file:hebi.org][Extra Index]]
 - [[file:index.org][Hebi Li, the Homepage]]
 - [[file:README.org][Homepage Source Repository]]
+- [[file:hn.org][Interesting Hacker News Posts]]
 - [[file:quotes.org][Quotes]]
 - art
   - [[file:art/README.org][Art]]
@@ -19,7 +20,7 @@
 - wiki
   - [[file:wiki/algorithm.org][Algorithm]]
   - [[file:wiki/ai.org][Artificial Intelligence]]
-  - [[file:wiki/common-lisp.org][Common Lisp]]
+  - [[file:wiki/camping.org][Camping]]
   - [[file:wiki/database.org][Data base]]
   - [[file:wiki/deep-learning.org][Deep Learning]]
   - [[file:wiki/draft.org][Draft]]
@@ -29,5 +30,4 @@
   - [[file:wiki/lisp.org][Lisp Index Page]]
   - [[file:wiki/machine-learning.org][Machine Learning]]
   - [[file:wiki/python.org][Python]]
-  - [[file:wiki/racket.org][Racket]]
   - [[file:wiki/writing.org][Techniques for Writing]]
