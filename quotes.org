@@ -1,5 +1,34 @@
 #+TITLE: Quotes
 
+* Michael Seibel
+
+#+BEGIN_QUOTE
+The best private schools are generous with financial aid.
+#+END_QUOTE
+
+* Sam Altman
+
+#+BEGIN_QUOTE
+The most successful founders are the sort of people who are low-stress
+to work with because you feel “he or she will get it done, no matter
+what it is.
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+Mediocre engineers do not build great companies.
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+The best companies are almost always mission oriented
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+When doing hiring:
+- are they smart?
+- do they get things done?
+- do I want to spend a lot of time around them?
+#+END_QUOTE
+
 * Steve Jobs
 
 #+BEGIN_QUOTE
@@ -42,4 +71,210 @@ you’ll know when you find it.
 If you want to live your life in a creative way, as an artist, you
 have to not look back too much. You have to be willing to take
 whatever you’ve done and whoever you were and throw them away.
+#+END_QUOTE
+
+* Alan Kay
+#+BEGIN_QUOTE
+If you want to make money, don't start a startup; start an
+industry. That way you make trillions instead of billions.
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+Don't do incremental things; do evolution ones.
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+I had the fortune or misfortune to learn how to read fluently starting
+at the age of three. So I had read maybe 150 books by the time I hit
+1st grade. And I already knew that the teachers were lying to me.
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+If you don't fail at least 90 percent of the time, you're not aiming
+high enough.
+#+END_QUOTE
+
+
+* Albert Einstein
+
+#+BEGIN_QUOTE
+Two things are infinite: the universe and human stupidity; and I'm not
+sure about the universe
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+There are only two ways to live your life. One is as though nothing is
+a miracle. The other is as though everything is a miracle.
+#+END_QUOTE
+
+
+* Neil Gaiman
+
+#+BEGIN_QUOTE
+When you are scared, but do it anyway, that's brave.
+#+END_QUOTE
+
+* Bernard M. Baruch
+
+#+BEGIN_QUOTE
+Be who you are and say what you feel, because those who mind don't
+matter, and those who matter don't mind.
+#+END_QUOTE
+
+
+* Paul Graham
+
+#+BEGIN_QUOTE
+There are few sources of energy so powerful as a procrastinating
+college student.
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+Odds are you just think whatever you're told.
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+You need three things to create a successful startup: to start with
+good people, to make something customers actually want, and to spend
+as little money as possible.
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+It's important for nerds to realize, too, that school is not
+life. School is a strange, artificial thing, half sterile and half
+feral. It's all-encompassing, like life, but it isn't the real
+thing. It's only temporary, and if you look, you can see beyond it
+even while you're still in it.
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+It’s hard to do a really good job on anything you don’t think about in
+the shower.
+#+END_QUOTE
+
+# #+BEGIN_QUOTE
+# You are not doing the right thing if you don't think about it in the
+# shower; you are doing a terrible thing if you are cursing it in the
+# shower. -- By Hebi Li
+# #+END_QUOTE
+
+#+BEGIN_QUOTE
+But if you're trying to choose between two theories and one gives you
+an excuse for being lazy, the other one is probably right.
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+Don't ignore your dreams; don't work too much; say what you think;
+cultivate friendships; be happy.
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+You don't need people to give you advice that doesn't surprise you.
+#+END_QUOTE
+
+* Peter Norvig
+#+BEGIN_QUOTE
+PowerPoint doesn't kill meetings. People kill meetings. But using
+PowerPoint is like having a loaded AK-47 on the table: You can do very
+bad things with it.
+#+END_QUOTE
+
+* Marvin Minsky
+#+BEGIN_QUOTE
+School is the best thing ever invented to keep you from thinking about
+something important for more than a few minutes.
+#+END_QUOTE
+
+* Pablo Picasso
+
+#+BEGIN_QUOTE
+Art is a lie that tells the truth
+#+END_QUOTE
+
+
+#+BEGIN_QUOTE
+Learn the rules like a pro, so you can break them like an artist.
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+Computers are useless. They can only give you answers.
+#+END_QUOTE
+
+* Mark Twain
+
+#+BEGIN_QUOTE
+Always do right. This will gratify some people and astonish the rest.
+#+END_QUOTE
+
+* Bob Dylan
+#+BEGIN_QUOTE
+A man is a success if he gets up in the morning and gets to bed at
+night, and in between he does what he wants to do.
+#+END_QUOTE
+
+* Albert Camus
+
+#+BEGIN_QUOTE
+Don't wait for the Last Judgement. It takes place every day.
+#+END_QUOTE
+
+* Louis Agassiz
+
+#+BEGIN_QUOTE
+I cannot afford to waste my time making money.
+#+END_QUOTE
+
+* Fred Hoyle
+
+#+BEGIN_QUOTE
+Space isn't remote at all. It's only an hour's drive away if your car
+could go straight upwards.
+#+END_QUOTE
+
+* Linus Torvalds
+
+#+BEGIN_QUOTE
+Only wimps use tape backup: real men just upload their important stuff
+on ftp, and let the rest of the world mirror it.
+#+END_QUOTE
+
+* George Box
+
+#+BEGIN_QUOTE
+All models are wrong. Some models are useful.
+#+END_QUOTE
+
+* Paul Brown
+
+#+BEGIN_QUOTE
+When you win, say nothing, when you lose say less.
+#+END_QUOTE
+
+Then, when to say a lot? When you are going to do!
+
+* Wayne Gretzky
+
+
+#+BEGIN_QUOTE
+I skate to where the puck is going to be, not where it has been.
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+Only one thing is ever guaranteed, that is that you will definitely
+not achieve the goal if you don’t take the shot.
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+The day I stop giving is the day I stop receiving. The day I stop
+learning is the day I stop growing. You miss 100% of the shots you
+don’t take.
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+If you surround yourself with quality people and great friends, the
+sky’s the limit.
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+Not doing it is certainly the best way to not getting it.
 #+END_QUOTE

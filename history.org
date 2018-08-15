@@ -1,0 +1,5 @@
+#+TITLE: History of Computing
+
+History was the present.
+
+- Sketchpad: https://en.wikipedia.org/wiki/Sketchpad

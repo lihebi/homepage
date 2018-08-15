@@ -1,1 +1,36 @@
 #+TITLE: Research
+
+From Advanced Research Project Agency (ARPA) dream by J.C.R. Licklider:
+
+#+BEGIN_QUOTE
+- *really advance* something *very important*
+- vision not goals
+- fund people not project
+- only fund the very best people
+- it's a research community, not research project
+- fund problem findings, not just problem solving
+- milestones not deadlines
+- it's baseball, not golf (??)
+- if you can make your own tools, HW, and SW, then you must.
+- argue for clarity, not to win
+- an important part of the research results are new and better researchers
+- the reaching is the reward
+#+END_QUOTE
+
+
+The research topics I think is important to work on:
+
+- Quantum Computing
+- Artificial General Intelligence (AGI)
+- Space, Universe
+- Programming Language (Lisp)
+
+The not-so-research topics I think worth working on:
+- Operating System in Lisp
+- Internet of Things (equipped with the OS above)
+- Self driving cars
+- Flying cars
+- Device that empower human physically
+  - artificial muscle that enhance strength
+  - personal aircraft/airwear
+  - personal drone
