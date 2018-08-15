@@ -888,6 +888,15 @@ Chagne resolution
 xrandr --output HDMI-1 --mode 1920x1080
 #+END_EXAMPLE
 
+Touch screen might need calibration in dual screen setup. Simply find
+the touch screen device ID (e.g. 10) from =xinput= and screen ID
+(e.g. DP-1) from =xrandr=, and execute:
+
+#+BEGIN_EXAMPLE
+xinput map-to-output <device-id> <screen-id>
+#+END_EXAMPLE
+
+
 ** cursor
 Install xcursor-themes:
 #+BEGIN_EXAMPLE
