@@ -44,13 +44,15 @@ routes using image processing, climbing the ladders, and finally put
 the followers precisely in front of the sculpture of Jici Yan. The
 micro controller was Freescale XS128. You can see
 [[https://www.youtube.com/watch?v=N0EbvINeiy4][a small video]] of our
-robot in the competition that day.
+robot in the competition that day. We also have a
+[[file:assets/robogame2012-technical-report.pdf][technical report in
+Chinese (pdf)]]
 
 * Wiki
 
 I use writing to refresh knowledge. More articles can be found on at
 [[https://wiki.lihebi.com][wiki.lihebi.com]].  Disclaimer: these are
-*my understandings*, not necessarily 100% correct. Read at your own
+/my understandings/, not necessarily 100% correct. Read at your own
 risk.
 
 Programming has been a big part of my work, I'm particularly

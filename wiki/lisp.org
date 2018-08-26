@@ -3756,3 +3756,4 @@ The system is specified using =defsystem= syntax. An example
 - The book: Lisp Lore: A Guide to Programming the LISP Machine
   http://www.archive.org/details/lisploreguidetop00brom
 - http://www.lispmachine.net/
+- A Retrospective on Paradigms of AI Programming http://norvig.com/Lisp-retro.html

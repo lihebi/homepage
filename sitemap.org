@@ -2,6 +2,7 @@
 
 - [[file:hebi.org][Extra Index]]
 - [[file:index.org][Hebi Li, the Homepage]]
+- [[file:history.org][History of Computing]]
 - [[file:README.org][Homepage Source Repository]]
 - [[file:hn.org][Interesting Hacker News Posts]]
 - [[file:quotes.org][Quotes]]
@@ -15,6 +16,8 @@
   - [[file:essays/exponential-growth.org][Exponential Growth]]
   - [[file:essays/global-view.org][Global View]]
   - [[file:essays/research.org][Research]]
+  - [[file:essays/startup.org][Startup]]
+  - [[file:essays/future.org][The future]]
   - [[file:essays/time.org][Time]]
   - [[file:essays/world.org][World and Space]]
 - wiki
@@ -28,5 +31,6 @@
   - [[file:wiki/linux.org][Linux]]
   - [[file:wiki/lisp.org][Lisp Index Page]]
   - [[file:wiki/ml.org][Machine Learning]]
+  - [[file:wiki/nlp.org][Natural Language Processing]]
   - [[file:wiki/python.org][Python]]
   - [[file:wiki/writing.org][Techniques for Writing]]
