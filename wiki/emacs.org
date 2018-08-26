@@ -1030,6 +1030,8 @@ nil. =dotimes= bind var to =[0,count)=.
 
 
 ** Packages
+- org-drill: flashcard app, using spaced repetition algorithm
+
 *** Dash.el
  https://github.com/magnars/dash.el
 
