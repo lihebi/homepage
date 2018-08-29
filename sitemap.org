@@ -1,10 +1,9 @@
 #+TITLE: Sitemap for project homepage-org
 
 - [[file:hebi.org][Extra Index]]
-- [[file:index.org][Hebi Li, the Homepage]]
+- [[file:index.org][Hebi Li]]
 - [[file:history.org][History of Computing]]
 - [[file:README.org][Homepage Source Repository]]
-- [[file:hn.org][Interesting Hacker News Posts]]
 - [[file:quotes.org][Quotes]]
 - art
   - [[file:art/README.org][Art]]
