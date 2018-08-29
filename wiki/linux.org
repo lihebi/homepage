@@ -1,5 +1,17 @@
 #+TITLE: Linux
 
+* Tmp
+** Arduino
+
+#+BEGIN_EXAMPLE
+pacman -S arduino arduino-docs arduino-avr-core
+gpasswd -a $USER uucp
+gpasswd -a $USER lock
+modprobe cdc-acm
+#+END_EXAMPLE
+
+
+
 * Installation
 On windows, you need =unetbootin=. On linux:
 
