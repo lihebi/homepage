@@ -189,7 +189,11 @@ guix pull
 guix package -u
 #+END_EXAMPLE
 
-
+** Guile
+When debugging guile files, use =C-c C-s= to change to scheme to
+=guile=, that would enable following definitions, otherwise it will
+just complain "No geiser REPL for this buffer" even after =M-x
+run-geiser=.
 
 
 
