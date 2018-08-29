@@ -830,6 +830,14 @@ Commands
 
 * Window System
 
+X generally distinguishes between two types of selection, the PRIMARY
+and the CLIPBOARD. Every time you select a piece of text with the
+mouse, the selected text is set as the PRIMARY selection. Using the
+copy function will place the selected text into the CLIPBOARD. Pasting
+using the middle mouse button will insert the PRIMARY selection,
+pasting using the paste function will insert the CLIPBOARD.
+
+
 ** xkill
 Kill all Xorg instances
 #+begin_example
