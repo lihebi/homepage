@@ -522,6 +522,11 @@ content should be changed to something like this:
 (nnvirtual "nnimap\\+cymail:INBOX\\|nnimap\\+cymail:.*/Sent Mail")
 #+END_EXAMPLE
 
+** Composing Mail
+=message-mark-inserted-region= can be used to insert cut-here code
+snippet in mail. The code will be shown in style when using Emacs as
+email reader.
+
 ** Sending Mail
 I usually just use =m= in gnus buffer to send mail. But you can also
 use =compose-mail (C-x m)= at any time, and this seems to use the same
