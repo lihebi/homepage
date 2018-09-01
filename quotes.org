@@ -1,12 +1,108 @@
 #+TITLE: Quotes
 
-* Michael Seibel
+* Education
+
+Michael Seibel
 
 #+BEGIN_QUOTE
 The best private schools are generous with financial aid.
 #+END_QUOTE
 
-* Sam Altman
+Marvin Minsky
+#+BEGIN_QUOTE
+School is the best thing ever invented to keep you from thinking about
+something important for more than a few minutes.
+#+END_QUOTE
+
+
+* Space
+Fred Hoyle
+
+#+BEGIN_QUOTE
+Space isn't remote at all. It's only an hour's drive away if your car
+could go straight upwards.
+#+END_QUOTE
+
+
+* Technology
+
+Linus Torvalds
+
+#+BEGIN_QUOTE
+Only wimps use tape backup: real men just upload their important stuff
+on ftp, and let the rest of the world mirror it.
+#+END_QUOTE
+
+
+* Mathematics
+
+George Box
+
+#+BEGIN_QUOTE
+All models are wrong. Some models are useful.
+#+END_QUOTE
+
+
+* China
+
+Napoleon Bonaparte
+
+#+BEGIN_QUOTE
+Let China sleep, for when she wakes she will shake the world.
+#+END_QUOTE
+
+
+* Time, Life, Determination, etc
+
+Paul Brown
+
+#+BEGIN_QUOTE
+When you win, say nothing, when you lose say less.
+#+END_QUOTE
+
+Then, when to say a lot? When you are going to do!
+
+Louis Agassiz
+
+#+BEGIN_QUOTE
+I cannot afford to waste my time making money.
+#+END_QUOTE
+
+Albert Camus
+
+#+BEGIN_QUOTE
+Don't wait for the Last Judgement. It takes place every day.
+#+END_QUOTE
+
+Bob Dylan
+#+BEGIN_QUOTE
+A man is a success if he gets up in the morning and gets to bed at
+night, and in between he does what he wants to do.
+#+END_QUOTE
+
+Mark Twain
+
+#+BEGIN_QUOTE
+Always do right. This will gratify some people and astonish the rest.
+#+END_QUOTE
+
+Neil Gaiman
+
+#+BEGIN_QUOTE
+When you are scared, but do it anyway, that's brave.
+#+END_QUOTE
+
+Bernard M. Baruch
+
+#+BEGIN_QUOTE
+Be who you are and say what you feel, because those who mind don't
+matter, and those who matter don't mind.
+#+END_QUOTE
+
+
+* By People
+
+** Sam Altman
 
 #+BEGIN_QUOTE
 The most successful founders are the sort of people who are low-stress
@@ -29,7 +125,7 @@ When doing hiring:
 - do I want to spend a lot of time around them?
 #+END_QUOTE
 
-* Steve Jobs
+** Steve Jobs
 
 #+BEGIN_QUOTE
 Your time is limited, don’t waste it living someone else’s life. Don’t
@@ -73,7 +169,12 @@ have to not look back too much. You have to be willing to take
 whatever you’ve done and whoever you were and throw them away.
 #+END_QUOTE
 
-* Alan Kay
+** Alan Kay
+
+#+BEGIN_QUOTE
+People who are really serious about software should make their own hardware.
+#+END_QUOTE
+
 #+BEGIN_QUOTE
 If you want to make money, don't start a startup; start an
 industry. That way you make trillions instead of billions.
@@ -95,7 +196,7 @@ high enough.
 #+END_QUOTE
 
 
-* Albert Einstein
+** Albert Einstein
 
 #+BEGIN_QUOTE
 Two things are infinite: the universe and human stupidity; and I'm not
@@ -108,21 +209,8 @@ a miracle. The other is as though everything is a miracle.
 #+END_QUOTE
 
 
-* Neil Gaiman
 
-#+BEGIN_QUOTE
-When you are scared, but do it anyway, that's brave.
-#+END_QUOTE
-
-* Bernard M. Baruch
-
-#+BEGIN_QUOTE
-Be who you are and say what you feel, because those who mind don't
-matter, and those who matter don't mind.
-#+END_QUOTE
-
-
-* Paul Graham
+** Paul Graham
 
 #+BEGIN_QUOTE
 There are few sources of energy so powerful as a procrastinating
@@ -172,20 +260,15 @@ cultivate friendships; be happy.
 You don't need people to give you advice that doesn't surprise you.
 #+END_QUOTE
 
-* Peter Norvig
+** Peter Norvig
 #+BEGIN_QUOTE
 PowerPoint doesn't kill meetings. People kill meetings. But using
 PowerPoint is like having a loaded AK-47 on the table: You can do very
 bad things with it.
 #+END_QUOTE
 
-* Marvin Minsky
-#+BEGIN_QUOTE
-School is the best thing ever invented to keep you from thinking about
-something important for more than a few minutes.
-#+END_QUOTE
 
-* Pablo Picasso
+** Pablo Picasso
 
 #+BEGIN_QUOTE
 Art is a lie that tells the truth
@@ -200,59 +283,11 @@ Learn the rules like a pro, so you can break them like an artist.
 Computers are useless. They can only give you answers.
 #+END_QUOTE
 
-* Mark Twain
 
-#+BEGIN_QUOTE
-Always do right. This will gratify some people and astonish the rest.
-#+END_QUOTE
 
-* Bob Dylan
-#+BEGIN_QUOTE
-A man is a success if he gets up in the morning and gets to bed at
-night, and in between he does what he wants to do.
-#+END_QUOTE
 
-* Albert Camus
 
-#+BEGIN_QUOTE
-Don't wait for the Last Judgement. It takes place every day.
-#+END_QUOTE
-
-* Louis Agassiz
-
-#+BEGIN_QUOTE
-I cannot afford to waste my time making money.
-#+END_QUOTE
-
-* Fred Hoyle
-
-#+BEGIN_QUOTE
-Space isn't remote at all. It's only an hour's drive away if your car
-could go straight upwards.
-#+END_QUOTE
-
-* Linus Torvalds
-
-#+BEGIN_QUOTE
-Only wimps use tape backup: real men just upload their important stuff
-on ftp, and let the rest of the world mirror it.
-#+END_QUOTE
-
-* George Box
-
-#+BEGIN_QUOTE
-All models are wrong. Some models are useful.
-#+END_QUOTE
-
-* Paul Brown
-
-#+BEGIN_QUOTE
-When you win, say nothing, when you lose say less.
-#+END_QUOTE
-
-Then, when to say a lot? When you are going to do!
-
-* Wayne Gretzky
+** Wayne Gretzky
 
 
 #+BEGIN_QUOTE
