@@ -202,6 +202,61 @@ guix pull
 guix package -u
 #+END_EXAMPLE
 
+The qemu image is 1.2G. To expand it, first expand the image size:
+
+#+BEGIN_EXAMPLE
+qemu-img resize guixsd-vm-image-0.15.0.x86_64-linux  +10G
+#+END_EXAMPLE
+
+Boot the image
+
+#+BEGIN_EXAMPLE
+qemu-system-x86_64 -net user -net nic,model=virtio -vga virtio -enable-kvm -m 2048 -cpu host -smp 8 guixsd-vm-image-0.15.0.x86_64-linux
+#+END_EXAMPLE
+
+The partition need not be umounted.
+
+#+BEGIN_EXAMPLE
+fdisk /dev/sda
+d 2
+d 1 # note that this starts from 2048
+n # create partition that starts also from 2048
+a # check the boot flag
+w # write
+#+END_EXAMPLE
+
+Then, reload the partition table:
+#+BEGIN_EXAMPLE
+partprobe
+#+END_EXAMPLE
+
+Then resize the filesystem via =resize2fs=
+
+#+BEGIN_EXAMPLE
+resize2fs /dev/sda
+#+END_EXAMPLE
+
+The image needs to connect internet.
+
+#+BEGIN_EXAMPLE
+dhclient eth0
+#+END_EXAMPLE
+
+You are online. The =ping= command will not work, you can check
+network with =guix download= command.
+
+Installing =git= is not enough. It says certificate is needed. You
+need probably =nss= and =nss-certs=. It also shows some environment
+variables needed (how to show this information again? Are they really
+belong to =nss= or =git=?)
+
+#+BEGIN_EXAMPLE
+export GIT_SSL_CAINFO="/root/.guix-profile/etc/ssl/certs/ca-certificates.crt"
+export GIT_EXEC_PATH="/root/.guix-profile/libexec/git-core"
+#+END_EXAMPLE
+
+
+
 ** Guile
 When debugging guile files, use =C-c C-s= to change to scheme to
 =guile=, that would enable following definitions, otherwise it will
@@ -409,6 +464,19 @@ at =http://git.lihebi.com/cgit=.
 In practice, I cannot push a lot of pdf files, it seems to be the
 problem of lighttpd configuration for max body size, but haven't look
 into that yet. Cloning does not have such problem though.
+
+#+BEGIN_EXAMPLE
+If I don't have the Let's Encrypt certificate, I cannot use
+https. Then, I can only clone, but not push via git-http-backend
+
+/var/lib/certbot/renew-certificates may need to be run manually, if
+the /etc/letsencrypt/live/example.com does not exist
+
+But, my server is inside IASTATE, Let's Encrypt cannot find my IP
+address. Thus, nothing can be done actually.
+#+END_EXAMPLE
+
+
 
 
 ** Configuration
