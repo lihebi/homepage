@@ -4,10 +4,6 @@
 #+ATTR_HTML: :width 200px
 [[./assets/hebi.png]]
 
-# #+begin_quote
-# 虽千万人，吾往矣。
-# #+end_quote
-
 #+begin_quote
 # Life is short, I don't have space for things that don't bring me joy.
 # 一生有爱 何惧风飞沙
@@ -93,19 +89,12 @@ great minds.
 
 * Misc
 
-I picked up skills for wooden projects and vehicle maintenance in the
-US. I crafted a standing desk, a versatile workbench, a simple sofa
-whose top is a slider for car engineering work. I have a Kawasaki
-Ninja 300 and a miata for road trip, and do all the maintenance
-myself, including replacement of engine oil and filter, transmission
-oil, differential oil, coolant, spark plug, air filter, break fluid,
-clutch fluid, and tire rotation.
+- [[vehicle.org][vehicle]]
 
-I enjoyed traveling. I was driving along Road 1 in California along
-San Diego and Los Angeles in 2015 Spring, experiencing Orlando
-Universal Studio and cruising to Nassau in 2016 Winter, relaxing in
-Las Vegas 2017 Spring.  I drove the round trip from Iowa to Seattle
-2017 Summer.
+I have a Kawasaki Ninja 300 and a miata for road trip, and do all the
+maintenance myself, including replacement of engine oil and filter,
+transmission oil, differential oil, coolant, spark plug, air filter,
+break fluid, clutch fluid, and tire rotation.
 
 Exercise brings me a lot of joy and energy. I finished
 [[file:assets/finisher_certificate.pdf][full marathon (pdf)]] in 4h
