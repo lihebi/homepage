@@ -5,6 +5,7 @@
 - [[file:history.org][History of Computing]]
 - [[file:README.org][Homepage Source Repository]]
 - [[file:quotes.org][Quotes]]
+- [[file:vehicle.org][Vehicle]]
 - art
   - [[file:art/README.org][Art]]
   - [[file:art/index.org][Art index]]

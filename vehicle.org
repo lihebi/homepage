@@ -2,7 +2,8 @@
 
 * Maintenance Schedule
 
-bought: 05/08/2017, 26800 miles
+** Miata
+Bought: 05/08/2017 from Omaha, with 26800 miles on it.
 
 Replace:
 | Item                                           | Schedule                | Log                    |
@@ -14,6 +15,7 @@ Replace:
 |                                                |                         | 42887 miles 04/11/2018 |
 |                                                |                         | 45445 miles 07/12/2018 |
 |                                                |                         | 48752 miles 07/27/2018 |
+|                                                |                         | 52030 miles 09/06/2018 |
 | Engine Timing belt (and front crankshaft seal) | 60,000                  |                        |
 | Manual Transmission Oil                        | 60,000                  | 34015 miles 07/18/2017 |
 | Rear Differential Oil                          | 60,000                  | 33950 miles 07/16/2017 |
@@ -21,7 +23,9 @@ Replace:
 |------------------------------------------------+-------------------------+------------------------|
 | Air filter                                     | 30,000 / 24 (me 15,000) | 29340 miles 06/29/2017 |
 |                                                |                         | 33900 miles 07/13/2017 |
+|                                                |                         | 52030 miles 09/06/2018 |
 | Spark Plug                                     | 30,000 / 24 (me 15,000) | 29340 miles 06/29/2017 |
+|                                                |                         | 52030 miles 09/06/2018 |
 |------------------------------------------------+-------------------------+------------------------|
 | Wiper                                          | 15,000 miles            | 05/11/2017             |
 |                                                |                         | 08/05/2018             |
@@ -42,10 +46,8 @@ Inspection:
 |                    |             | 38813 miles 12/16/2017 |
 |                    |             | 45445 miles 07/12/2018 |
 
-
-
 ** Ninja 300
-buy: 2015 summer
+Bought on the beautiful summer of 2015.
 
 | Item                    | Schedule | Log                    |
 |-------------------------+----------+------------------------|
@@ -55,6 +57,7 @@ buy: 2015 summer
 |                         |          | 6485 miles, 11/12/2017 |
 | F/R break fluid change  |          | 05/15/2017             |
 | air filter              |          | 6600 miles, 07/10/2018 |
+| spark plug              |          | 6700 miles, 07/29/2018 |
 
 
 * Miata
