@@ -16,9 +16,11 @@ starting 2014 Fall.  I graduated from Electrical Engineering (1010) of
 [[http://en.ustc.edu.cn/][USTC]] in 2014. See details in my
 [[file:cv.pdf][CV(pdf)]].
 
-# You can find a list of my coding on
-# [[https://github.com/lihebi][GitHub@lihebi]].
-
+My (research) interests are quite broad:
+- Programming Language (but not quite Software Engineering)
+- Artificial (General) Intelligence (but not quite Machine Learning)
+- Operating System (well, I mean Lisp Machines)
+- Embedded system (IoT, robotics, you name it)
 
 * Projects
 
@@ -42,27 +44,34 @@ Chinese (pdf)]]
 
 * Wiki
 
-I use writing to refresh knowledge. More articles can be found on at
-[[https://wiki.lihebi.com][wiki.lihebi.com]].  Disclaimer: these are
-/my understandings/, not necessarily 100% correct. Read at your own
-risk.
+This is a personal wiki, on various topics. An old archive of articles
+can be found on at
+[[https://wiki.lihebi.com][wiki.lihebi.com]]. Although I name it
+"wiki", it is different from hyper-linked wikis aiming at connecting
+concepts. Instead, these articles document highly integrated and
+hierarchical knowledge, typically one big page per-topic. In this
+sense it is more like a reference. There are many benefits of writing
+a personal reference instead of using official ones:
+1. I can control the granularity and focus on the topic 
+2. possibly add my thoughts, and
+3. a consistent writing style
 
-Programming has been a big part of my work, I'm particularly
-passionate of writing [[file:wiki/functional.org][functional]]
-programs and climbing the ladder of abstraction. The best language for
-that is [[file:wiki/lisp.org][lisp]]. It is the ultimate meta language
-that is ready for tuning as an ideal tool for any tasks, instead of
-forcing you to think in its way. I believe programming and computing
-has a basis on lisp, both the history and future. Other languages,
-e.g. [[file:wiki/python.org][Python]], are helpful for collaborate
-with people.
+#+BEGIN_QUOTE
+Disclaimer: these are /my understandings/, not necessarily 100%
+correct. Read at your own risk.
+#+END_QUOTE
 
-I started to use [[file:wiki/linux.org][Linux]] from 2011 when I got
-my first laptop. I started with Vim initially, and catch up with
-[[file:wiki/emacs.org][Emacs]] from 2015.
+- [[file:wiki/functional.org][functional programming]]
+- [[file:wiki/lisp.org][lisp]]: the language of the history and, of
+  course, the future
+- [[file:wiki/python.org][Python]]: communication language
+- [[file:wiki/writing.org][markup languages for writing]]: org, latex
+- [[file:wiki/linux.org][Linux]]: the OS to-go, before the revival of
+  Lisp Machine
+- [[file:wiki/emacs.org][Emacs]]: poor-man's lisp machine
+- [[file:wiki/ai.org][AI]]: currently very preliminary
+- [[file:wiki/ml.org][ML]]: currently very preliminary
 
-Some writings about [[file:wiki/ai.org][AI]] and
-[[file:wiki/ml.org][ML]].
 
 * Essays
 
@@ -85,12 +94,7 @@ great minds.
 
 * Misc
 
-- [[vehicle.org][vehicle]]
-
-I have a Kawasaki Ninja 300 and a miata for road trip, and do all the
-maintenance myself, including replacement of engine oil and filter,
-transmission oil, differential oil, coolant, spark plug, air filter,
-break fluid, clutch fluid, and tire rotation.
+- [[file:vehicle.org][vehicle]]
 
 Exercise brings me a lot of joy and energy. I finished
 [[file:assets/finisher_certificate.pdf][full marathon (pdf)]] in 4h
