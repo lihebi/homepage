@@ -99,6 +99,33 @@ Be who you are and say what you feel, because those who mind don't
 matter, and those who matter don't mind.
 #+END_QUOTE
 
+Michel de Montaigne
+#+BEGIN_QUOTE
+There is no conversation more boring than the one where everybody
+agrees.
+#+END_QUOTE
+
+Albert Szent-Gyorgi
+#+BEGIN_QUOTE
+Discovery is seeing what everyone else has seen and thinking what no
+one else has thought.
+#+END_QUOTE
+
+* Art
+
+John A. Locke
+
+#+BEGIN_QUOTE
+That which is static and repetitive is boring. That which is dynamic
+and random is confusing. In between lies art.
+#+END_QUOTE
+
+Alan Turing
+#+BEGIN_QUOTE
+Science is a differential equation. Religion is a boundary condition.
+#+END_QUOTE
+
+
 
 * By People
 
