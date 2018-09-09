@@ -5,14 +5,10 @@
 [[./assets/hebi.png]]
 
 #+begin_quote
-# Life is short, I don't have space for things that don't bring me joy.
-# 一生有爱 何惧风飞沙
-# 悲白发留不住芳华 
-# --- 《天下》
-
 # so busy yearning for the moon that he never saw the sixpence at his feet
 
-If you look on the ground in search of a sixpence, you don't look up, and so miss the moon.
+If you look on the ground in search of a sixpence, you don't look up,
+and so miss the moon.
 #+end_quote
 
 I'm currently a PhD student in [[https://www.cs.iastate.edu/][CS@ISU]]
