@@ -1,5 +1,26 @@
 #+TITLE: Artificial Intelligence
 
+* Tmp
+
+- Conditional Random Field (CRF): 
+
+- Markov property: a stochastic process has Markov property, if the
+  conditional probabilistic distribution of future states depends only
+  on current state, not the sequence of events preceded it.
+- Markov process: a stochastic process with Markov property
+- Hidden Markov Model (HMM): Markov process with unobserved states.
+- strong Markov property: it indicates ordinary Markov property. It
+  introduces an extra variable time t, and says for each t, some
+  property holds.
+- Markov assumption: assume Markov property holds in a given model
+- Markov Random Field (MRF): THIS IS JUST THE MARKOV NETWORK. It
+  extend the Markov property to two or more *dimensions*, or to random
+  variables defined for an *interconnected network of items*, instead
+  of a sequence, such as the graphical model.
+- Ising model: this is an example of Markov Random Field.
+- Markov chain: a discrete-time stochastic process satisfying the
+  Markov property
+
 * Graphical Model
 
 ** Graph Background
@@ -745,17 +766,19 @@ hard.
 
 The /Expectation Maximization (EM)/ method is especially designed for
 optimizing the likelihood function in case of missing data: it tries
-to fill in the missing data. Indeed, this is a chicken and egg
-problem: learning the parameters and hypothesizing values for
-unobserved variables, both of them are fairly easy given the solution
-to the other. EM algorithm solve this chicken and egg problem using a
-bootstrap approach: it starts with some arbitrary starting point, and
-repeatedly apply the two steps, until converge. The expectation step
-is to use the current parameter assignment, to complete the data. The
-maximization step treats the completed data as observed, perform
-maximum likelihood estimation, and learn a new set of parameters. The
-algorithm guarantee that each iteration can improve the log-likelihood
-function, thus the process is guaranteed to converge.
+to fill in the missing data. Originally developed by Dempster
+cite:1977-Journal-Dempster-Maximum (50,000+ citations). Indeed, this
+is a chicken and egg problem: learning the parameters and
+hypothesizing values for unobserved variables, both of them are fairly
+easy given the solution to the other. EM algorithm solve this chicken
+and egg problem using a bootstrap approach: it starts with some
+arbitrary starting point, and repeatedly apply the two steps, until
+converge. The expectation step is to use the current parameter
+assignment, to complete the data. The maximization step treats the
+completed data as observed, perform maximum likelihood estimation, and
+learn a new set of parameters. The algorithm guarantee that each
+iteration can improve the log-likelihood function, thus the process is
+guaranteed to converge.
 
 In terms of structure learning, the dominate approach here is score
 based one. We apply /laplace approximation/, and use the /Laplace
