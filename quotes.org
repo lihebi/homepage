@@ -33,6 +33,19 @@ Only wimps use tape backup: real men just upload their important stuff
 on ftp, and let the rest of the world mirror it.
 #+END_QUOTE
 
+Eric S. Raymond on Plan9's failure.
+
+#+BEGIN_QUOTE
+The most dangerous enemy of a better solution is an existing codebase
+that is just good enough.
+#+END_QUOTE
+
+Richard Feynman
+
+#+BEGIN_QUOTE
+What I cannot create, I do not understand.
+#+END_QUOTE
+
 
 * Mathematics
 
