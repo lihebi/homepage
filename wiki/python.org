@@ -1121,3 +1121,5 @@ has some support for id and class, the =select= is easier to use.
 - =s.select(a[href^=xxx])=: filtering based on attribute values
 
 
+
+** click http://click.pocoo.org/5/
