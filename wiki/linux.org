@@ -588,6 +588,38 @@ ip link show <dev>
 
 To kill apps listening on a port, use =sudo fuser -k 8080/tcp=.
 
+** SSH
+Dropbear is a replacement of OpenSSH.
+
+To set up RSA login:
+#+BEGIN_EXAMPLE
+# generate ~/.ssh/id_rsa and ~/.ssh/id_rsa.pub
+ssh-keygen
+# copy RSA to remote
+ssh-copy-id user@host
+#+END_EXAMPLE
+
+This will put the content of the public key onto the server's
+=~/.ssh/authorized_keys=. Which is to say, you can do the same thing
+manually:
+
+#+BEGIN_EXAMPLE
+cat ~/.ssh/id_rsa.pub | ssh user@host "cat >> .ssh/authorized_keys"
+#+END_EXAMPLE
+
+
+In =~/.ssh/config=, you can actually set up alias for remote
+host. Then you will use that alias in place of =user@host=.
+
+#+BEGIN_EXAMPLE
+host remarkable
+     Hostname 10.11.99.1
+     User root
+#+END_EXAMPLE
+
+A side note: remarkable password can be changed by editing
+=/etc/remarkable.conf= and a reboot.
+
 ** Wireless Networking
 
 DHCP is not enabled by default. It is the philloshophy for Arch:
@@ -1240,6 +1272,22 @@ execution permission.
 =F8= to open context menu, and =f= to fullscreen. Once fullscreened,
 the host WM shortcut will not be honored.
 
+On Ubuntu, the =vncserver= will by default only listen on
+localhost. Thus, need to pass =-localhost no= to enable outside
+access. Nothing related to firewall (iptables or ufw). Enabling =ufw=
+will actually block connection, even if I use =ufw enable; ufw allow
+5901/tcp=. Just disable it.
+
+Also, on Ubuntu, the clipboard seems not to be enabled by default. The
+problem is on the server side. =vncconfig= is the helper program
+specific to maintain the clipboard. You will need =vncconfig -nowin&=
+to start it. Probably add this to my =.vnc/xstartup=? This is not a
+problem on Arch.
+
+On GuixSD, there is no tigervnc client. I use vinagre instead.
+
+
+
 * System Management
 The hardware beep sound is known as PC Speaker. To disable, simply
 remove the kernel module:
@@ -1332,9 +1380,26 @@ swapon -s
 Create swap file:
 #+BEGIN_EXAMPLE
 dd if=/dev/zero of=/path/to/extraswap bs=1M count=4096
+#+END_EXAMPLE
+
+Or using =fallocate=
+#+BEGIN_EXAMPLE
+fallocate -l 4096M /path/to/extraswap
+#+END_EXAMPLE
+
+Set the permission. A world-readable swap file is a huge
+vulnerability.
+
+#+BEGIN_EXAMPLE
+chmod 600 /swapfile
+#+END_EXAMPLE
+
+Format it:
+#+BEGIN_EXAMPLE
 mkswap /path/to/extraswap
 #+END_EXAMPLE
 
+Swap on/off:
 #+BEGIN_EXAMPLE
 swapon /path/to/extraswap
 swapoff /path/to/extraswap
