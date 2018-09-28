@@ -263,6 +263,21 @@ When debugging guile files, use =C-c C-s= to change to scheme to
 just complain "No geiser REPL for this buffer" even after =M-x
 run-geiser=.
 
+** Guix
+
+- guix package --search-paths: show search path
+- guix channel: ???
+
+- A good reference: https://gitlab.com/pjotrp/guix-notes/
+- chromium package channel: https://gitlab.com/mbakke/guix-chromium
+  - How to use this channel?? my guix pull is showing me this error:
+
+#+BEGIN_EXAMPLE
+guix pull: error: failed to load '/home/hebi/.config/guix/channels.scm':
+system/base/compile.scm:144:21: In procedure compile-file:
+failed to create path for auto-compiled file "/home/hebi/.config/guix/channels.scm"
+#+END_EXAMPLE
+
 
 
 

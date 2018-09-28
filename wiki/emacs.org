@@ -278,6 +278,10 @@ IRC commands
   - =flycheck-describe-checker=
   - =flycheck-list-errors=
 
+** flyspell
+- =flyspell-auto-correct-word= (=C-.=)
+- =flyspell-goto-next-error= (=C-,=)
+
 ** AUCTex
   - =C-c C-c=: tex-compile
 
