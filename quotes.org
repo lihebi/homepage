@@ -1,5 +1,12 @@
 #+TITLE: Quotes
 
+* Tmp
+Yoda in "The Empire Strikes Back":
+
+#+BEGIN_QUOTE
+You must unlearn what you have learned.
+#+END_QUOTE
+
 * Education
 
 Michael Seibel

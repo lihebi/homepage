@@ -21,6 +21,38 @@
 - Markov chain: a discrete-time stochastic process satisfying the
   Markov property
 
+** Gibbs sampling
+It is one kind of Monte Carlo Markov Chain method, for sampling from
+posterior distribution. The key is to sample from variables'
+conditional distribution: for each variable, sample from the
+conditional distribution where all other variables are fixed to their
+previous value.
+
+$$x^i_1 \sim p(X_1=x_1 | X_2 = x^{i-1}_2, X_3=.., X_4=.., ...)$$
+
+The convergence is when the sample values have the same distribution
+as their posterior joint distribution. The theory of MCMC guarantees
+that the stationary distribution of the samples is the target joint
+posterior distribution.
+
+- How do we know they converge?
+- what do you mean by "sample from conditional distribution"?
+
+** Explaining away effect
+Two causes for an effect, if we can confirm one cause, it will reduce
+the happen of the other.
+
+However, one cause does not provide any evidence of the other cause,
+because they are independent (??). But in probability theory, it
+SHOULD reduce the other cause.
+
+For example, you scored 100/100 out of a test, can have two causes:
+- paper is too easy
+- you are too smart
+Given that the paper is too easy, I tend not to think you are too
+smart.
+
+
 * Graphical Model
 
 ** Graph Background

@@ -1,5 +1,30 @@
 #+TITLE: Python
 
+#+BEGIN_QUOTE
+Pseudocode which runs.
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+The best program to do a job is one which already ships the solution.
+#+END_QUOTE
+
+Aphorism 13 in the Zen of Python by Tim Peters:
+
+#+BEGIN_QUOTE
+There should be one – and preferably only one – obvious way to do it.
+#+END_QUOTE
+
+
+Python is nice, sure.  But only until it stats warping your mind in
+the very late of the game. See https://www.draketo.de/proj/py2guile/
+for an insightful reference.
+
+#+BEGIN_QUOTE
+When you start thinking about using code-templates in your editor to
+comply with the requirements of your language, then it is likely that
+something is wrong with the language.
+#+END_QUOTE
+
 * Language
 The ultimate reference:
 # - language reference: https://docs.python.org/2/reference/
