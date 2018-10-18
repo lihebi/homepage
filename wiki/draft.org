@@ -31,3 +31,15 @@ Everything else Not set, including
 - Server
 - Authentication Type
 - MVNO Value
+
+* C
+** Context Sensitivity of C
+- https://eli.thegreenplace.net/2007/11/24/the-context-sensitivity-of-cs-grammar/
+- The lexer hack https://en.wikipedia.org/wiki/The_lexer_hack
+- Clang use a thin lexer to avoid this problem, which is what I'm
+  going to use as well
+
+
+Here is the C lexer rule and grammar for yacc
+- lex: http://www.quut.com/c/ANSI-C-grammar-l.html
+- yacc: http://www.quut.com/c/ANSI-C-grammar-y.html
