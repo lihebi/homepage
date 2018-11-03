@@ -45,6 +45,8 @@ Inspection:
 | Tire Rotation      | 6000-8000   | 34060 miles 07/22/2017 |
 |                    |             | 38813 miles 12/16/2017 |
 |                    |             | 45445 miles 07/12/2018 |
+|                    |             | 52700 miles 10/10/2018 |
+
 
 ** Ninja 300
 Bought on the beautiful summer of 2015.
