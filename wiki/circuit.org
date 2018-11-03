@@ -1,0 +1,190 @@
+#+TITLE: Circuit
+
+* Reference
+** [#A] Foundations of analog and digital electronic circuits cite:2005-Book-Agarwal-Foundations
+
+* Circuit Analysis
+
+/Lumped element model/ simplifies the description of the behaviour of
+spatially distributed physical systems into a topology consisting of
+discrete entities that approximate the behaviour of the distributed
+system under certain assumptions.
+
+In another word, it abstracts real items into a discrete finite space,
+such as a battery (voltage source) and a resistor circuit.
+
+Circuit analysis is basically solving the equations imposed with the
+following laws:
+- Kirchhoff's Current Law (KCL) :: the current flowing out of any node
+     in a circuit must equal the current flowing in.
+- Kirchhoff's Voltage Law (KVL) :: The algebraic sum of the branch
+     voltages around any closed path in a network must be zero.
+- Ohm's law :: V=IR, voltage, current, resistance
+
+There are several analysis methods:
+- node analysis method :: We choose a node as ground, as a
+     reference. The voltages of all other nodes can be
+     represented. But it seems to be just apply KCL and KVL to get
+     equations and solve them.
+- Superposition method :: This is for a circuit with multiple
+     independent sources. The method analyzes each of them separately,
+     by setting the other sources to zero:
+  - replace voltage source with a short circuit
+  - replace the current source with an open circuit
+  The results are summed together.
+
+The superposition method has some further extensions:
+- Thevenin's Theorem :: Any combination of batteries and resistances
+     with two terminals can be replaced by a single voltage source e
+     ($v_{TH}$) and a single series resistor r (called /Thevenin's
+     equivalent resistance/, $R_{TH}$). The value of e is the open
+     circuit voltage at the terminals, and the value of r is e divided
+     by the current with the terminals short circuited. The two
+     circuits are called /Thevenin equivalent circuit/.
+- Norton Theorem :: Any collection of batteries and resistances with
+                    two terminals is electrically equivalent to an
+                    ideal current source i (i_N) in parallel with a
+                    single resistor r (R_N). The value of r is the
+                    same as that in the Thevenin equivalent and the
+                    current i can be found by dividing the open
+                    circuit voltage by r.
+- It is easy to see that the two theorems are equivalent, and $v_{TH}
+t  = i_N R_{TH}$
+
+The power source can be:
+- independent voltage source
+- independent current source
+- Voltage-Controlled Current Source (VCCS) :: $i_{out} = f(v_{in})$,
+     in the circuit, it has a diamond shape. The linear VCCS is
+     $i_{out} = g v_{in}$ where g is called /transconductance/.
+- Current Controlled Current Source (CCCS) :: $i_{out} = \alpha
+     i_{in}$, $\alpha$ is called current transfer ratio.
+- Current-Controlled Voltage Source (CCVS) :: $v_{out} = r i_{in}$, r
+     is called /transresistance/.
+- Voltage-Controlled Voltage Source (VCVS) :: $v_{out} = \mu v_{in}$,
+     $\mu$ is referered to as a /voltage transfer ratio/.
+
+Some of the circuit pattern is frequent enough to have their notations:
+- parallel resistors: $R_1 || R_2 = \frac{R_1R_2}{R_1 + R_2}$. This
+  notations can be used for multiple parallel resistors, as $R_1 ||
+  R_2 || R_3$.
+
+There is not a lot of nonlinear circuits, as in the textbook the
+example is a diode.
+
+#+BEGIN_QUOTE
+A diode is a two-terminal electronic component that conducts current
+primarily in one direction (asymmetric conductance); it has low
+(ideally zero) resistance in one direction, and high (ideally
+infinite) resistance in the other.
+#+END_QUOTE
+
+But the specific v-i non-linear relation is $i_D = I_s
+(e^{\frac{v_D}{V_{TH}}} - 1)$, where I_s and V_{TH} are constants,
+typically $10^{-12} A$ and $0.025V$.
+
+There are several analysis method for non-linear circuits:
+1. directly use the relation equation
+2. graphical analysis
+3. piecewise linear
+4. incremental analysis, i.e. use derivation and integral
+
+Some other notes:
+- Power = VI
+- Pull down resistor R_{pd}, pull up resistor R_{pu}. These are used
+  for a clean stable voltage, and also for controlling power
+  consumption.
+
+** TODO Pictures of typical circuit elements
+
+* Digital abstraction
+
+Basically we want to transform the analog voltage level to binary 0
+and 1. The /static discipline/ is the specification to define the
+transformation. There is a /low voltage threshold/ $V_L$ and /high
+voltage threshold/ $V_H$. The space in between is called /forbidden
+region/. The other regions are the valid region.
+
+But we also need to consider noise. Suppose we have a sender and a
+receiver. We need to have different voltage level requirement for them
+to allow a margin for noise. Thus, we will have $5V > V_{OH} > V_{IH}
+> V_{IL} > V_{OL} > 0V$. O stands for out, I stands for in. Clearly,
+we are proposing a stricter requirement for the sender. The difference
+of V_{OH} and V_{IH} is called the /Noise Margin/, i.e. $NM_0 =
+V_{IL} - V_{OL}$ for logical 0, $NM_1 = V_{OH} - V_{IH}$ for
+logical 1.
+
+Logical gate notations:
+- AB: and
+- A+B: or
+- \bar{A}: not
+
+An implementation of logical gate is simply accepting two terminals,
+and output the voltage that is in the valid region of the desired
+result. To implement the logical gates, we typically need a switch in
+serial or parallel. However, mechanical switches require a form of
+physical pressure, thus we need a electronic switch.  /Meta Oxide
+Semiconductor Field-Effect Transistor (MOSFET)/ is one such device, a
+three-terminal switch device. It contains three terminals
+- control terminal :: called the gate G
+- input terminal :: called the drain D
+- output terminal :: called the source S
+It has a simple v-i characteristics:
+- if v_{GS} < V_T, i_{DS} = 0
+- otherwise, v_{DS} = 0. Thus it is a short circuit. In practice there
+  is a small resistance (R_{ON}). If we ignore it, the model is called
+  /switch (S) model/. Otherwise, we are looking at /switch-resistor
+  (SR) model/.
+
+Amplifiers also have three ports: the input (control) port, the output
+port, and the power port (because in order to amplify the signal, we
+need to supply power). It can amplify voltage, current, or both (with
+possibly different gain ratio).
+
+Amplifiers applications:
+1. signal transition in the presence of noise, because for the same
+   amount of noise, the larger the signal, the stabler.
+2. buffering. A buffer isolate one part of a system from another. Many
+   sensors produce a voltage signal, but cannot supply a large amount
+   of current. A buffer device can replicate the sensor's voltage
+   signal while also provides a large current.
+
+The implementation of amplifiers also uses the MOSFET, but different
+properties. It turns out that, a MOSFET will operate in /saturation
+region/ if the following two conditions are satisfied:
+- $v_{GS} \le V_T$
+- $v_{DS} \le v_{GS} - v_T$ (this is more important)
+
+This is called the saturation discipline:
+
+#+BEGIN_QUOTE
+The saturation discipline simply says that the amplifier be operated
+in the saturation region of the MOSFET
+#+END_QUOTE
+
+If these conditions are satisfied, we are looking at the
+/Switch-Current Source (SCS) model/ of MOSFET, with the following
+characteristics:
+- $i_{DS} = \frac{K(v_{GS}-v_T)^2}{2}$ if $v_{GS} \le V_T$. This is
+  more important. K is a constant related to the physical properties
+  of the MOSFET.
+- $i_{DS} = 0$ if $v_{GS} < V_T$
+
+The amplifier is a non-linear transfer function of voltage, and the
+analytical result is: $v_O = V_S - K \frac{(v_{IN} - V_T)^2}{2}
+R_L$. We also care about what is the range of valid input values.
+
+Actually there is a transistor that can implement linear amplifier,
+the /bipolar junction transistor (BJT)/. It is a three terminal
+device, with the base (B), the collector (C), the emitter (E)
+corresponding to G, D, S. It has three regions: active region, cutoff
+region, saturation region. In the active region, the piecewise-linear
+model for BJT is:
+- $i_C = \beta i_B$ if $i_B>0$ and $v_{CE} > v_{BE} - 0.4V$
+- 0 otherwise
+Using as an amplifier, it is $v_O = V_S - \frac{(v_{IN} - 0.6)}{R_I}
+\beta R_L
+
+
+** TODO Logical gates pictures
+** TODO transistor pictures
