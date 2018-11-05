@@ -3,6 +3,19 @@
 * Reference
 ** [#A] Foundations of analog and digital electronic circuits cite:2005-Book-Agarwal-Foundations
 
+* Simple Staff
+- DC: Direct Current.
+- AC: Alternating current. Can be produced by an alternator. AC is
+  easy to transform to high voltage. The higher the voltage, P=IV. To
+  transform the same among of energy, the higher the voltage, the
+  lower the current. And P_{waste}=I2R, the lower the current, the
+  lower the wasted energy in the wire. Thus, higher voltage enables
+  long distance power distribution. It is hard to obtain high voltage
+  direct current, thus can only support a mile. Thus, AC is used in
+  distributing energy.
+
+
+
 * Circuit Analysis
 
 /Lumped element model/ simplifies the description of the behaviour of
@@ -95,6 +108,88 @@ Some other notes:
   for a clean stable voltage, and also for controlling power
   consumption.
 
+** Energy storage elements
+This will be sensitive to time, different from those in resistors.
+
+*** Capacitors in Lumped Model
+To capture the parasitic effects using Lumped Model, we model:
+- resistance by resistors
+- charge by capacitors
+- flux by inductors
+
+Some physical parameters:
+- gap of length l
+- area overlap A
+
+We have:
+- $C = \epsilon A(t) / l(t)$
+- $q(t) = Cv(t)$, where q is the charge of the capacitor
+- $i(t) = C \frac{dv}{dt}$. This is the most important equation used
+  in KCL/KVL analysis.
+- The stored energy is $w_E(t) = \frac{q^2}{2C} = \frac{Cv(t)^2}{2}$
+
+When connected together:
+- series connection: $\frac{1}{C} = \frac{1}{C_1} + \frac{1}{C_2}$
+- parallel connection: $C=C_1+C_2$
+
+*** Inductors in Lumped Model
+- the capacitor is a circuit element to model the effect of electric fields
+- Correspondingly, the inductor models the effect of magnetic fields.
+
+Some physical parameters:
+- number of turns N
+- magnetic permeability (渗透性) \mu
+- length of the core l
+- cross-sectional (横截面) area A
+
+We have:
+- $L(t) = \frac{\mu N^2 A(t)}{l(t)}$
+- flux: $\lambda(t) = L(t)i(t)$
+- $v(t) = L \frac{di}{dt}$. This is the most important equation used
+  in KCL/KVL analysis.
+  - Putting this in KCL/KVL simply results in a differential equation
+    to solve. We will be looking at serial/parallel RC/RL
+    circuit. This is called first-order transient circuit
+  - When two energy storage elements with independent states, it is
+    second-order transient circuit, because we need to solve
+    second-order differential equations.
+- stored energy $w_M(t) = \frac{\lambda^2(t)}{2L} = \frac{Li(t)^2}{2}$
+
+When connected together:
+- series connection: $L=L_1+L_2$
+- parallel connection: $\frac{1}{L} = \frac{1}{L_1} + \frac{1}{L_2}$
+
+If we wind a second coil around an inductor, we arrive at the
+/transformer/. Assume the two coils have N_1 and N_2 turns
+respectively, we have $\frac{v_1(t)}{N_1} = \frac{v_2(t)}{N_2}$, or
+$N_1 i_1(t) = -N_2 i_2(t)$.
+
+*** Impedance analysis
+It is still very complex for solving the differential equations for LC
+circuits. If the input is sinusoidal, it is possible to derive a very
+simple analysis method.
+
+Under sinusoidal drive, we are almost always interested in the
+steady-state value of the capacitor voltage. One of the most important
+properties is that $V_c = \frac{1/Cs_1}{R+1/Cs_1} V_i$.  This suggests
+a very simple method for finding the complex amplitude V_c directly
+from the circuit: redraw the circuit, replacing resistors with R
+boxes, capacitors with 1/Cs_1 boxes, and cosine sources by their
+amplitudes.
+
+Basically three equations:
+- $V=\frac{1}{Cs} I$, where s is short hand for $j \omega$, where j
+  indicates imagination part of complex number, \omega measures the
+  frequency.
+- $V = L s I$
+- $V = I R$
+
+Thus, we can simply replace the C and L as a resistor! Specifically,
+the impedances (阻抗) of an inductor, a capacitor and a resistor are
+- Z_L = sL = jwL
+- Z_C = \frac{1}{sC} = \frac{1}{jwC}
+- Z_R = R
+
 ** TODO Pictures of typical circuit elements
 
 * Digital abstraction
@@ -186,5 +281,29 @@ Using as an amplifier, it is $v_O = V_S - \frac{(v_{IN} - 0.6)}{R_I}
 \beta R_L
 
 
+However, the non-linear gain of the amplifier is not very desired. In
+many situations we want a linear gain. We can simply take a piece-wise
+linear of the v-i relationship to realize that. We choose an
+/operating point/, and around that point, we have a limited small
+range of perturbation (called /narrow operating range/) that
+approximate linear behavior. We will have the gain to be $g_m =
+K(V_{GS} - V_T)$, and the voltage gain is $\frac{v_o}{v_i} = -g_m
+R_L$. This model is derived by applying $Taylor Series Expansion$, and
+ignore the second order term for small changes. This model is called
+/small-signal model/.
+
+Operational amplifier is the one that achieve fixed gain that is
+invariant to temperature. It has two input ports, v^+ and v^-, two
+power supply ports, and an output port. The special property of op-amp
+is that, it has a infinite gain, i.e. $v_o = A(v^+ - v^-)$, A is
+usually about 300,000. The gain itself is not precise, but that is not
+important. The important part is that it is much larger than 1, thus
+the constant 1 can be ignored if it is added to the gain. The trick is
+to introduce two resistors, and possibly add negative feedback
+loop. The result is that, we have a gain of $\frac{v_o}{v_i}$ to be
+only related to the ratio of the two resistors. Since resistors are
+stable, the gain is stable.
+
 ** TODO Logical gates pictures
 ** TODO transistor pictures
+** TODO op-amp pictures and equations
