@@ -10,6 +10,40 @@ gpasswd -a $USER lock
 modprobe cdc-acm
 #+END_EXAMPLE
 
+** Deep Learning Framework GPU setup
+In ubuntu 18.04:
+
+You can install a latest driver, no problem.
+
+
+Install cuda 9.0 (not 9.2, the python package is actually finding
+exact 9.0 of the dynamic library, e.g. libcublas.so.9.0). You can
+install multiple versions of cuda. Set the $LD_LIBRARY_PATH to
+=/usr/local/cuda/lib64= if you have made the symlink, otherwise
+include the 9.0 entire path.
+
+
+For the current tensorflow (1.12, as of 11/6/2018), install
+
+#+BEGIN_EXAMPLE
+pip3 install --user tensorflow-gpu
+#+END_EXAMPLE
+
+test 
+
+#+BEGIN_EXAMPLE
+tf.Session().list_devices()
+#+END_EXAMPLE
+
+Or actually tf.Session() will output the information, e.g. run this:
+
+#+BEGIN_EXAMPLE
+sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
+#+END_EXAMPLE
+
+
+
+
 
 
 * Installation
