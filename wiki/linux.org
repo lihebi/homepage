@@ -1154,6 +1154,30 @@ with startstump
 (stumpwm:stumpwm)
 #+END_EXAMPLE
 
+When using gdm, for example on Ubuntu, the default =Xsession= is
+=/etc/gdm3/Xsession=. To add stumpwm into the entry, create
+=/usr/share/xsessions/stumpwm.desktop= with:
+
+#+BEGIN_EXAMPLE
+[Desktop Entry]
+Encoding=UTF-8
+Name=Stumpwm
+Comment=Tiling, keyboard driven Common Lisp window manager
+TryExec=stumpwm
+Exec=stumpwm
+Type=Application
+
+[X-Window Manager]
+SessionManaged=true
+#+END_EXAMPLE
+
+Of course this require the =/usr/bin/stumpwm= to be executable with
+
+#+BEGIN_EXAMPLE
+#!/bin/sh
+sbcl --load /path/to/startstump
+#+END_EXAMPLE
+
 **** Live Debugging
 To debug it live, you might need this in .stumpwmrc:
 #+BEGIN_SRC lisp
