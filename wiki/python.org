@@ -1148,3 +1148,27 @@ has some support for id and class, the =select= is easier to use.
 
 
 ** click http://click.pocoo.org/5/
+** matplotlib
+#+BEGIN_SRC python
+import matplotlib.pyplot as plt
+
+# plot some random staff
+plt.plot([1,2,3,4])
+plt.show()
+
+# plot a mnist digit
+(x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
+# since the data is just an array (28,28), imshow must have converted
+# it to image pixel properly
+plt.imshow(x_train[7777], cmap='Greys')
+# must call plt.show() to open the figure window. Or, execute
+# %matplotlib in the REPL, you can get the image directly after
+# imshow().
+plt.show()
+
+# plot to a file
+pylab.ioff()
+plot([1, 2, 3])
+savefig("/tmp/test.png")
+#+END_SRC
+
