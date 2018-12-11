@@ -25,6 +25,15 @@ comply with the requirements of your language, then it is likely that
 something is wrong with the language.
 #+END_QUOTE
 
+* Random
+
+#+BEGIN_EXAMPLE
+export PYTHONPATH="$PYTHONPATH:/home/hebi/github/reading/models"
+#+END_EXAMPLE
+
+
+
+
 * Language
 The ultimate reference:
 # - language reference: https://docs.python.org/2/reference/
@@ -1171,4 +1180,17 @@ pylab.ioff()
 plot([1, 2, 3])
 savefig("/tmp/test.png")
 #+END_SRC
+
+** Deep Learning Framework
+Select visible GPU in a multi-GPU setting:
+#+BEGIN_SRC py
+os.environ['CUDA_VISIBLE_DEVICES'] = '3'
+#+END_SRC
+
+Cudnn setup
+
+#+BEGIN_EXAMPLE
+export LD_LIBRARY_PATH="/usr/local/cuda-9.0/lib64:$LD_LIBRARY_PATH"
+#+END_EXAMPLE
+
 
