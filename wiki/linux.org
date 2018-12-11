@@ -1359,6 +1359,11 @@ problem on Arch.
 
 On GuixSD, there is no tigervnc client. I use vinagre instead.
 
+some random settings in =xstartup=:
+#+BEGIN_EXAMPLE
+[ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
+#+END_EXAMPLE
+
 
 
 * System Management
