@@ -52,6 +52,29 @@ For example, you scored 100/100 out of a test, can have two causes:
 Given that the paper is too easy, I tend not to think you are too
 smart.
 
+** Chi-square Independence test
+Using the example taken from Wikipedia
+
+|              |   A |   B |   C |   D | total |
+|--------------+-----+-----+-----+-----+-------|
+| White collar |  90 |  60 | 104 |  95 |   349 |
+| Blue collar  |  30 |  50 |  51 |  20 |   151 |
+| No collar    |  30 |  40 |  45 |  35 |   150 |
+| Total        | 150 | 150 | 200 | 150 |   650 |
+
+We basically use the 3x4 table cells. This is the observed number.
+
+1. We first calculate a table for the expected number, for example for
+   (A, white collar), we calculate it as (150 /650 * 349 =
+   80.54). 
+2. Then, we compute the difference in each cell, as the /test
+   statistics/, for example (90 - 80.54) / 80.54 = 1.11
+3. We sum up all these difference values in the table cells
+4. calculate the /Degree of Freedom (DF)/ as $(ncol-1)*(nrow-1)$
+5. Using the DF and the test statistics, we can look up table to see
+   what is the probability of seen such a distribution if the data is
+   independent (our /null hypothesis/)
+
 
 * Graphical Model
 
@@ -1028,6 +1051,72 @@ distribution of the sub-populations.
 
 Finally, a formal causal definition of confounding comes that, X and Y
 are /not confounded/ in causal model M iff $P(y|do(x)) = P(y|x)$.
+
+** Causal Discovery
+Two books for reference
+- Causation, prediction, and search cite:2000-Book-Spirtes-Causation
+- Causality cite:2009-Book-Pearl-Causality
+*** IC algorithm
+
+- Input: a sample distribution
+- Output: a partial (mixed directed and undirected edge) DAG graph
+
+This is very simple:
+1. for each pair (a,b), search for set $S_{ab}$ that $a independent b ||
+   S_{ab}$. If no such $S_{ab}$, add undirected edge $a-b$.
+2. For =a-c-b=, if $c \not\in S_{ab}$, orient the direction as
+   =a->c<-b=
+3. orient as many edges as we can, by two rules: (HEBI: ??)
+   1. the orientation should not create new v-structure (i.e. ={X,Y}->Z=)
+   2. the orientation should not create cyclic graph
+
+So actually step 3 is unspecified. In later works by Pearl and Meek
+there are several rules, that are necessary and sufficient:
+1. a->b whenever there exists c->a such that b and c are not adjacent
+   (in =IC*= algorithm, a->b is marked with =*=)
+2. a->b whenever there is a chain a->c->b
+3. a->b if a-c->b and a-d->b and c and d are not adjacent
+4. a->b if a-c->d and c->d->b and c and b are not adjacent
+
+IC* algorithm differs in the step 3:
+1. a->b with =*= mark whenever there exists c->a such that b and c are
+   not adjacent
+2. a->b if a and b are adjacent, and there is a directed strictly
+   marked (with =*=) path from a to b.
+
+The graph output of IC* is different. It contains four types of edges:
+1. a->b
+2. a-b
+3. a<->b
+4. a->b with =*= mark
+
+IC* algorithm is not complete, in that it may not output a maximally
+informative graph.
+
+*** SGS algorithm
+
+1. form complete undirected graph
+2. for each pair (a,b), if we can find a subset S that can d-separate
+   (a,b), remove a-b
+3. if a-b-c, but not a-c. If a and c cannot be d-separated, orient
+   =a->b<-c=
+4. repeat until no more edges can be oriented
+   1. if a->b-c and not a-c, and there is no arrowhead at b (?),
+      orient b->c
+   2. if a-b and there is a directed path from a to b, orient =a->b=
+      (because we don't want cycle)
+
+*** PC algorithm
+SGS requires too many d-separation test, thus computationally
+inefficient.
+
+The PC algorithm differs only in step 2, how to remove edge. The trick
+is, we can remove an edge once we find one set of nodes to separate a
+and b. So it makes sense to test in some order.
+
+PC* algorithm takes one additional step further than PC. The only
+difference is, when removing a-b, only test the subset of variables
+adjacent to a and b that are on undirected paths between a and b.
 
 
 * Search Algorithm

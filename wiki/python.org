@@ -1187,10 +1187,20 @@ Select visible GPU in a multi-GPU setting:
 os.environ['CUDA_VISIBLE_DEVICES'] = '3'
 #+END_SRC
 
-Cudnn setup
+CUDA setup
+
+1. Install Nvidia driver. This can be done using Ubuntu's software
+   center. But this is the stable version, not newest
+2. Install cuda. To =/usr/local/cuda-10.0=. I use the "runfile", with
+   the =--override= option (otherwise throw gcc version not supported
+   error).
+3. Install cudnn by copying header files and library files into =/usr/local/cuda-10.0=
+4. Configure
 
 #+BEGIN_EXAMPLE
-export LD_LIBRARY_PATH="/usr/local/cuda-9.0/lib64:$LD_LIBRARY_PATH"
+CUDA_PATH=/usr/local/cuda-10.0
+export LD_LIBRARY_PATH="$CUDA_PATH/lib64:$LD_LIBRARY_PATH"
+export PATH="$CUDA_PATH/bin:$PATH"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$CUDA_PATH/extras/CUPTI/lib64"
 #+END_EXAMPLE
-
 
