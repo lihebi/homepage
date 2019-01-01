@@ -32,6 +32,113 @@ export PYTHONPATH="$PYTHONPATH:/home/hebi/github/reading/models"
 #+END_EXAMPLE
 
 
+** Meta Programming
+
+Basically =eval= (return value) and =exec= (no return value), with
+either string or /code object/ created by =compile=. They can use the
+names bound by current namespace.
+
+#+BEGIN_SRC python
+eval("1+2")
+a=2
+eval("1+a")
+def foo(a):
+    return a+3
+eval("foo(a)")
+# no return
+exec("foo(a)")
+eval(compile("1+a", '', 'eval'))
+#+END_SRC
+
+** Function def and call
+The default value of an argument is evaluated once at the function
+definition. Thus, the object is shared for all the invoke of the
+function. This is typically not desired behavior.
+
+#+BEGIN_SRC python
+def foo(a=[]):
+    a.append(3)
+    return a
+foo()
+foo()
+# => [3,3] !!!
+#+END_SRC
+
+Python function pass-by-object. If you pass a list, you can modify the
+list, and the original list is modified.
+
+#+BEGIN_SRC python
+a = [1,2]
+def foo(x):
+    x.append(3)
+foo(a)
+a # => [1,2,3]
+#+END_SRC
+
+
+** List object model
+
+Lists are mutable.  The behavior of slicing is a bit confusing. If the
+slicing is used directly as the target of an assignment statement, it
+will modify the object in place. E.g.
+
+#+BEGIN_SRC python
+a = [1,2,3,4]
+a[1:3] = []
+a # => [1,4]
+#+END_SRC
+
+That also means all other references to =a= will be modified:
+
+#+BEGIN_SRC python
+a = [1,2,3,4]
+a[1:3] = []
+# although tuple is immutable, it can still contain reference to
+# mutable objects.
+c=(a,)
+# this will also modify a
+a.append(5)
+c # => ([1,4,5])
+#+END_SRC
+
+However, if the slicing is assigned to another variable (either
+assignment or pass-by-object function call), it is copied. Modifying
+this copy will not affect the original list.
+
+#+BEGIN_SRC python
+a = [1,2,3,4]
+b = a[1:3]
+b[0] = 9
+a # => [1,2,3,4]
+def foo(x):
+    x[1] = 8
+
+# changing b
+foo(b)
+b # => [9,8]
+a # => [1,2,3,4]
+#+END_SRC
+
+If you convert a list to a tuple, the elements are shallow-copied.
+
+#+BEGIN_SRC python
+a = [1,2,3]
+b = [a]
+# this is shallow copied. Still contains reference to the object "a"
+c = tuple(b)
+# no reference anymore, just a tuple of (1,2,3). Will never change
+# whatsoever.
+d = tuple(a)
+
+# testing:
+a[2] = 8
+b # => [[1,2,8]]
+c # => [[1,2,8]]
+d # => [1,2,3]
+#+END_SRC
+
+String is immutable sequence, thus cannot be assigned. Thus it is
+fairly safe to use string.
 
 
 * Language
