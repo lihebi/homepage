@@ -75,52 +75,10 @@ We basically use the 3x4 table cells. This is the observed number.
    what is the probability of seen such a distribution if the data is
    independent (our /null hypothesis/)
 
+* Probabilistic Model
 
-* Graphical Model
+** Discrete Variables
 
-** Graph Background
-We typically denote undirected graph as H, directed graph as G, and a
-general graph as K.
-- For two nodes connected by any edge, we have neighbor (Nb) relation
-- A graph in which every pair of nodes is connected by an edge is
-  called complete
-
-For directed graph:
-- For a direct edge, we have parent (Pa) and child (Ch) relation
-- The boundary of X, denoted as $Boundary_X$, is $Pa_X \cup Nb_X$
-- A family in a graph is a node and its all parents
-- A node is root if no parent
-- A node is sink if it has no children
-- A connected DAG in which every node has at most one parent is called
-  a tree
-- A connected DAG in which every node has at most one child is called
-  a chain
-
-For undirected graph, two nodes are /adjacent/ if there is an edge
-joining them, denoted as $X \sim Y$. A /path/ is a set of vertices
-that are adjacent sequentially. A /complete graph/ is a graph where
-every pair of vertices is joined by an edge. A /subgraph/ is a subset
-of vertices together with their edges. A /clique/ is a complete
-subgraph. It is called /maximal/ if it is a clique and no other
-vertices can be added to it and still yield a clique.
-
-For directed graph, a path can follow any edge, but must not reverse
-direction. However, a trail can follow either direction. Some defines
-the path as a trail, i.e. can go either along or against the arrows,
-and define the directed path for those that go along arrows. If there
-exists a path between two vertices, they are said to be connected,
-otherwise disconnected.
-
-An acyclic graph containing both directed and undirected edges is
-called a /partially directed acyclic graph (PDAG)/. Such a PDAG can be
-cecomposed into chain components, where the edges between components
-must be directed. The hybrid network is the one that has both
-continuous and discrete probabilities.
-
-The /skeleton/ of G is the corresponding undirected graph, i.e. strip
-away all arrowheads.
-
-** Probability Background
 We define the /outcome space/ as the space of possible outcomes,
 denoted as $\Omega$. We also define the /events/ $S$. Each event
 $\alpha \in S$ is a subset of $\Omega$. For example, for a dice
@@ -176,6 +134,123 @@ distribution/* over a set $X = \{X_1, ..., X_n\}$, denoted as $P(X_1,
 that can be described using these random variables. We use $\xi$ to
 refer to a full assignment to the variables in $X$. The conditional
 probability in terms of random variables are intuitive.
+
+** Continuous Variables
+For *continuous random variables*, /probability density function
+(PDF)/ is used for continuous random variables, because the vector is
+infinite. I record some distributions here:
+
+
+/Uniform distribution/ over [a,b], denoted as $X \sim Unif[a,b]$, if
+$p(x) = \frac{1}{b-1}$ in [a,b] otherwise 0.
+
+/Gaussian distribution/ with mean $\mu$ and variance $\sigma^2$,
+denoted as $X \sim N(\mu; \sigma^2)(x)$, if
+
+$$p(X)=\frac{1}{\sqrt{2\pi} \sigma} e^{-\frac{(x-\mu)^2}{2
+  \sigma^2}}$$
+
+Multivariate normal distribution:
+
+$$N(x|\mu, \Sigma)
+ = \frac{1}{(2\pi)^{D/2}} \frac{1}{|\Sigma|^{1/2}} 
+exp\{-\frac{1}{2}(x-\mu)^T \Sigma^-1 (x-\mu)\} $$
+
+
+** Expectation, Variance, Entropy
+
+Expectation is $E_x[f]=\sum_x p(x)f(x)$. Variance is 
+
+\begin{align}
+var[f] 
+& = E[(f(x) - E[f(x)])^2]\\
+& = E[f(x)^2] - E[f(x)]^2
+\end{align}
+
+The square root of variance is called standard deviation.
+
+Specially for x, it is
+
+$$var[x] = E[x^2] - E[x]^2$$
+
+The covariate of two random variables x and y is defined as
+\begin{align}
+cov[x,y]
+& = E_{x,y}[(x-E[x])(y-E[y])]\\
+& = E_{x,y}[xy] - E[x]E[y]
+\end{align}
+
+The entropy is from information theory. We want to calculate how much
+information we gain after seeing an observation from a probability
+distribution $p(x)$. Intuitively, if we see a highly improbable event,
+we received a lot of information. If we observe a very likely event,
+we gain less information. The extreme case, if we observe an event
+that is certain to happen, we would receive no information. How can we
+quantify this?
+
+The straightforward thinking is that, the information gain of two
+independent observations $x$ and $y$ should be the sum of the gain of
+the two, i.e. $h(x,y) = h(x) + h(y)$. And we have $p(x,y) = p(x)p(y)$,
+thus, we need to take the logarithm of $p(x)$ to define $h(x)$,
+i.e.
+
+$$h(x) = -log_2 p(x)$$
+
+The basis 2 is arbitrary.  We also want to define information gain for
+a distribution. To that end, we define entropy as 
+
+$$H(x) = - \sum_x p(x) log_2 p(x)$$
+
+The conditional entropy is
+
+$$H[y|x] = - \int \int p(y,x)ln p(y|x) dy dx$$
+
+and we can see
+
+$$H[x,y] = H[y|x] + H[x]$$
+
+Consider some unknown distribution p(x), and we use q(x) to
+approximate it. If we use q(x) to transmit the information about p(x),
+how much additional information is required to correct the mistake? We
+model that by /relative entropy/, or /Kullback-Leibler (KL)
+divergence/, defined as:
+
+\begin{align}
+KL(p||q) 
+& = - \int p(x) ln q(x) dx - (- \int p(x) ln p(x) dx)\\
+& = - \int p(x) ln \frac{q(x)}{p(x)} dx
+\end{align}
+
+Note that this is not a symmetrical quantity. We can show that
+$KL(p||q) \ge 0$ with equality if and only if $p(x) = q(x)$.
+
+Recall that for two random variables x and y, if they are independent,
+the joint distribution can factorize into the product of their
+marginals, i.e. $p(x,y) = p(x)p(y)$. If they are not independent, how
+close they are from being independent? We can quantify this by /mutual
+information/ between $x$ and $y$, defined as:
+
+\begin{align}
+I[x,y]
+& = KL[p(x,y)||p(x)p(y)]\\
+& = - \int \int p(x,y) ln \frac{p(x)p(y)}{p(x,y)} dx dy
+\end{align}
+
+Finally, we can see
+
+$$I[x,y] = H[x] - H[x|y] = H[y] - H[y|x]$$
+
+The /linearity of expectation/ property states that
+$E[X+y]=E[X]+E[Y]$. There is no general product form, but if X and Y
+are independent, we have $E[X*y]=E[X]*E[Y]$. The variance is defined
+as $Var_P[X] = E_P[(X-E_P[X])^2]$, or $Var[X] = E[X^2] - (E[X])^2$. We
+don't have even the linear property, but if X and Y are independent,
+then $Var[X+Y]=Var[X]+Var[Y]$. The variance generally scales as a
+quadratic function of X: $Var[aX+b]=a^2Var[X]$. The standard deviation
+is $\sigma_X=\sqrt{Var[X]}$.
+
+
+** Independence
 
 Next, we introduce *independence*. First in events notation, we say
 that
@@ -237,6 +312,8 @@ property says, for mutually disjoint sets X,Y,Z,W, we have:
   Y,W|Z)$.
 All these properties are called /graphoid axioms/.
 
+** probability queries
+
 After defining probability distribution, we are interested in
 answering */probability queries/*. We have /evidence variables/ E and
 /query variables/ Y, and we aims to compute $P(Y|E=e)$, and this is
@@ -251,25 +328,50 @@ to some subset of variables. The /MAP assignment/ is the most likely
 assignment to all of the non-evidence variables. Formally, let
 $W=X-E$, our task is to find $MAP(W|e) = argmax_w P(w,e)$
 
-For *continuous random variables*, /probability density function
-(PDF)/ is used for continuous random variables, because the vector is
-infinite. I record some distributions here:
-- /Uniform distribution/ over [a,b], denoted as $X \sim Unif[a,b]$, if
-  $p(x) = \frac{1}{b-1}$ in [a,b] otherwise 0.
-- /Gaussian distribution/ with mean $\mu$ and variance $\sigma^2$,
-  denoted as $X \sim N(\mu; \sigma^2)(x)$, if
-  $p(X)=\frac{1}{\sqrt{2\pi} \sigma} e^{-\frac{(x-\mu)^2}{2
-  \sigma^2}}$
 
-The /linearity of expectation/ property states that
-$E[X+y]=E[X]+E[Y]$. There is no general product form, but if X and Y
-are independent, we have $E[X*y]=E[X]*E[Y]$. The variance is defined
-as $Var_P[X] = E_P[(X-E_P[X])^2]$, or $Var[X] = E[X^2] - (E[X])^2$. We
-don't have even the linear property, but if X and Y are independent,
-then $Var[X+Y]=Var[X]+Var[Y]$. The variance generally scales as a
-quadratic function of X: $Var[aX+b]=a^2Var[X]$. The standard deviation
-is $\sigma_X=\sqrt{Var[X]}$.
+* Graphical Model
 
+** Graph Background
+We typically denote undirected graph as H, directed graph as G, and a
+general graph as K.
+- For two nodes connected by any edge, we have neighbor (Nb) relation
+- A graph in which every pair of nodes is connected by an edge is
+  called complete
+
+For directed graph:
+- For a direct edge, we have parent (Pa) and child (Ch) relation
+- The boundary of X, denoted as $Boundary_X$, is $Pa_X \cup Nb_X$
+- A family in a graph is a node and its all parents
+- A node is root if no parent
+- A node is sink if it has no children
+- A connected DAG in which every node has at most one parent is called
+  a tree
+- A connected DAG in which every node has at most one child is called
+  a chain
+
+For undirected graph, two nodes are /adjacent/ if there is an edge
+joining them, denoted as $X \sim Y$. A /path/ is a set of vertices
+that are adjacent sequentially. A /complete graph/ is a graph where
+every pair of vertices is joined by an edge. A /subgraph/ is a subset
+of vertices together with their edges. A /clique/ is a complete
+subgraph. It is called /maximal/ if it is a clique and no other
+vertices can be added to it and still yield a clique.
+
+For directed graph, a path can follow any edge, but must not reverse
+direction. However, a trail can follow either direction. Some defines
+the path as a trail, i.e. can go either along or against the arrows,
+and define the directed path for those that go along arrows. If there
+exists a path between two vertices, they are said to be connected,
+otherwise disconnected.
+
+An acyclic graph containing both directed and undirected edges is
+called a /partially directed acyclic graph (PDAG)/. Such a PDAG can be
+cecomposed into chain components, where the edges between components
+must be directed. The hybrid network is the one that has both
+continuous and discrete probabilities.
+
+The /skeleton/ of G is the corresponding undirected graph, i.e. strip
+away all arrowheads.
 
 ** Representation
 
