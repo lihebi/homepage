@@ -1,159 +1,172 @@
 \documentclass[10pt,letterpaper]{article}
-\usepackage[parfill]{parskip} % Remove paragraph indentation
-\usepackage{array} % Required for boldface (\bf and \bfseries) tabular columns
-\usepackage{ifthen} % Required for ifthenelse statements
+\usepackage[parfill]{parskip}
+\usepackage{array}
+\usepackage{ifthen}
 \usepackage{fontawesome}
 \usepackage{hyperref}
 \usepackage[usenames, dvipsnames]{color}
-\pagestyle{empty} % Suppress page numbers
+\pagestyle{empty}
+\usepackage[default]{cantarell}
+\usepackage[T1]{fontenc}
+\usepackage[left=0.75in,top=0.6in,right=0.75in,bottom=0.6in]{geometry}
+\usepackage{fancyhdr}
 
-\renewcommand\refname{}
-
-
-%----------------------------------------------------------------------------------------
-%	SECTION FORMATTING
-%----------------------------------------------------------------------------------------
-
-% Defines the rSection environment for the large sections within the CV
-\newenvironment{rSection}[1]{ % 1 input argument - section name
-  \sectionskip
-  \MakeUppercase{\bf #1} % Section title
-  \sectionlineskip
-  \hrule % Horizontal line
-  \begin{list}{}{ % List for each individual item in the section
-      \setlength{\leftmargin}{1.5em} % Margin within the section
+\newenvironment{mysection}[1]{ % 1 input argument - section name
+  \medskip
+  \MakeUppercase{\bf #1}
+  \medskip
+  \hrule
+  \begin{list}{}{
+      \setlength{\leftmargin}{1.5em}
     }
   \item[]
 }{
   \end{list}
 }
 
-%----------------------------------------------------------------------------------------
-%	WORK EXPERIENCE FORMATTING
-%----------------------------------------------------------------------------------------
 
-\newenvironment{rSubsection}[4]{ % 4 input arguments - company name, year(s) employed, job title and location
-  {\bf #1} \hfill {#2} % Bold company name and date on the right
-  \ifthenelse{\equal{#3}{}}{}{ % If the third argument is not specified, don't print the job title and location line
-    \\
-      {\em #3} \hfill {\em #4} % Italic job title and location
-  }\smallskip
-  \begin{list}{$\cdot$}{\leftmargin=0em} % \cdot used for bullets, no indentation
-    \itemsep -0.5em \vspace{-0.5em} % Compress items in list together for aesthetics
-}{
-  \end{list}
-  \vspace{0.5em} % Some space after the list of bullet points
-}
-
-% The below commands define the whitespace after certain things in the document - they can be \smallskip, \medskip or \bigskip
-\def\namesize{\huge} % Size of the name at the top of the document
-\def\addressskip{\smallskip} % The space between the two address (or phone/email) lines
-\def\sectionlineskip{\medskip} % The space above the horizontal line for each section 
-\def\nameskip{\bigskip} % The space after your name at the top
-\def\sectionskip{\medskip} % The space after the heading section
-
-
-\usepackage[default]{cantarell}
-\usepackage[T1]{fontenc}
-\usepackage[left=0.75in,top=0.6in,right=0.75in,bottom=0.6in]{geometry} % Document margins
-\usepackage{fancyhdr}
-
-%% \name{Hebi Li}
-%% \address{}
-%% \address{}
-%% \address{+1 (515) 708-8131}
-%% \address{}
-
-
-%% \address{www.lihebi.com}
 \definecolor{mygray}{gray}{0.6}
 \begin{document}
 
-{
-  \footnotesize
-  \begingroup
-  \hfil{\MakeUppercase{\namesize\bf Hebi Li}}\hfil
-  \nameskip\break
-  \endgroup
+\centerline{\MakeUppercase{\huge\bf Hebi Li}}
+%% \centerline{PhD Candidate in Programming Languages \& Analysis}
+\centerline{\textit{\textcolor{mygray}{1865 Long Rd, Unit A, Ames IA
+      50010}}} \centerline{\faEnvelope ~ hebi@iastate.edu ~ | ~
+  \faHome ~ lihebi.com ~ | ~ \faGithubSquare ~ lihebi}
 
-  %% \centerline{PhD Candidate in Programming Languages \& Analysis}
-  \centerline{\textit{\textcolor{mygray}{1865 Long Rd, Unit A, Ames IA
-        50010}}} \centerline{\faEnvelope ~ hebi@iastate.edu ~ | ~
-    \faHome ~ lihebi.com ~ | ~ \faGithubSquare ~ lihebi} }
+\begin{mysection}{Education}
+  \textbf{Iowa State University} \hfill \emph{Aug. 2014 - Aug 2019 (Expected)} \\
+  \emph{PhD Student in Department of Computer Science}
 
-\begin{rSection}{Education}
-  \textbf{Iowa State University} \hfill \emph{Aug. 2014 - Present}
-  \\ \emph{PhD Student in Department of Computer Science}
+  \textbf{University of Science and Technology of China}
+  \hfill \emph{Aug. 2010 - Jun. 2014} \\
+  \emph{B.E. in Electrical Engineering}
+\end{mysection}
 
-  \textbf{University of Science and Technology of China} \hfill
-  \emph{Aug. 2010 - Jun. 2014} \\ \emph{B.E. in Electrical Engineering}
+\begin{mysection}{Research Area}
+  \begin{itemize}
+  \item \textbf{Artificial Intelligence, Deep Learning, Causality}
+  \item \textbf{Natural Language Processing}
+  \item \textbf{Programming Languages \& Analysis, Software Engineering}
+  \end{itemize}
+\end{mysection}
 
-\end{rSection}
+\begin{mysection}{Research Projects}
 
-%% \begin{rSection}{Skills}
-%%   \textbf{Programming Languages}
-%%   \begin{itemize}
-%%   \item \textbf{Lisp (Scheme):} Proficient
-%%   \item \textbf{C/C++:} Proficient
-%%   \item \textbf{Python:} Good
-%%   \item \textbf{Haskell:} OK
-%%   \end{itemize}
+  \textbf{NLP: Semantic metric for abstract doc summarization (Python,
+    Tensorflow)} \hfill \emph{Spring 2018 - Present}
+  \begin{itemize}
+  \item Website \& Code: \url{https://github.com/lihebi/anti-rouge}
+  \item Description: ROUGE is the de facto criterion for summarization
+    research.  However, its two major drawbacks: 1. favors lexical
+    similarity instead of semantic similarity 2. require a reference
+    summary which may be expensive to obtain.  Therefore, we introduce
+    a completely new end-to-end metric system for summary quality
+    assessment by leveraging recently developed \textbf{deep
+      sentence-embedding}.
 
-%%   \textbf{Software \& System}
-%%   \begin{itemize}
-%%   \item \textbf{Compiler Architecture}: Proficient
-%%   \item \textbf{Programming Language}: Proficient
-%%   \item \textbf{Program Analysis}: Proficient
-%%   \item \textbf{LLVM/Clang}: Proficient
-%%   \item \textbf{Linux:} Proficient, 8 years experience
-%%   \end{itemize}
-%% \end{rSection}
+    Existing data set like CNN/DM contains only positive samples. We
+    hence develop two \textbf{negative sample generation} approaches:
+    \textit{random mutation} and \textit{cross-pairing}.  We apply and
+    evaluate different sentence-embedding models: \textbf{Universal
+      Sentence Encoder} by Google and \textbf{InferSent} by Facebook,
+    and a vanilla word-embedding \textbf{Grove} model. We evaluate 3
+    kinds of networks, Fully-connected, CNN, and LSTM.
 
-%% \begin{rSection}{Research Interest}
-%%   \textbf{Artificial Intelligence}
-%%   \textbf{Functional Programming}
-%% \end{rSection}
+  \item Publications: Hebi Li, Qi Xiao, Yinfei Yang, Forrest Sheng Bao,
+      \textit{``End-to-end semantics-based summary quality assessment
+        for single-document summarization''}, In submission to
+      NAACL-2019.
+  \end{itemize}
+  
+  \textbf{AI: Causal Discovery From High Dimensional Data (Python,
+    Tensorflow)} \hfill \emph{Spring 2018 - Present}
 
-\begin{rSection}{Research Project}
-  \textbf{Dynamic Program Analysis on Demand} \hfill \emph{Summer 2015 -
-    Present}
+  \begin{itemize}
+  \item Description: Causality is believed by many to be the right way
+    for Artificial General Intelligence. However, most causality
+    research are done in low-dimensional data. We hence are interested
+    in discovering causal relations embedded inside high dimensional
+    data such as images and text. In particular, we are interested in
+    mapping low-level raw pixels (micro variables) into high-level
+    features (macro variables) that have explicit causal relations.
+    The model is built atop \emph{Variational Causal Encoder (VAE)}.
+  \end{itemize}
+  
+  \textbf{PL\&SE: Dynamic Program Analysis on Demand (C/C++, LLVM/Clang,
+    Racket)} \hfill \emph{Summer 2015 - Spring 2018}
 
-  %% I built a compiler framework,
-  %% Helium \footnote{\url{https://github.com/lihebi/helium}}
-  %% \footnote{\url{https://github.com/lihebi/helium2}}. It tests
-  %% arbitrary, non-continuous segment of code. The front-end is built on
-  %% top of Clang, and back-end algorithm is implemented in C++ and
-  %% Racket.  The code has 866 commits, 1.7k Lisp (Racket), 25k C/C++.
+  \begin{itemize}
+  \item Website: \url{https://helium.lihebi.com/}
+  \item Project Code:
+    \begin{itemize}
+    \item \url{https://github.com/lihebi/Helium} (723 commits, 22k C/C++)
+    \item \url{https://github.com/lihebi/helium2} (143 commits, 1.7k
+      Racket, 3k C/C++)
+    \end{itemize}
+  \item Description: Helium is a framework that debugs your program
+    on-demand, preventing running time overhead by running just enough
+    code. It generates a small partial program from the original big
+    buggy program by performing data and control flow analysis and
+    dynamically test to verify the bug.  It features a
+    \textbf{syntactic patching algorithm} that find the extra code in
+    addition to the user selection that is necessary for a valid
+    partial program. It also features a \textbf{demand-driven context
+      search algorithm} to find smaller partial programs that preserve
+    a given program property.
+  \item Implementation highlights: The framework uses
+    \textbf{LLVM/Clang} framework as the underlying parser, and
+    performs \textbf{AST modelling and manipulation}. \textbf{Program
+      Generation} steps outputs partial programs, including
+    \textbf{Unit test generation} and \textbf{dynamic test data
+      generation}. The framework is provided as \textbf{docker} image
+    that is easy and ready to use. Partial program AST are visualized
+    through \textbf{Graphviz} framework.
+  \item Publications:
+    \begin{itemize}
+    \item Hebi Li, Wei Le, \textit{``Enabling Dynamic Analysis for
+      Partial Programs Via Syntactic Patching''}, In submission.
+    \item Hebi Li, Wei Le, \textit{``Demand-Driven Dynamic Analysis
+      for Automatic Benchmark Building''}, In submission.
+    \end{itemize}
+  \end{itemize}
 
-  %% 143 commits, 1.7k Racket, 3k C/C++
-  %% 723 commits, 22k C/C++
+  \textbf{USTC Bachelor Thesis: Named Data Network} \hfill
+  \emph{Summer 2013 - Summer 2014}
 
-\end{rSection}
+  Publications: Hebi Li, Xiaobin Tan \textit{``TreeSync: A Distributed
+    Message Synchronization Algorithm Using Topology-Related Hierarchy
+    over Named Data Network''}, USTC Thesis, 2014
+\end{mysection}
 
-\begin{rSection}{Teaching}
-  TA in Principles of Programming Languages \hfill \emph{Fall 2016, Fall 2017}
+\begin{mysection}{Open Source Projects}
+  \begin{itemize}
+  \item \textbf{hn.el (ELisp)}: A Hacker News Client for Emacs.
+    \url{https://github.com/lihebi/hn.el}
+  \item \textbf{simple-drill.el (Elisp)}: A Flashcard Program for
+    Emacs. \url{https://github.com/lihebi/simple-drill.el}
+  \item \textbf{smart-scholar.el (Elisp, Python)}: An Emacs plugin for
+    downloading and managing bibs for CS conferences.
+    \url{https://github.com/lihebi/smart-scholar.el}
+  \end{itemize}
+\end{mysection}
 
-  TA in Introduction to Database System \hfill \emph{Fall 2014, Spring
-    2015}
-\end{rSection}
+\begin{mysection}{Teaching Experience}
+  TA in Network Programming, Applications, and Research Issues (ISU CS587)
+  \hfill \emph{Spring 2019}
+  
+  TA in Advanced Design and Analysis of Algorithms (ISU CS511)
+  \hfill \emph{Spring 2019}
+  
+  TA in Principles of Programming Languages (ISU CS342)
+  \hfill \emph{Fall 2016, Fall 2017}
 
-\begin{rSection}{Awards}
-  \textbf{Teaching Excellent Award} \hfill \emph{May 2017}
-\end{rSection}
+  TA in Introduction to Database System (ISU CS363)
+  \hfill \emph{Fall 2014, Spring 2015}
+\end{mysection}
 
-
-%% TODO machine learning class
-
-\begin{rSection}{Publications}
-  %% \textbf{Hebi Li}, Xiaobin Tan \textit{``TreeSync: A Distributed
-  %%   Message Synchronization Algorithm Using Topology-Related Hierarchy
-  %%   over Named Data Network''}, USTC Thesis, 2014
-\end{rSection}
-  \textbf{Hebi Li}, Wei Le, \textit{``Enabling Dynamic Analysis for
-    Partial Programs Via Syntactic Patching''}, submitted to FSE-18.
-
-  \textbf{Hebi Li}, Wei Le, \textit{``Demand-Driven Dynamic Analysis
-    for Automatic Benchmark Building''}, full paper draft.
-\end{rSection}
+%% \begin{mysection}{Awards}
+%%   \textbf{Teaching Excellent Award} \hfill \emph{May 2017}
+%% \end{mysection}
 
 \end{document}
