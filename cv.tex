@@ -71,16 +71,16 @@
     similarity instead of semantic similarity 2. require a reference
     summary which may be expensive to obtain.  Therefore, we introduce
     a completely new end-to-end metric system for summary quality
-    assessment by leveraging recently developed \textbf{deep
-      sentence-embedding}.
+    assessment by leveraging recently developed \textbf{deep sentence
+      embedding}.
 
-    Existing data set like CNN/DM contains only positive samples. We
-    hence develop two \textbf{negative sample generation} approaches:
+    We develop two \textbf{negative sample generation} approaches:
     \textit{random mutation} and \textit{cross-pairing}.  We apply and
-    evaluate different sentence-embedding models: \textbf{Universal
+    evaluate three sentence-embedding models: \textbf{Universal
       Sentence Encoder} by Google and \textbf{InferSent} by Facebook,
-    and a vanilla word-embedding \textbf{Grove} model. We evaluate 3
-    kinds of networks, Fully-connected, CNN, and LSTM.
+    and a vanilla word-embedding model \textbf{Grove}. We evaluate 3
+    neural network architectures atop the embedding,
+    \textbf{Fully-connected}, \textbf{CNN}, and \textbf{LSTM}.
 
   \item Publications: Hebi Li, Qi Xiao, Yinfei Yang, Forrest Sheng Bao,
       \textit{``End-to-end semantics-based summary quality assessment
@@ -106,13 +106,10 @@
     Racket)} \hfill \emph{Summer 2015 - Spring 2018}
 
   \begin{itemize}
-  \item Website: \url{https://helium.lihebi.com/}
-  \item Project Code:
-    \begin{itemize}
-    \item \url{https://github.com/lihebi/Helium} (723 commits, 22k C/C++)
-    \item \url{https://github.com/lihebi/helium2} (143 commits, 1.7k
-      Racket, 3k C/C++)
-    \end{itemize}
+  \item Website: \url{https://helium.lihebi.com/}. V1 Code:
+    \url{https://github.com/lihebi/Helium} (723 commits, 22k LOC
+    C/C++). V2 Code: \url{https://github.com/lihebi/helium2} (143
+    commits, 1.7k LOC Racket, 3k LOC C/C++).
   \item Description: Helium is a framework that debugs your program
     on-demand, preventing running time overhead by running just enough
     code. It generates a small partial program from the original big
