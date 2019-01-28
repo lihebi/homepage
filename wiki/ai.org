@@ -328,6 +328,32 @@ to some subset of variables. The /MAP assignment/ is the most likely
 assignment to all of the non-evidence variables. Formally, let
 $W=X-E$, our task is to find $MAP(W|e) = argmax_w P(w,e)$
 
+** Non-parametric distributions
+
+Non-parametric models essentially exploit the locality of data.
+
+/Histogram density model/ simply partitions the input into bins of
+width $\delta_i$, and calculate the density inside each bin by
+normalization, i.e. $\int p(x) dx = 1$, resulting in $p_i =
+\frac{n_i}{N \delta_i}$.
+
+The downsides:
+1. it is discontinuous
+2. it does not scale with dimensionality
+
+Two other models, /kernel method/ and /KNN/, are highly
+related. Specifically, with some D-dimentional distance model like
+Euclidean, we can define a region $R$ of volume $V$ around a data
+point containing $K$ data points. The density estimator is $p(x) =
+\frac{K}{NV}$.  Importantly, if we fix K and determine the value of V
+from the data, it is called K-Nearest-Neighbor; if we fix V and
+determine K from the data, it is called Kernel Method.  The kernel
+function is the function that define the shape of the region. The
+kernel method has one problem: since $V$ is fixed, if the data points
+are dense at some points while sparse at others, it will lead to
+precision problem.
+
+
 
 * Graphical Model
 
@@ -1379,3 +1405,6 @@ Both the tfidf is 0, meaning "this" is not very informative.
 - idf("example", D) = log(2/1) = 0.3
 - tfidf("example", d1) = 0 / 5 * 0.3 = 0
 - tfidf("example", d2) = 3 / 7 * 0.3 = 0.13
+
+* Reference
+** cite:2007-Journal-Nasrabadi-Pattern Pattern recognition and machine learning

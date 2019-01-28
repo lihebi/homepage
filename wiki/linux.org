@@ -91,6 +91,8 @@ to enable CPU virtualization in BIOS.
 qemu-system-x86_64 -cdrom iso_image -boot order=d -drive file=disk_image,format=raw -enable-kvm -m 1024
 #+end_example
 
+To escape from Qemu app, press =Ctrl-Alt-G=.
+
 Finally, run the system with
 #+begin_example
 qemu-system-x86_64 -enable-kvm -m 1024 disk_image
@@ -1764,6 +1766,13 @@ apt-get dist-upgrade
 Another part is the =main=.  If you want some 3rd party contributor
 packages, add =contrib= after =main=.  If you further want some
 non-free packages, add also =non-free=.
+
+To fix dependency problems:
+#+BEGIN_EXAMPLE
+apt --fix-broken install
+#+END_EXAMPLE
+
+
 
 
 ** Configuration
