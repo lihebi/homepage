@@ -22,6 +22,8 @@ My (research) interests are quite broad:
 - Operating System (well, I mean Lisp Machines)
 - Embedded system (IoT, robotics, you name it)
 
+
+
 * Projects
 
 ** Dynamic Analysis on Demand
@@ -41,6 +43,19 @@ micro controller was Freescale XS128. You can see
 robot in the competition that day. We also have a
 [[file:assets/robogame2012-technical-report.pdf][technical report in
 Chinese (pdf)]]
+
+** Open Source Tools
+- [[https://github.com/lihebi/hn.el][hn.el]]: A Hacker News Client for
+  Emacs
+- [[https://github.com/lihebi/simple-drill.el][simple-drill.el]]: A
+  Flashcard Program for Emacs
+- [[https://github.com/lihebi/smart-scholar.el][smart-scholar.el]]: An
+  Emacs plugin for downloading and managing bibs for CS conferences
+- [[https://github.com/lihebi/Helium][Helium]]: Demand-driven dynamic
+  analysis Framework
+- [[https://github.com/lihebi/helium2][Helium-v2]]: using
+  [[https://racket-lang.org/][Racket]]
+# - [[https://github.com/lihebi/anti-rouge][AntiRouge]]
 
 * Wiki
 
