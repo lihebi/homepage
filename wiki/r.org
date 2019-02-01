@@ -1,46 +1,54 @@
 #+TITLE: R
 
-* Setting up
+* Setup
 
 ** Packages
-   =library()= see the list of installed packages.
-   =library(class)= load the package =class=.
-   =search()= see the list of loaded packages.
-   =install.packages()= and =update.packages()= install and update packages.
+   =library()= see the list of installed packages.  =library(class)=
+   load the package =class=.  =search()= see the list of loaded
+   packages.  =install.packages('name of package')= and
+   =update.packages('name of package')= install and update packages.
+
+When installing =pcalg=, some dependencies are from other
+repositories, following http://bactra.org/weblog/914.html:
+
+#+BEGIN_EXAMPLE
+source("http://bioconductor.org/biocLite.R") 
+biocLite("RBGL")
+#+END_EXAMPLE
+
+
+About =library= and =require=:
+#+BEGIN_QUOTE
+‘library(package)’ and ‘require(package)’ both load the namespace of
+the package with name ‘package’ and attach it on the search list.
+‘require’ is designed for use inside other functions; it returns
+‘FALSE’ and gives a warning (rather than an error as ‘library()’ does
+by default) if the package does not exist.  Both functions check and
+update the list of currently attached packages and do not reload a
+namespace which is already loaded.
+#+END_QUOTE
+
+
 
 ** Emacs ESS
-   To start ESS session, run command =S=.
-   ESS will create a command interface as a buffer.
-   Execute =?foo= will open the =R-doc= for the function =foo=.
+   To start ESS session, run command =S=. But my preferred way is to
+   simply open an R file and switch to the REPL by =C-c C-z= runs the
+   command =ess-switch-to-inferior-or-script-buffer=.  ESS will create
+   a command interface as a buffer.  Execute =?foo= will open the
+   =R-doc= for the function =foo=.
 
-   There's a babel in org mode for R, so just =C-c C-c= would work.
-   This will prompt to create a session.
-   One special for this babel is you can evaluate by line, using =C-<RET>= in the edit buffer.
+   =C-c C-c= executes
+   =ess-eval-region-or-function-or-paragraph-and-step=. =C-c C-b=
+   executes =ess-eval-buffer=.
 
-   Keep the session using the header:
-   #+BEGIN_EXAMPLE
-#+PROPERTY: session *R*
-   #+END_EXAMPLE
+=C-c C-v= runs the command =ess-display-help-on-object=, it is
+equivalent to =help()=.
 
-   To export a graph:
+=C-c C-p= runs the command =Rd-preview-help=, which previews the help
+file in plain text.
 
-   #+BEGIN_EXAMPLE
-:file image.png :results output graphics :exports both
-   #+END_EXAMPLE
 
-   To export ordinary result:
-
-   #+BEGIN_EXAMPLE
-:exports both
-   #+END_EXAMPLE
-
-   To export some summary data:
-
-   #+BEGIN_EXAMPLE
-:exports both :results output org
-   #+END_EXAMPLE
-
-** Interactive command
+** Interactive Shell
 We need to know what's going on in the current workspace.  =getwd()=
 and =setwd()= get and set the current dir.  =ls()= list the objects
 currently stored.  =rm(x, y, z)= remove objects =rm(list=ls())= remove
@@ -70,6 +78,35 @@ Finally, =q()= quit R.
    - =summary(dataset)= shows some information like max,min,mean
    - =class(data$col)= get type
    - =levels(data$col)= if it is factor, get the values
+
+** Org Mode
+   There's a babel in org mode for R, so just =C-c C-c= would work.
+   This will prompt to create a session.  One special for this babel
+   is you can evaluate by line, using =C-<RET>= in the edit buffer.
+
+   Keep the session using the header:
+   #+BEGIN_EXAMPLE
+#+PROPERTY: session *R*
+   #+END_EXAMPLE
+
+   To export a graph:
+
+   #+BEGIN_EXAMPLE
+:file image.png :results output graphics :exports both
+   #+END_EXAMPLE
+
+   To export ordinary result:
+
+   #+BEGIN_EXAMPLE
+:exports both
+   #+END_EXAMPLE
+
+   To export some summary data:
+
+   #+BEGIN_EXAMPLE
+:exports both :results output org
+   #+END_EXAMPLE
+
 
 * Objects
   Objects have mode and length.  The =typeof= gets the type of an

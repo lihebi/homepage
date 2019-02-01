@@ -34,4 +34,5 @@
   - [[file:wiki/ml.org][Machine Learning]]
   - [[file:wiki/nlp.org][Natural Language Processing]]
   - [[file:wiki/python.org][Python]]
+  - [[file:wiki/r.org][R]]
   - [[file:wiki/writing.org][Techniques for Writing]]
