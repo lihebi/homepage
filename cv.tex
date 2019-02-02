@@ -16,6 +16,7 @@
   \MakeUppercase{\bf #1}
   \medskip
   \hrule
+  \medskip
   \begin{list}{}{
       \setlength{\leftmargin}{1.5em}
     }
@@ -29,10 +30,14 @@
 \begin{document}
 
 \centerline{\MakeUppercase{\huge\bf Hebi Li}}
+\medskip
 %% \centerline{PhD Candidate in Programming Languages \& Analysis}
-\centerline{\textit{\textcolor{mygray}{1865 Long Rd, Unit A, Ames IA
-      50010}}} \centerline{\faEnvelope ~ hebi@iastate.edu ~ | ~
-  \faHome ~ lihebi.com ~ | ~ \faGithubSquare ~ lihebi}
+%% \centerline{\textit{\textcolor{mygray}{1865 Long Rd, Unit A, Ames IA
+%%       50010}}}
+\centerline{\faEnvelope ~ lihebi.com@gmail.com ~ | ~
+  \faHome ~ lihebi.com ~ | ~ \faGithubSquare ~ lihebi
+  %% ~ | ~ \faPhone +1 (515) 708-8131
+}
 
 \begin{mysection}{Education}
   \textbf{Iowa State University} \hfill \emph{Aug. 2014 - Aug 2019 (Expected)} \\
@@ -43,22 +48,26 @@
   \emph{B.E. in Electrical Engineering}
 \end{mysection}
 
-\begin{mysection}{Research Area}
-  \begin{itemize}
-  \item \textbf{Artificial Intelligence, Causality}
-  \item \textbf{Natural Language Processing}
-  \item \textbf{Programming Languages \& Analysis, Software Engineering}
-  \end{itemize}
-\end{mysection}
 
-\begin{mysection}{Preferred Programming Skills}
-  \begin{itemize}
-  \item \textbf{Lisp \& Scheme dialects}: Racket, Common-Lisp, Emacs
-    Lisp
-  \item \textbf{C/C++}: familiar with LLVM/Clang, Boost
-  \item \textbf{Python}: familiar with Tensorflow, BeautifulSoup
-  \end{itemize}
-\end{mysection}
+\begin{minipage}{0.5\textwidth}
+  \begin{mysection}{Research Area}
+    \begin{itemize}
+    \item Artificial Intelligence, Causality
+    \item Natural Language Processing
+    \item Programming Languages \& Analysis
+    \end{itemize}
+  \end{mysection}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+  \begin{mysection}{Programming Skills}
+    \begin{itemize}
+    \item Lisp \& Scheme
+    \item C/C++
+    \item Python
+    \end{itemize}
+  \end{mysection}
+\end{minipage}
+  
 
 \begin{mysection}{Research Projects}
 
@@ -82,41 +91,40 @@
     neural network architectures atop the embedding,
     \textbf{Fully-connected}, \textbf{CNN}, and \textbf{LSTM}.
 
-  \item Publications: Hebi Li, Qi Xiao, Yinfei Yang, Forrest Sheng Bao,
-      \textit{``End-to-end semantics-based summary quality assessment
-        for single-document summarization''}, In submission to
-      NAACL-2019.
+  \item \textbf{Hebi Li}, Qi Xiao, Yinfei Yang, Forrest Sheng Bao,
+    \textit{``End-to-end semantics-based summary quality assessment
+      for single-document summarization''}, In submission to
+    NAACL-2019.
   \end{itemize}
   
   \textbf{AI: Causal Discovery From High Dimensional Data (Python,
     Tensorflow)} \hfill \emph{Spring 2018 - Present}
 
   \begin{itemize}
-  \item Description: Causality is believed by many to be the right way
-    for Artificial General Intelligence. However, most causality
-    research are done in low-dimensional data. We hence are interested
-    in discovering causal relations embedded inside high dimensional
-    data such as images and text. In particular, we are interested in
+  \item Description: Causal relationships are fundamental for
+    predictions of the consequences of actions. However, most
+    causality research are done in low-dimensional data. We hence are
+    interested in \textbf{causal discovery in high dimensional data}
+    such as images and text. In particular, we are interested in
     mapping low-level raw pixels (micro variables) into high-level
     features (macro variables) that have explicit causal relations.
-    The model is built atop \emph{Variational Causal Encoder (VAE)}.
+    The model is built atop \textbf{Variational Causal Encoder (VAE)}.
   %% \item Publications: Hebi Li, Jin Tian, \textit{``Causal Discovery
   %%   From High Dimensional Data''}, In Progress.
   \end{itemize}
   
-  \textbf{PL\&SE: Dynamic Program Analysis on Demand (C/C++, LLVM/Clang,
-    Racket)} \hfill \emph{Summer 2015 - Spring 2018}
+  \textbf{PL: Demand-driven Dynamic Program Analysis (C++,
+    LLVM/Clang, Racket)} \hfill \emph{Summer 2015 - Spring 2018}
 
   \begin{itemize}
   \item Website: \url{https://helium.lihebi.com/}. V1 Code:
-    \url{https://github.com/lihebi/Helium} (723 commits, 22k LOC
+    \url{https://github.com/lihebi/Helium} (723 commits, 22k
     C/C++). V2 Code: \url{https://github.com/lihebi/helium2} (143
-    commits, 1.7k LOC Racket, 3k LOC C/C++).
-  \item Description: Helium is a framework that debugs your program
-    on-demand, preventing running time overhead by running just enough
-    code. It generates a small partial program from the original big
-    buggy program by performing data and control flow analysis and
-    dynamically test to verify the bug.  It features a
+    commits, 1.7k Racket, 3k C/C++).
+  \item Description: We develop Helium, a framework that debugs
+    programs on-demand, preventing running time overhead by running
+    just enough code. It analyzes a buggy program and generates a much
+    smaller partial program that retains the same bug.  It features a
     \textbf{syntactic patching algorithm} that find the extra code in
     addition to the user selection that is necessary for a valid
     partial program. It also features a \textbf{demand-driven context
@@ -124,54 +132,50 @@
     a given program property.
   \item Implementation highlights: The framework uses
     \textbf{LLVM/Clang} framework as the underlying parser, and
-    performs \textbf{AST modelling and manipulation}. \textbf{Program
-      Generation} steps outputs partial programs, including
-    \textbf{unit test generation} and \textbf{dynamic test data
-      generation}. The framework is provided as \textbf{docker} image
-    that is easy and ready to use. Partial program ASTs are visualized
-    through \textbf{Graphviz} framework.
-  \item Publications:
-    \begin{itemize}
-    \item Hebi Li, Wei Le, \textit{``Enabling Dynamic Analysis for
-      Partial Programs Via Syntactic Patching''}, In submission.
-    \item Hebi Li, Wei Le, \textit{``Demand-Driven Dynamic Analysis
-      for Automatic Benchmark Building''}, In submission.
-    \end{itemize}
+    performs \textbf{AST} modelling and manipulation, and generates
+    partial programs together with dynamic tests. The framework is
+    provided as \textbf{docker} image that is easy and ready to
+    use. Partial program ASTs are visualized through \textbf{Graphviz}
+    framework.
+  \item \textbf{Hebi Li}, Wei Le, \textit{``Enabling Dynamic Analysis
+    for Partial Programs Via Syntactic Patching''}, In submission.
+  \item \textbf{Hebi Li}, Wei Le, \textit{``Demand-Driven Dynamic
+    Analysis for Automatic Benchmark Building''}, In submission.
   \end{itemize}
 
-  \textbf{USTC Bachelor Thesis: Named Data Network} \hfill
-  \emph{Summer 2013 - Summer 2014}
+  %% \textbf{USTC Bachelor Thesis: Named Data Network} \hfill
+  %% \emph{Summer 2013 - Summer 2014}
 
-  Publications: Hebi Li, Xiaobin Tan \textit{``TreeSync: A Distributed
-    Message Synchronization Algorithm Using Topology-Related Hierarchy
-    over Named Data Network''}, USTC Thesis, 2014
+  %% Publications: Hebi Li, Xiaobin Tan \textit{``TreeSync: A Distributed
+  %%   Message Synchronization Algorithm Using Topology-Related Hierarchy
+  %%   over Named Data Network''}, USTC Thesis, 2014
 \end{mysection}
 
-\begin{mysection}{Open Source Projects}
-  \begin{itemize}
-  \item \textbf{hn.el (ELisp)}: A Hacker News Client for Emacs.
-    \url{https://github.com/lihebi/hn.el}
-  \item \textbf{simple-drill.el (Elisp)}: A Flashcard Program for
-    Emacs. \url{https://github.com/lihebi/simple-drill.el}
-  \item \textbf{smart-scholar.el (Elisp, Python)}: Download and manage
-    bibs for CS conferences.
-    \url{https://github.com/lihebi/smart-scholar.el}
-  \end{itemize}
-\end{mysection}
+%% \begin{mysection}{Open Source Projects}
+%%   \begin{itemize}
+%%   \item \textbf{hn.el (ELisp)}: A Hacker News Client for Emacs.
+%%     \url{https://github.com/lihebi/hn.el}
+%%   \item \textbf{simple-drill.el (Elisp)}: A Flashcard Program for
+%%     Emacs. \url{https://github.com/lihebi/simple-drill.el}
+%%   \item \textbf{smart-scholar.el (Elisp, Python)}: Download and manage
+%%     bibs for CS conferences.
+%%     \url{https://github.com/lihebi/smart-scholar.el}
+%%   \end{itemize}
+%% \end{mysection}
 
-\begin{mysection}{Teaching Experience}
-  TA in Network Programming, Applications, and Research Issues (ISU CS587)
-  \hfill \emph{Spring 2019}
+%% \begin{mysection}{Teaching Experience}
+%%   TA in Network Programming, Applications, and Research Issues (ISU CS587)
+%%   \hfill \emph{Spring 2019}
   
-  TA in Advanced Design and Analysis of Algorithms (ISU CS511)
-  \hfill \emph{Spring 2019}
+%%   TA in Advanced Design and Analysis of Algorithms (ISU CS511)
+%%   \hfill \emph{Spring 2019}
   
-  TA in Principles of Programming Languages (ISU CS342)
-  \hfill \emph{Fall 2016, Fall 2017}
+%%   TA in Principles of Programming Languages (ISU CS342)
+%%   \hfill \emph{Fall 2016, Fall 2017}
 
-  TA in Introduction to Database System (ISU CS363)
-  \hfill \emph{Fall 2014, Spring 2015}
-\end{mysection}
+%%   TA in Introduction to Database System (ISU CS363)
+%%   \hfill \emph{Fall 2014, Spring 2015}
+%% \end{mysection}
 
 %% \begin{mysection}{Awards}
 %%   \textbf{Teaching Excellent Award} \hfill \emph{May 2017}
