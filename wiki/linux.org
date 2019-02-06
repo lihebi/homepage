@@ -1,6 +1,10 @@
 #+TITLE: Linux
 
 * Tmp
+
+=sudo -i= will drop you to root shell, even if you don't know root
+password!
+
 ** Arduino
 
 #+BEGIN_EXAMPLE
@@ -314,7 +318,39 @@ system/base/compile.scm:144:21: In procedure compile-file:
 failed to create path for auto-compiled file "/home/hebi/.config/guix/channels.scm"
 #+END_EXAMPLE
 
+** Guix on Foreign distribution
 
+*** Trouble Shooting
+
+On Ubuntu, every time I run =guix package=, I got the warning:
+#+BEGIN_EXAMPLE
+guile: warning: failed to install locale
+hint: Consider installing the `glibc-utf8-locales' or `glibc-locales' package and
+defining `GUIX_LOCPATH', along these lines:
+
+     guix package -i glibc-utf8-locales
+     export GUIX_LOCPATH="$HOME/.guix-profile/lib/locale"
+
+See the "Application Setup" section in the manual, for more info.
+#+END_EXAMPLE
+
+The problem is that, on Ubuntu, the guix-daemon is run as root. Thus,
+the package and the path should be set to root's
+profile. Specifically, in =/etc/systemd/system/guix-daemon.service=:
+
+#+BEGIN_EXAMPLE
+Environment=GUIX_LOCPATH=/var/guix/profiles/per-user/root/guix-profile/lib/locale
+#+END_EXAMPLE
+
+The path is OK, but root does not have the package installed. Thus,
+the following command fixes it. There is no need to update the guix of
+the root.
+
+#+BEGIN_EXAMPLE
+sudo guix package -i glibc-utf8-locales
+#+END_EXAMPLE
+
+Reference: https://lists.gnu.org/archive/html/help-guix/2019-01/msg00211.html
 
 
 * Git
