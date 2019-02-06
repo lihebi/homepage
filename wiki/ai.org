@@ -21,6 +21,59 @@
 - Markov chain: a discrete-time stochastic process satisfying the
   Markov property
 
+** TODO PCA & PCR & PLS
+In case of high dimensionality, many models would fail, and this is
+known as /curse of dimensionality/. For example, when the dimension is
+high, KNN need not to be close to the target point.  In general, any
+method that attempts to produce local varying functions in small
+isotropic neighborhoods will run into problems in high dimensions.
+
+# Dimension Reduction techniques are discussed here.
+
+# linear combination of the predictors into M new predictors.
+
+# \begin{eqnarray}
+# Z_m = \sum_{j=1}^p \phi_{jm} X_j
+# \end{eqnarray}
+
+*** /Principal Component Analysis (PCA)/
+The following are some criteria for the direction selection, they all
+talk about the same thing:
+- The first principal component direction is that along which the
+  observation vary the most.
+- This also yields the highest variance.
+- It also defines the line that is as close as possible to the data.
+- projected observations are as close as possible to the original
+  observations.
+
+The second principal component $Z_2$ is a linear combination of the
+variables that is uncorrelated with $Z_1$, and has largest variance
+subject to this constraint.  Actually $Z_1$ and $Z_2$ are always
+orthogonal.
+
+*** /Principal Component Regression (PCR)/
+
+Construct the first M principal components, and do linear regression
+on the new predictors.
+
+*** /Partial Least Squares (PLS)/
+The directions identified by PCA is in an unsupervised way, i.e. it
+does not use response Y.
+
+Set each $\phi_{j1}$ equal to the coefficient from teh simple linear
+regression of Y onto X_j.  Intuitively PLS places the highest weight
+on the variables that are most strongly related to the response.
+
+Second PLS direction is by
+1. adjust each of the variables for Z_1, by regressing each variable
+   on Z_1 and taking residuals This captures the remaining information
+   that has not been explained by the first PLS direction
+2. use this orthogonalized data in exactly the same fashion as Z_1.
+3. Repeat M times.
+
+
+** TODO ICA
+
 ** Gibbs sampling
 It is one kind of Monte Carlo Markov Chain method, for sampling from
 posterior distribution. The key is to sample from variables'
