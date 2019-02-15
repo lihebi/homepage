@@ -31,6 +31,58 @@ something is wrong with the language.
 export PYTHONPATH="$PYTHONPATH:/home/hebi/github/reading/models"
 #+END_EXAMPLE
 
+Add some path so that I can import from there:
+#+BEGIN_SRC python
+sys.path.append('/home/hebi/github/reading/InferSent/')
+# assume in root of that directory, models.py defines InferSent class
+from models import InferSent
+#+END_SRC
+
+Packaging:
+
+setup.py:
+#+BEGIN_SRC python
+from setuptools import setup, find_packages
+setup(
+    name="InferSent-Mirror",
+    version="0.1",
+    # packages=find_packages(),
+    packages=['p1', 'p2'],
+)
+#+END_SRC
+
+Directory structure:
+#+BEGIN_EXAMPLE
+mypackage/
+  p1/
+    __init__.py
+    xxx.py
+  p2/
+    __init__.py
+    yyy.py
+#+END_EXAMPLE
+
+Install locally:
+#+BEGIN_EXAMPLE
+python3 setup.py install --user
+#+END_EXAMPLE
+
+Install from git repo:
+#+BEGIN_EXAMPLE
+pip install --user git+https://github.com/lihebi/InferSent
+#+END_EXAMPLE
+
+Import:
+#+BEGIN_EXAMPLE
+from p1 import xxx
+from p2.yyy import foo
+#+END_EXAMPLE
+
+
+
+
+
+
 
 ** Meta Programming
 
