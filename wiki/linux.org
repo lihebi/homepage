@@ -318,6 +318,30 @@ system/base/compile.scm:144:21: In procedure compile-file:
 failed to create path for auto-compiled file "/home/hebi/.config/guix/channels.scm"
 #+END_EXAMPLE
 
+
+** Developing Guix packages
+
+To get the hash:
+#+BEGIN_EXAMPLE
+git clone https://...
+cd xxx
+guix hash -rx .
+#+END_EXAMPLE
+
+It seems not necessary to switch to the last commit if using the last
+commit. But the commit is needed anyway.
+#+BEGIN_EXAMPLE
+git log | head -1 # show the first commit
+git checkout c6e10a
+#+END_EXAMPLE
+
+
+
+
+
+
+
+
 ** Guix on Foreign distribution
 
 *** Trouble Shooting
