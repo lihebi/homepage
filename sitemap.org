@@ -21,6 +21,7 @@
   - [[file:essays/time.org][Time]]
   - [[file:essays/world.org][World and Space]]
 - wiki
+  - [[file:wiki/ai-frameworks.org][AI Frameworks]]
   - [[file:wiki/algorithm.org][Algorithm]]
   - [[file:wiki/ai.org][Artificial Intelligence]]
   - [[file:wiki/camping.org][Camping]]

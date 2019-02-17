@@ -84,7 +84,8 @@ correct. Read at your own risk.
 - [[file:wiki/linux.org][Linux]]: the OS to-go, before the revival of
   Lisp Machine
 - [[file:wiki/emacs.org][Emacs]]: poor-man's lisp machine
-- [[file:wiki/ai.org][AI]]: currently very preliminary
+- [[file:wiki/ai.org][AI]] and [[file:wiki/ai-frameworks.org][AI
+  Frameworks]]: currently very preliminary
 - [[file:wiki/ml.org][ML]]: currently very preliminary
 
 
