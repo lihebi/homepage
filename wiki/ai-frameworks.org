@@ -84,6 +84,54 @@ image_ds = tf.data.TFRecordDataset('images.tfrec').map(preprocess_image)
 Seems that =TFRecordDataset= is simply a subclass of =Dataset=, and
 only the =__init__= function is different.
 
+*** TFRecord Creation
+TFRecord is closely related to ProtocolBuffer.
+
+#+BEGIN_SRC python
+def convert_to_proto(data):
+    # data format example: ('0x87', ['hello', 'world'], [1.2, 0.8])
+    feature = {
+        'id': _bytes_feature(data[0].encode('utf-8')),
+        'mutate': _bytes_feature(tf.serialize_tensor(data[1]).numpy()),
+        'label': _bytes_feature(tf.serialize_tensor(data[2]).numpy())
+    }
+    exp = tf.train.Example(features=tf.train.Features(feature=feature))
+    return exp
+
+def decode(raw):
+    feature_description = {
+        'id': tf.FixedLenFeature([], tf.string, default_value=''),
+        'mutate': tf.FixedLenFeature([], tf.string, default_value=''),
+        'label': tf.FixedLenFeature([], tf.string, default_value='')
+    }
+    def _my_parse_function(pto):
+      # Parse the input tf.Example proto using the dictionary above.
+      return tf.parse_single_example(pto, feature_description)
+    decoded = raw.map(_my_parse_function)
+    # need to further parse tensor
+    # FIXME can we define this inside protobuffer?
+    def _my_parse2(pto):
+        return {'id': pto['id'],
+                'label': tf.parse_tensor(pto['label'], out_type=tf.float32),
+                'mutate': tf.parse_tensor(pto['mutate'], out_type=tf.string)}
+    return decoded.map(_my_parse2)
+    
+def __test():
+    exp1 = convert_to_proto(('0x87', ['hello', 'world'], [1.2, 0.8]))
+    exp2 = convert_to_proto(('0x333', ['yes', 'and', 'no'], [-1, 0.33]))
+    exp1
+    with tf.python_io.TFRecordWriter('111.tfrec') as writer:
+        writer.write(exp1.SerializeToString())
+        writer.write(exp2.SerializeToString())
+    raw = tf.data.TFRecordDataset('111.tfrec')
+    out = decode(raw)
+    out
+    for a in out:
+        print(a)
+#+END_SRC
+
+
+
 * Visualization
 Display an image file on disk:
 
