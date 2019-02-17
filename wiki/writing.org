@@ -1,5 +1,38 @@
 #+TITLE: Techniques for Writing
 
+* Tmp
+
+** Footnote cite
+
+See this for biblatex with org-mode:
+- https://orgmode.org/worg/org-tutorials/org-latex-export.html
+- https://github.com/joostkremers/ebib
+
+#+BEGIN_EXAMPLE
+#+LATEX_HEADER: \usepackage[style=authortitle,backend=bibtex]{biblatex}
+#+LATEX_HEADER: \addbibresource{../../../smart-scholar-dist/bib/AAAI/AAAI-2015}
+#+END_EXAMPLE
+
+Cite like this:
+#+BEGIN_EXAMPLE
+\footfullcite{2015-AAAI-Zhang-Multi}
+#+END_EXAMPLE
+
+Print reference slides:
+#+BEGIN_EXAMPLE
+\printbibliography
+#+END_EXAMPLE
+
+Remove
+#+BEGIN_EXAMPLE
+# bibliographystyle:apalike
+# bibliography:../../../smart-scholar-dist/bib/ICML/ICML-2013.bib,../../../smart-scholar-dist/bib/AAAI/AAAI-2015.bib
+#+END_EXAMPLE
+
+
+
+
+
 * Org Mode
 
 ** Structure
