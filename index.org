@@ -26,10 +26,15 @@ My (research) interests are quite broad:
 
 * Projects
 
-** Dynamic Analysis on Demand
-I was researching in Program Language and Analysis from 2015 Summer to
-2018 Spring. We designed an on-demand dynamic analysis framework,
-called [[https://helium.lihebi.com][Helium]], and is
+** AI, Causality & NLP (Spring 2018 - Present)
+Working ..
+** Robotics (Spring 2018 - Present)
+Working ..
+
+** Dynamic Analysis on Demand (Summer 2015 - Spring 2018)
+I was researching in Program Language and Analysis. We designed an
+on-demand dynamic analysis framework, called
+[[https://helium.lihebi.com][Helium]], and is
 [[https://github.com/lihebi/helium2][open source]].
 
 ** USTC RoboGame 2012
@@ -40,9 +45,10 @@ routes using image processing, climbing the ladders, and finally put
 the followers precisely in front of the sculpture of Jici Yan. The
 micro controller was Freescale XS128. You can see
 [[https://www.youtube.com/watch?v=N0EbvINeiy4][a small video]] of our
-robot in the competition that day. We also have a
-[[file:assets/robogame2012-technical-report.pdf][technical report in
-Chinese (pdf)]]
+robot in the competition that day. Check out the
+[[file:assets/robogame2012-proposal.pdf][proposal (pdf)]] and the
+[[file:assets/robogame2012-technical-report.pdf][technical report
+(pdf)]] in Chinese.
 
 ** Open Source Tools
 - [[https://github.com/lihebi/hn.el][hn.el]]: A Hacker News Client for
