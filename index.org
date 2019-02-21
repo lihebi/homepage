@@ -1,8 +1,11 @@
 #+TITLE: Hebi Li
 #+OPTIONS: toc:nil num:0
 
+#+BEGIN_CENTER
 #+ATTR_HTML: :width 200px
 [[./assets/hebi.png]]
+#+END_CENTER
+
 
 #+begin_quote
 # so busy yearning for the moon that he never saw the sixpence at his feet
@@ -124,5 +127,12 @@ certificate (pdf)]] in 4h 35min and
 [[file:assets/finisher_certificate_2018.pdf][2018 certificate (pdf)]]
 in 4h 59min.
 
+
+#+BEGIN_CENTER
 #+ATTR_HTML: :width 200px
-[[./assets/marathon.jpg]]
+[[./assets/marathon_2017.jpg]]
+
+#+ATTR_HTML: :width 300px
+[[./assets/marathon_2018.jpg]]
+#+END_CENTER
+

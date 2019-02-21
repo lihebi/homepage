@@ -90,3 +90,11 @@ pre {
   word-wrap: break-word;
   white-space: pre-wrap;
 }
+
+.figure {
+    display: inline;
+}
+
+.figure p {
+    display: inline;
+}
