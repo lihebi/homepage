@@ -337,6 +337,12 @@ git checkout c6e10a
 
 
 
+** Bootloader
+
+#+BEGIN_EXAMPLE
+/gnu/store/9nqaksx40zh5d6cg5rim3f3spy56bfb9-raw-initrd/initrd.cpio.gz
+#+END_EXAMPLE
+
 
 
 
