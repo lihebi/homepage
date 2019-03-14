@@ -343,9 +343,71 @@ git checkout c6e10a
 /gnu/store/9nqaksx40zh5d6cg5rim3f3spy56bfb9-raw-initrd/initrd.cpio.gz
 #+END_EXAMPLE
 
+** Nvidia driver
+
+To install Nvidia driver, we need to kernel source tree. However,
+there is no such a package in Guix. Thus, we need to build the kernel
+source first.
+
+#+BEGIN_EXAMPLE
+guix build linux-libre --check --keep-failed
+#+END_EXAMPLE
+
+When =--check= and =--keep-failed= are used together, it builds the
+package and keep it in =/tmp/guix-build-linux-libre-x.x.x.drv-0=.
+
+After that, we can simply unpack the Nvidia driver:
+
+#+BEGIN_EXAMPLE
+sh NVIDIA-Linux-x86_65-xxx.xx.run -x
+cd NVIDIA-Linux-x86_64-xxx.xx
+#+END_EXAMPLE
+
+Note that you should use the same version of GCC, and =guix
+environment= seems not to overwrite the gcc version. So say you need
+gcc@7:
+
+#+BEGIN_EXAMPLE
+guix package -i gcc@7
+#+END_EXAMPLE
+
+Run the build
+#+BEGIN_EXAMPLE
+sudo ./nvidia-installer --kernel-source-path /tmp/guix-build-linux-libre-x.x.x.drv-0
+#+END_EXAMPLE
 
 
+It should build, and the kernel modules are in
+=/lib/modules/4.20.7-gnu/video/=. However it won't be loaded
+successfully, and the installer will complain:
 
+#+BEGIN_EXAMPL
+Driver file installation is complete.
+ERROR: Unable to load the 'nvidia-drm' kernel module.
+#+END_EXAMPLE
+
+That's OK.  Guix has its own module load path, and the path is hard
+coded by Linux source to be a single path. Thus, there is practically
+no way to automatically load those modules. So just load them
+manually. Thus the driver cannot be used as the X11 driver. But it is
+OK to use for Tensorflow.
+
+#+BEGIN_EXAMPLE
+modprobe ipmi_devintf
+insmod /lib/modules/x.x.x-gnu/video/nvidia.ko
+insmod /lib/modules/x.x.x-gnu/video/nvidia-modeset.ko
+insmod /lib/modules/x.x.x-gnu/video/nvidia-drm.ko
+insmod /lib/modules/x.x.x-gnu/video/nvidia-uvm.ko
+#+END_EXAMPLE
+
+Last but not least, you need to manually prevent kernel from loading
+nouveau, i.e. in =config.scm=, you should have:
+
+#+BEGIN_EXAMPLE
+(operating-system
+  (kernel-arguments '("intel_iommu=on" "iommu=pt" "modprobe.blacklist=nouveau"))
+  ..)
+#+END_EXAMPLE
 
 
 ** Guix on Foreign distribution
