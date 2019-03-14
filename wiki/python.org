@@ -1018,6 +1018,35 @@ Finally, =help= option can be used to provide help string, and it can
 be printed out using =parser.print_help()=.  To test the parser, you
 can use =parser.parse_args(['-f', '1', 'bar'])=.
 
+** contextlib
+#+BEGIN_SRC python
+from contextlib import redirect_stdout
+with open('xxx.txt', 'w') as f:
+    redirect_stdout(f)
+#+END_SRC
+
+Or:
+#+BEGIN_SRC python
+sys.stdout = f
+#+END_SRC
+
+The file handle can be:
+#+BEGIN_SRC python
+f = open(os.devnull, 'w')
+#+END_SRC
+
+It can also be a predefined handle, like =sys.stderr=:
+
+#+BEGIN_SRC python
+with redirect_stdout(sys.stderr):
+    help(dir)
+#+END_SRC
+
+
+
+
+
+
 ** Regular Expression
 
 construction
@@ -1379,11 +1408,33 @@ plt.imshow(x_train[7777], cmap='Greys')
 # imshow().
 plt.show()
 
-# plot to a file
+#+END_SRC
+
+plot to a file
+#+BEGIN_SRC python
 pylab.ioff()
 plot([1, 2, 3])
 savefig("/tmp/test.png")
 #+END_SRC
+
+
+Subplots:
+
+#+BEGIN_SRC python
+plt.ioff()
+figure = plt.figure()
+figure.canvas.set_window_title('My Grid Visualization')
+for x in range(height):
+    for y in range(width):
+        # print(x,y)
+        figure.add_subplot(height, width, x*width + y + 1)
+        plt.axis('off')
+        plt.imshow(convert_image_255(images[x*width+y]), cmap='gray')
+# plt.show()
+plt.savefig(filename)
+#+END_SRC
+
+
 
 ** Deep Learning Framework
 Select visible GPU in a multi-GPU setting:

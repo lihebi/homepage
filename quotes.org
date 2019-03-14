@@ -7,6 +7,12 @@ Yoda in "The Empire Strikes Back":
 You must unlearn what you have learned.
 #+END_QUOTE
 
+William Gibson:
+
+#+BEGIN_QUOTE
+The future is already here — it's just not very evenly distributed.
+#+END_QUOTE
+
 * Education
 
 Michael Seibel
@@ -383,6 +389,9 @@ bad things with it.
 Art is a lie that tells the truth
 #+END_QUOTE
 
+#+BEGIN_QUOTE
+Good artists copy, great artists steal.
+#+END_QUOTE
 
 #+BEGIN_QUOTE
 Learn the rules like a pro, so you can break them like an artist.

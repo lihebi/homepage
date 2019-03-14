@@ -122,10 +122,10 @@ great minds.
 - [[file:vehicle.org][vehicle]]
 
 Exercise brings me a lot of joy and energy. I run full marathon every
-year since 2017. The [[file:assets/finisher_certificate_2017.pdf][2017
-certificate (pdf)]] in 4h 35min and
-[[file:assets/finisher_certificate_2018.pdf][2018 certificate (pdf)]]
-in 4h 59min.
+year since 2017. See the
+[[file:assets/finisher_certificate_2017.pdf][2017 certificate (pdf)]]
+in 4h 35min and [[file:assets/finisher_certificate_2018.pdf][2018
+certificate (pdf)]] in 4h 59min.
 
 
 #+BEGIN_CENTER

@@ -1,5 +1,76 @@
 #+TITLE: Algorithm
 
+* Network Flow Problems
+- A *cut* of an undirected graph G is a partition of V, into $(S, V-S)$.
+- An edge E *crosses the cut* if its two ends belong to the different
+  sides of the cut.
+- A cut *respects* a set of edges A if no edge in A crosses the cut
+- The minimum weight edge crossing the cut is called *light edge*
+- More generally, we say an edge the *light edge* for some properties,
+  if it is the minimum weight one among all edges satisfying the
+  property.
+
+General idea: We grow a set of edges A, from $\emptyset$, and maintain
+the invariant that is a subset of some minimum spanning tree. If we
+can add an edge to A, and don't violate this invariant, we call it
+*safe edge* to A.
+
+#+BEGIN_EXAMPLE
+A = {}
+while A is not a spanning tree:
+  find (u,v) that is safe for A
+  A = A union {(u,v)}
+#+END_EXAMPLE
+
+Theorem 23.1:
+
+#+BEGIN_QUOTE
+$A$ is a subset of $E$, and $A$ is in some minimum spanning tree of
+G. Cut $c$ respects A. Then the light edge of $c$ is safe to $A$.
+#+END_QUOTE
+
+Corollary 23.2
+
+#+BEGIN_QUOTE
+A is a subset of E and A is included in some minimum spanning tree of
+G. We have a forest F=(V,A). In the forest, there will be many
+connected components $C_i$.
+
+Then the light edge connecting $C_i$ to $C_j$ is safe to A.
+#+END_QUOTE
+
+** Kruskal's algorithm
+#+BEGIN_EXAMPLE python
+edges = sorted(edges, key=weight)
+A = {}
+for (u,v) in edges:
+  if u,v are not in the same component of A:
+    add (u,v) to A
+#+END_EXAMPLE
+
+** Prim's algorithm
+Maintain a tree A at each step. Start from an arbitrary node, add it
+to A. Each step, add to A the light edge from a node A to the rest of
+G.
+
+#+BEGIN_EXAMPLE python
+for u in G.V:
+  u.key = infinite
+  u.parent = None
+r = random_node()
+Q = G.V
+while Q:
+  u = extract_min(Q, key=key)
+  for v in G.Adj[u]:
+    if v in Q and w(u,v) < v.key:
+      v.key = w(u,v)
+      v.parent = u
+#+END_EXAMPLE
+
+
+
+
+
 * Other
 
 ** Barrel shifter
