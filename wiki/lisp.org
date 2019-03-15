@@ -3780,6 +3780,45 @@ The system is specified using =defsystem= syntax. An example
        (= (+ -1 -3) -4)))
  #+END_SRC
 
+* Guile
+** Module
+
+A module is identified by a list of one or more symbols indicating the
+hierarchy, e.g. =(ice-9 popen)=. When creating a module, you typically
+supplies what modules to depend on, and what symbols are exported as
+its public interface:
+
+#+BEGIN_SRC scheme
+(define-module (ice-9 popen)
+  #:use-module (ice-9 popen)
+  #:use-module (ice-9 pclose)
+  #:export (my list-of names))
+#+END_SRC
+
+When using a module, the =use-modules= accesses this public interface.
+
+#+BEGIN_SRC scheme
+(use-modules (ice-9 popen))
+(use-modules ((ice-9 popen)
+              #:select ((open-pipe . pipe-open) close-pipe)
+              #:renamer (symbol-prefix-proc 'unixy:)))
+(use-modules ((ice-9 popen)
+              #:select ((open-pipe . pipe-open) close-pipe)
+              #:prefix unixy:))
+#+END_SRC
+
+Another way to access a module is through =@= syntax:
+
+#+BEGIN_SRC scheme
+(define unixy:pipe-open (@ (ice-9 popen) open-pipe))
+(define unixy:close-pipe (@ (ice-9 popen) close-pipe))
+#+END_SRC
+
+The =@@= syntax does the same thing, but is able to access private
+bindings.
+
+Both method will try to find the module in =%load-path=, and if not
+loaded, will load it.
 
 * Reference
 - Ron Garret: Why Lisp: http://blog.rongarret.info/2015/05/why-lisp.html
