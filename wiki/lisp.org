@@ -125,6 +125,43 @@ programming language; the bad news is that they will be Unix and C++.
 
 
 
+* Emacs IDE
+** Geiser
+All REPL evaluation happens in a module, and the module of the REPL is
+typically different from that of a file.
+
+In the REPL, the module name is shown in REPL right after =@= sign. If
+you are not in the right module, you cannot access the bindings
+defined in it. You can switch the module by =switch-to-geiser-module
+(C-c C-m)=, which is implemented as =,m=, =,use=, or =,enter=,
+depending on the scheme implementation. You can also import the
+bindings of a module into the current namespace, using
+=geiser-repl-import-module (C-c C-i)=.
+
+In a file, the module is the current file. If you evaluate something,
+it will most likely output results in minibuffer, unless
+1. an error happens, where you are dropped in the REPL in debugger
+   mode with the module of the file, so that you can access all the
+   bindings there. Just remember to =,q= when you are done.
+2. output images, which will be shown in the REPL, but no entry of
+   debugger
+3. a warning happens. The warning will be in a separate buffer, and
+   will not drop you in debugger.
+
+Some of the useful commands:
+- =C-c C-z=: jump to repl, start if not started.
+- =C-c C-d d=: read document for symbol
+- =C-c C-d i=: read the manual (more comprehensive) for symbol
+- =C-c C-d m=: read the list of exported bindings in a module (enter)
+- =C-x C-e=: evaluate last sexp
+- =C-x C-b=: evaluate buffer
+- =C-x C-r=: evaluate region
+- =C-M-x=: eval top level
+- =C-c \= runs the command =geiser-insert-lambda=, inserts a
+  lambda. As a comparison, the racket-mode has
+  =racket-unicode-input-method-enable=, implemented an input method
+  for all latin letters.
+
 * Racket
 ** Basic
 *** Local binding
