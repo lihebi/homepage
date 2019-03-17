@@ -1346,6 +1346,48 @@ narrowing, and =widen= undoes it. This creates the following effects:
 2. no texts outside are displayed
 3. most (?) functions refuse to operate on outside text
 
+*** Faces
+
+http://ergoemacs.org/emacs/elisp_define_face.html
+
+You probably don't want to define a face from scratch. Try use the
+default ones:
+
+- default
+- bold
+- italic
+- bold-italic
+- underline
+- fixed-pitch
+- variable-pitch
+- shadow
+- link
+- link-visited
+- highlight
+- match
+- isearch
+- lazy-highlight
+- error
+- warning
+- success
+
+Or the ones defined in font-lock-mode:
+
+- font-lock-builtin-face
+- font-lock-comment-delimiter-face
+- font-lock-comment-face
+- font-lock-constant-face
+- font-lock-doc-face
+- font-lock-function-name-face
+- font-lock-keyword-face
+- font-lock-negation-char-face
+- font-lock-preprocessor-face
+- font-lock-regexp-grouping-backslash
+- font-lock-regexp-grouping-construct
+- font-lock-string-face
+- font-lock-type-face
+- font-lock-variable-name-face
+- font-lock-warning-face
 
 *** Marker
 A marker has two component: the buffer it is in, and the position in
