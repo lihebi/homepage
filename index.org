@@ -45,10 +45,9 @@ on-demand dynamic analysis framework, called
 I was the leader of a team in USTC RoboGame 2012, and we ranked 3rd
 among 26 teams. The robot precisely fetched a bunch of flowers, found
 routes using image processing, climbing the ladders, and finally put
-the followers precisely in front of the sculpture of Jici Yan. The
-micro controller was Freescale XS128. You can see
-[[https://www.youtube.com/watch?v=N0EbvINeiy4][a small video]] of our
-robot in the competition that day. Check out the
+the followers precisely in front of the sculpture of Jici Yan. You can
+see [[https://www.youtube.com/watch?v=N0EbvINeiy4][a small video]] of
+our robot in the competition that day. Check out the
 [[file:assets/robogame2012-proposal.pdf][proposal (pdf)]] and the
 [[file:assets/robogame2012-technical-report.pdf][technical report
 (pdf)]] in Chinese.
