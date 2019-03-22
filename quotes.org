@@ -13,6 +13,12 @@ William Gibson:
 The future is already here — it's just not very evenly distributed.
 #+END_QUOTE
 
+** ??
+
+#+BEGIN_QUOTE
+You can't get to the moon by piling up chairs.
+#+END_QUOTE
+
 * Education
 
 Michael Seibel

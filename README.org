@@ -1,2 +1,9 @@
 #+TITLE: Homepage Source Repository
 
+* TODOs
+
+** wiki internal/external links
+** wiki quotation author
+** blog create and last modify time, modify history
+** TODO https://ambrevar.xyz/ org-publish and last-update is interesting
+  [2018-08-29 Wed 04:38]
