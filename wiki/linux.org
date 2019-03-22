@@ -458,7 +458,33 @@ git push -f origin master
 By contrast, =git-revert= will create a new commit to undo the
 previous commits.
 
-** TODO gitolite
+show the diff together when inspecting log
+#+BEGIN_EXAMPLE
+git lg -p
+#+END_EXAMPLE
+
+Clone recursively for all submodules:
+
+#+BEGIN_EXAMPLE
+git clone --recursive https://xxx
+#+END_EXAMPLE
+
+If you cloned without the recursive option, you can retrieve the
+submodules by:
+
+#+BEGIN_EXAMPLE
+git submodule update --init --recursive
+#+END_EXAMPLE
+
+
+** Configuration
+
+#+BEGIN_EXAMPLE
+git config --global user.email 'xxx@xxx'
+git config --global user.name 'xxx'
+git config --global credential.helper cache # cache 15 min by default
+git config --global credential.helper 'cache --timeout=3600' # set in sec
+#+END_EXAMPLE
 
 ** Server
 
@@ -655,23 +681,7 @@ But, my server is inside IASTATE, Let's Encrypt cannot find my IP
 address. Thus, nothing can be done actually.
 #+END_EXAMPLE
 
-
-
-
-** Configuration
-
-#+BEGIN_EXAMPLE
-git config --global user.email 'xxx@xxx'
-git config --global user.name 'xxx'
-git config --global credential.helper cache # cache 15 min by default
-git config --global credential.helper 'cache --timeout=3600' # set in sec
-#+END_EXAMPLE
-
-** Usage Tips
-show the diff together when inspecting log
-#+BEGIN_EXAMPLE
-git lg -p
-#+END_EXAMPLE
+*** TODO gitolite
 
 ** Individual tools
 
