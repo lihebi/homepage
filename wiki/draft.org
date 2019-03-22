@@ -43,3 +43,32 @@ Everything else Not set, including
 Here is the C lexer rule and grammar for yacc
 - lex: http://www.quut.com/c/ANSI-C-grammar-l.html
 - yacc: http://www.quut.com/c/ANSI-C-grammar-y.html
+
+* Math
+
+** Calculus
+Calculus has two main branches:
+- differential calculus
+  - it is mainly about derivative. The process of finding a derivative
+    is called differentiation.
+  - $\frac{dy}{dx}|_{a}$ is Leibniz's notation
+  - f'(a) is Lagrange's notation
+- integral calculus
+  - definite integral
+  - indefinite integral (also antiderivative)
+
+** Lagrange multiplier
+
+When solving a maxima of a function, with subject to a constraint, we
+often use /Lagrange multiplier/. Say:
+- maximize $f(x,y)$
+- subject to $g(x,y)=0$
+We are going to introduce the Lagrange multiplier $\lambda$ such that
+- $L(x,y,\lambda) = f(x,y) - \lambda g(x,y)$ is called Lagrange
+  function.
+- Compute the gradient of L, and compute the stationary points. Those
+  points will be the space of the solution to the original maxima
+  problem.
+
+The intuition: at a maximum, f(x,y) cannot be increasing in the
+direction of any neighboring point where g = 0.
