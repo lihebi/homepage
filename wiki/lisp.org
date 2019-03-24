@@ -123,6 +123,296 @@ programming language; the bad news is that they will be Unix and C++.
 
 [fn:1] http://www.dreamsongs.com/WIB.html
 
+* Basics
+** Continuation
+
+Continuation is an abstract representation of the control state of a
+computer program. It can be used to implement exceptions, coroutines,
+loop break, return, yield, etc. It is the GOTO statement in functional
+programming.
+
+The sandwich example by Luke Palmer
+(https://groups.google.com/forum/#!msg/perl.perl6.language/-KFNPaLL2yE/_RzO8Fenz7AJ):
+
+#+BEGIN_QUOTE
+Say you're in the kitchen in front of the refrigerator, thinking about
+a sandwich. You take a continuation right there and stick it in your
+pocket. Then you get some turkey and bread out of the refrigerator and
+make yourself a sandwich, which is now sitting on the counter. You
+invoke the continuation in your pocket, and you find yourself standing
+in front of the refrigerator again, thinking about a sandwich. But
+fortunately, there's a sandwich on the counter, and all the materials
+used to make it are gone. So you eat it. :-).
+
+A continuation doesn't save data.  It's just a closure that closes
+over the execution stack (and any lexicals associated with it; thus
+the "I want a sandwitch" thought).  If things change between the
+taking and invoking of the continuation, those things remain changed
+after invoking.
+#+END_QUOTE
+
+
+References:
+- wikipedia: https://en.wikipedia.org/wiki/Continuation
+- sandwich example: 
+- a blog: https://medium.com/@steinuil/call-cc-and-other-fantastic-tales-a574cab554e3
+- William Byrd: https://www.youtube.com/watch?v=2GfFlfToBCo&t=2087s
+
+*** call/cc
+
+Call with current continuation.
+
+A very simple continuation example, to simulate the return statement:
+
+#+BEGIN_SRC scheme
+(display
+  (call/cc (lambda (return)
+    (display "One ")
+    (return "Two ")
+    (display "Three"))))
+#+END_SRC
+
+#+BEGIN_SRC scheme
+(+ 5 (call/cc (lambda (k)
+                (k (* 2 3))))
+   6)
+#+END_SRC
+
+
+Seems that in order to make continuation useful, we must assign the
+continuation to a global variable, hence first-class continuation:
+
+#+BEGIN_SRC scheme
+(define reset #f)
+(define counter #f)
+
+((lambda ()
+   (call/cc (lambda (cc) (set! reset cc)))
+   (set! counter 1)))
+
+counter
+;; 1
+(set! counter (+ 1 counter))
+
+counter
+;; 2
+(reset)
+counter
+;; 1
+#+END_SRC
+
+
+Implementations of the sandwich example:
+
+#+BEGIN_SRC scheme
+(define sandwich #f)
+(define pocket #f)
+
+(define (eat-sandwich)
+  (let ((mouth '()))
+    (call/cc (lambda (cc)
+               (set! pocket cc)))
+    (if sandwich
+        (begin (set! mouth (cons sandwich mouth))
+               (set! sandwich #f)
+               (display "Ate the sandwich\n")
+               (display mouth))
+        (display "No sandwich\n"))))
+
+(eat-sandwich)
+;; make the sandwich
+(set! sandwich (cons 'bread 'turkey))
+(pocket)
+
+#+END_SRC
+
+**** self-apply continuation example
+
+There is a very interesting example in the scheme reference (by Dyrid?):
+
+#+BEGIN_SRC scheme
+(let ([x (call/cc (lambda (k) k))])
+  (x (lambda (ignore) "hi")))
+#+END_SRC
+
+What it does, is that, the k here is:
+
+#+BEGIN_SRC scheme
+(lambda (_)
+  (let ([x _])
+   (x (lambda (ignore) "hi"))))
+#+END_SRC
+
+Thus the it assigns this k to x, and apply x on =(lambda (ignore)
+"hi")=. It will result in:
+
+#+BEGIN_SRC scheme
+(lambda (_)
+  (let ([x _])
+    (x (lambda (ignore) "hi")))
+  (lambda (ignore) "hi"))
+
+(let ([x (lambda (ignore) "hi")])
+  (x (lambda (ignore) "hi")))
+
+((lambda (ignore) "hi")
+ (lambda (ignore) "hi"))
+#+END_SRC
+
+This is the self application function, which returns "hi". So If we say:
+
+#+BEGIN_SRC scheme
+(let ([x (call/cc (lambda (k) k))])
+  (x (lambda (a) (+ a 2))))
+#+END_SRC
+
+It will basically means:
+
+#+BEGIN_SRC scheme
+((lambda (a) (+ a 2))
+ (lambda (a) (+ a 2)))
+#+END_SRC
+
+Which throws type errors.
+
+If we gives it identify function, it will return the procedure:
+
+#+BEGIN_SRC scheme
+(let ([x (call/cc (lambda (k) k))])
+  (x (lambda (a) a)))
+#+END_SRC
+
+If we give it self application function, it will loop forever:
+
+#+BEGIN_SRC scheme
+(let ([x (call/cc (lambda (k) k))])
+  (x (lambda (a) (a a))))
+#+END_SRC
+
+As an exercise:
+
+#+BEGIN_SRC scheme
+((
+  (call/cc (lambda (k) k))
+  (lambda (x) x))
+ "hi")
+#+END_SRC
+
+k:
+
+#+BEGIN_SRC scheme
+(lambda (_)
+  ((
+   _
+   (lambda (x) x))
+   "hi"))
+#+END_SRC
+
+Thus:
+
+#+BEGIN_SRC scheme
+(((lambda (_)
+    ((
+      _
+      (lambda (x) x))
+     "hi"))
+  (lambda (x) x))
+ "hi")
+
+(((((lambda (x) x)
+    (lambda (x) x))
+   "hi")
+  )
+ "hi")
+((((lambda (x) x)
+   "hi")
+  )
+ "hi")
+(("hi")
+ "hi")
+#+END_SRC
+
+Apparently this is wrong (HEBI: FIXME).
+
+*** Continuation passing style
+How to write the factorial code in tail call?
+
+The non-tail call version:
+
+#+BEGIN_SRC scheme
+(define (fact n)
+  (cond
+   [(zero? n) 1]
+   [else (* (fact (sub1 n)) n)]))
+#+END_SRC
+
+It can also be written in tail call, using accumulator-passing-style (aps):
+#+BEGIN_SRC scheme
+(define (fact-aps n acc)
+  (cond
+   [(zero? n) acc]
+   [else (fact-aps (sub1 n) (* acc n))]))
+(define (fact n)
+  (fact-aps n 1))
+#+END_SRC
+
+One of the noticeable effect is that, when passing negative value as
+n, the first version will run out of stack, while the second won't.
+
+Continuous passing style:
+
+#+BEGIN_SRC scheme
+(define (fact-cps n k)
+  (cond
+   [(zero? n) (k 1)]
+   [else (fact-cps (sub1 n)
+                   (lambda (v)
+                     (k (* v n))))]))
+(define (fact n)
+  (fact-cps n (lambda (v) v)))
+#+END_SRC
+
+Notice that CPS although CPS doesn't use stack space, it uses heap to
+store the nested procedures, so you can observe a quick memory usage
+increase when it goes into infinite loop.
+
+The initial continuation passed here is the empty continuation
+=(lambda (v) v)=, but we can also pass something like =(lambda (v) (*
+3 v))=.
+
+
+Lastly, notice that all these code are checking =zero?= instead of
+negative, to intentionally turn on the probability of going infinite,
+thus observe stack and memory usage.
+
+*** TODO Dynamic wind
+
+** Tail Call Optimization
+First, use the trace library:
+#+BEGIN_SRC scheme
+(require racket/trace)
+#+END_SRC
+
+Tail call:
+#+BEGIN_SRC scheme
+(define (foo n)
+  (when (> n 0)
+    (foo (sub1 n))))
+(trace foo)
+(foo 5)
+#+END_SRC
+
+Non-tail call:
+#+BEGIN_SRC scheme
+(define (bar n)
+  (when (> n 0)
+    (identity (bar (sub1 n)))))
+(trace bar)
+(bar 5)
+#+END_SRC
+
+The call stack of foo is flat, the call stack of bar is triangular.
+
 
 
 * Emacs IDE
