@@ -5,6 +5,10 @@ This is the lisp index page, containing general staff for lisp.
 There's a [[http://hyperpolyglot.org/lisp][page]] for corresponding
 APIs of common lisp, racket, clojure, emacs lisp.
 
+* References
+- Matthew Flatt's youtube channel: https://www.youtube.com/channel/UCIaj30eyLyUCwBYzeSKf67A
+- William Byrd's youtube channel: https://www.youtube.com/channel/UCSC9kYeTee012BRsYw-y12Q
+
 * Introduction
 
 ** Dialects
@@ -228,7 +232,7 @@ Implementations of the sandwich example:
 
 **** self-apply continuation example
 
-There is a very interesting example in the scheme reference (by Dyrid?):
+There is a very interesting example in the scheme reference (by Dybvig?):
 
 #+BEGIN_SRC scheme
 (let ([x (call/cc (lambda (k) k))])
@@ -781,6 +785,10 @@ better:
 
 
 *** Hygienic
+A very good video by Matthew Flatt
+https://www.youtube.com/watch?v=Or_yKiI3Ha4, code:
+https://github.com/mflatt/expander
+
 A very good writing about syntax-case, and how to (NOT) write
 non-hygienic macros.
 http://blog.racket-lang.org/2011/04/writing-syntax-case-macros.html
