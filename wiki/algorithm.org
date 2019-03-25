@@ -34,7 +34,7 @@ Formally:
 ** TODO how to analyze the running time
 ** TODO Amortized Analysis
 
-* TODO Sorting algorithms
+* Sorting algorithms
 
 | algorithm      | worst-case | average case | memory   |
 |----------------+------------+--------------+----------|
@@ -213,8 +213,8 @@ The idea:
    or equal to =i=
 3. put the elements directly to the place according to C
 
-*** Radix sort
-*** Bucket sort
+*** TODO Radix sort
+*** TODO Bucket sort
 Assume the input is drawn from a uniform distribution. The average
 running time is linear.
 
@@ -244,7 +244,7 @@ max-priority queue and min-priority queue, respectively.
 
 ** hash table
 
-* TODO Trees
+* Trees
 ** [#A] Search
 Using binary tree as example.  & 
 
@@ -362,9 +362,9 @@ one kind of search tree, in which all descendants of a node share a
 common prefix.
 
 ** Heap
-*** Fibonacci Heap
+*** TODO Fibonacci Heap
 
-* TODO Graph
+* Graph
 The representation of a graph can be either a adjacent list or adjacent matrix.
 
 A graph is (V,E), each edge has a weight.
