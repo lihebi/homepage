@@ -455,14 +455,126 @@ while Q:
 
 ** Shortest path
 
-*** TODO Bellman-Ford algorithm
-*** TODO Dijkstra's algorithm
+Given a weighted, directed graph, the shortest path from u to v is the
+path that has minimum weight. We talk mainly about single-source,
+single-destination shortest path.
 
-** TODO Network Flow Problems
-Maximium Flow & Minimum cut
+We add to attributes to vertices of the graph:
+- =v.d=: the upper bound of shortest path from s to v. Initialize to infinite.
+- =v.pred=: the predecessor for that upper bound. Initialize to nil.
 
-*** TODO Ford-Fulkerson algorithm
-*** TODO Edmonds-Karp algorithm
+First a helper function, relax of an edge (u,v), by checking whether
+setting v.pred to u improve v.d:
+
+#+BEGIN_SRC python
+def relax(u,v):
+  if v.d > u.d + w(u,v):
+    v.d = u.d + w(u,v)
+    v.pred = u
+#+END_SRC
+
+
+*** Bellman-Ford algorithm
+This is kind of a brute force algorithm. It relax all edges $|V|-1$
+times. Each time, at least one node is set to its optimal, and the
+source vertex s.d=0, thus $|V|-1$ iterations will make sure all
+vertices are set to optimal.
+
+#+BEGIN_SRC python
+def bellman_ford():
+  for i in range(|V|-1):
+    for (u,v) in |E|:
+      relax(u,v)
+#+END_SRC
+
+The running time is |V||E|
+
+*** Dijkstra's algorithm
+In addition to weighted, directly graph, it assumes all weights are
+non-negative. The key idea has two fold:
+1. It maintains a set S of vertices whose "d" has been determined.
+2. Every iteration, it tries to determine one more vertex. It greedily
+   choose the one with minimum "d".
+
+#+BEGIN_SRC python
+def dijkstra():
+  sovled = {}
+  s.d = 0
+  q = min_priority_queue(V, "d")
+  while q:
+    u = q.pop_min()
+    solved.insert(u)
+    for v in u.adj:
+      relax(u,v)
+#+END_SRC
+
+
+The running time is $|V|^2 + |E|$. If the priority queue is
+implemented using Fibonacci heap (TODO), the running time is $|V|
+log |V| + |E|$.
+
+
+** Network Flow Problems
+
+The constraints of a flow network:
+
+1. capacity constraint: 0 \le f(u,v) \le c(u,v)
+2. flow conservation: \sum_{v\in V} f(v,u) = \sum_{v \in V}
+   f(u,v). I.e. the ingoing and outgoing flow of a node shall equal.
+
+We are interested in two equivalent problems:
+- maximum flow
+- minimum cut
+
+Residual network:
+- Residual network: given capacity c and flow f, the capacity of
+  residual network $c_f$ is simply $c(u,v)-f(u,v)$.
+- augmenting path: given a flow network G and a flow f, the augmenting
+  path p is a simple path from s to t in the residual network $G_f$
+
+The cut of a flow is (S,T) where S + T = V. The flow f(S,T) across the
+cut is defined as:
+
+$$f(S,T) = \sum_{u\in S} \sum_{v \in T} f(u,v) - \sum_{u\in S} \sum_{v \in T} f(v,u)$$
+
+The capacity of the cut is:
+
+$$c(S,T) = \sum_{u\in S} \sum_{v \in T} c(u,v)$$.
+
+The minimum cut is the one whose capacity is minimum. The max-flow
+min-cut theorem states that the minimum cut equals to the
+max-flow. Specifically, the following conditions are equivalent:
+
+1. f is maximum flow in G
+2. The residual network $G_f$ contains no augmenting paths
+3. |f|=c(S,T) for some cut (S,T) of G.
+   - This should be further written as |f| equal to the capacity of
+     minimum cut of G.
+
+*** Ford-Fulkerson method
+It is a method instead of an algorithm because it has several
+different implementations with different running time.
+
+The general ford-fulkerson:
+
+#+BEGIN_SRC python
+f = 0
+while True:
+  res_net = residual_network(G, f):
+  aug_p = augmenting_path(res_net)
+  if not aug_p: break
+  do_augment(aug_p)
+return f
+#+END_SRC
+
+Apparently the key point is how to find the augmenting path. If chosen
+poorly, it may not terminate.
+
+*** Edmonds-Karp algorithm
+This algorithm is to use BFS for finding the augmenting path. The
+shortest path (with unit edge weight) from s to t is selected in this
+way. It runs in O(VE^2), i.e. polynomial time.
+
 
 * TODO String algorithms
 ** TODO Substring matching
