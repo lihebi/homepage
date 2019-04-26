@@ -36,9 +36,10 @@ Working ..
 
 ** Dynamic Analysis on Demand (Summer 2015 - Spring 2018)
 I was researching in Program Language and Analysis. We designed an
-on-demand dynamic analysis framework, called
-[[https://helium.lihebi.com][Helium]], and is
-[[https://github.com/lihebi/helium2][open source]].
+on-demand dynamic analysis framework.
+
+# , called [[https://helium.lihebi.com][Helium]], and is
+# [[https://github.com/lihebi/helium2][open source]].
 
 ** USTC RoboGame 2012
 

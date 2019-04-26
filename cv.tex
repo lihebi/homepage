@@ -83,17 +83,17 @@
     assessment by leveraging recently developed \textbf{deep sentence
       embedding}.
 
-    We develop two \textbf{negative sample generation} approaches:
-    \textit{random mutation} and \textit{cross-pairing}.  We apply and
-    evaluate three sentence-embedding models: \textbf{Universal
-      Sentence Encoder} by Google and \textbf{InferSent} by Facebook,
-    and a vanilla word-embedding model \textbf{Grove}. We evaluate 3
-    neural network architectures atop the embedding,
-    \textbf{Fully-connected}, \textbf{CNN}, and \textbf{LSTM}.
+    % We develop two \textbf{negative sample generation} approaches:
+    % \textit{random mutation} and \textit{cross-pairing}.  We apply and
+    % evaluate three sentence-embedding models: \textbf{Universal
+    %   Sentence Encoder} by Google and \textbf{InferSent} by Facebook,
+    % and a vanilla word-embedding model \textbf{Grove}. We evaluate 3
+    % neural network architectures atop the embedding,
+    % \textbf{Fully-connected}, \textbf{CNN}, and \textbf{LSTM}.
 
-  \item \textbf{Hebi Li}, Qi Xiao, Yinfei Yang, Forrest Sheng Bao,
-    \textit{``End-to-end semantics-based summary quality assessment
-      for single-document summarization''}, In submission.
+  % \item \textbf{Hebi Li}, Qi Xiao, Yinfei Yang, Forrest Sheng Bao,
+  %   \textit{``End-to-end semantics-based summary quality assessment
+  %     for single-document summarization''}, In submission.
   \end{itemize}
   
   \textbf{AI: Causal Discovery From High Dimensional Data (Python,
@@ -116,26 +116,30 @@
     LLVM/Clang, Racket)} \hfill \emph{Summer 2015 - Spring 2018}
 
   \begin{itemize}
-  \item Website: \url{https://helium.lihebi.com/}. V1 Code:
-    \url{https://github.com/lihebi/Helium} (723 commits, 22k
-    C/C++). V2 Code: \url{https://github.com/lihebi/helium2} (143
-    commits, 1.7k Racket, 3k C/C++).
-  \item Description: We develop Helium, a framework that debugs
-    programs on-demand, preventing running time overhead by running
-    just enough code. It analyzes a buggy program and generates a much
-    smaller partial program that retains the same bug.  It features a
-    \textbf{syntactic patching algorithm} that find the extra code in
-    addition to the user selection that is necessary for a valid
-    partial program. It also features a \textbf{demand-driven context
-      search algorithm} to find smaller partial programs that preserve
-    a given program property.
-  \item Implementation highlights: The framework uses
-    \textbf{LLVM/Clang} framework as the underlying parser, and
-    performs \textbf{AST} modelling and manipulation, and generates
-    partial programs together with dynamic tests. The framework is
-    provided as \textbf{docker} image that is easy and ready to
-    use. Partial program ASTs are visualized through \textbf{Graphviz}
-    framework.
+  \item Description: We develop a framework that debugs programs
+    on-demand, preventing running time overhead by running just enough
+    code. It analyzes a buggy program and generates a much smaller
+    partial program that retains the same bug.
+  % \item Website: \url{https://helium.lihebi.com/}. V1 Code:
+  %   \url{https://github.com/lihebi/Helium} (723 commits, 22k
+  %   C/C++). V2 Code: \url{https://github.com/lihebi/helium2} (143
+  %   commits, 1.7k Racket, 3k C/C++).
+  % \item Description: We develop Helium, a framework that debugs
+  %   programs on-demand, preventing running time overhead by running
+  %   just enough code. It analyzes a buggy program and generates a much
+  %   smaller partial program that retains the same bug.  It features a
+  %   \textbf{syntactic patching algorithm} that find the extra code in
+  %   addition to the user selection that is necessary for a valid
+  %   partial program. It also features a \textbf{demand-driven context
+  %     search algorithm} to find smaller partial programs that preserve
+  %   a given program property.
+  % \item Implementation highlights: The framework uses
+  %   \textbf{LLVM/Clang} framework as the underlying parser, and
+  %   performs \textbf{AST} modelling and manipulation, and generates
+  %   partial programs together with dynamic tests. The framework is
+  %   provided as \textbf{docker} image that is easy and ready to
+  %   use. Partial program ASTs are visualized through \textbf{Graphviz}
+  %   framework.
   %% \item \textbf{Hebi Li}, Wei Le, \textit{``Enabling Dynamic Analysis
   %%   for Partial Programs Via Syntactic Patching''}, In submission.
   %% \item \textbf{Hebi Li}, Wei Le, \textit{``Demand-Driven Dynamic
