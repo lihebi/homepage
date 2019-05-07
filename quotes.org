@@ -13,6 +13,13 @@ William Gibson:
 The future is already here — it's just not very evenly distributed.
 #+END_QUOTE
 
+#+BEGIN_QUOTE
+If we wish to count lines of code, we should not regard them as lines
+produced, but as lines spend.
+
+-- Edsger Dijkstra
+#+END_QUOTE
+
 ** ??
 
 #+BEGIN_QUOTE

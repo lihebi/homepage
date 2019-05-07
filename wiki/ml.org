@@ -4,6 +4,12 @@
 All models are wrong, but some are useful.
 #+END_QUOTE
 
+* Tmp
+- false positive: error, output true, but supposed to output false
+- false negative: error, output false
+- true positive: correct
+- true negative: correct
+
 * Supervised Learning
 The /input/ is also called /predictors/, /independent variables/, or
 /features/. The /output/ is also called /response/ or /dependent

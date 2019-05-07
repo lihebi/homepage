@@ -5,3 +5,7 @@
 *.out
 
 ltximg
+
+*.tex
+
+!cv.tex

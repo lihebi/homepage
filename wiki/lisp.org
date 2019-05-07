@@ -1,5 +1,23 @@
 #+TITLE: Lisp Index Page
 
+
+#+BEGIN_QUOTE
+Any sufficiently complicated C or Fortran program contains an ad-hoc,
+informally-specified, bug-ridden, slow implementation of half of
+Common Lisp.
+
+-- [[https://en.wikipedia.org/wiki/Greenspun's_tenth_rule][Greenspun's tenth rule]]
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+Code is written for others to understand the developers' thoughts, and
+it accidentally runs on computers.
+
+-- Matthias Felleisen,
+   [[https://www.youtube.com/watch?v=XTl7Jn_kmio][Types are like the
+   Weather, Type Systems are like Weathermen (youtube video)]]
+#+END_QUOTE
+
 This is the lisp index page, containing general staff for lisp.
 
 There's a [[http://hyperpolyglot.org/lisp][page]] for corresponding

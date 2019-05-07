@@ -11,8 +11,14 @@
 # so busy yearning for the moon that he never saw the sixpence at his feet
 
 If you look on the ground in search of a sixpence, you don't look up,
-and so miss the moon.
+and so miss the moon. --- a 1956 letter from Maugham
 #+end_quote
+
+
+*@@html:<font color = "red">@@
+If you like collaboration, please do NOT collaborate with me.
+@@html:</font>@@*
+
 
 I'm currently a PhD student in [[https://www.cs.iastate.edu/][CS@ISU]]
 starting 2014 Fall.  I graduated from Electrical Engineering (1010) of
@@ -20,10 +26,10 @@ starting 2014 Fall.  I graduated from Electrical Engineering (1010) of
 [[file:cv.pdf][CV(pdf)]].
 
 My (research) interests are quite broad:
-- Programming Language (but not quite Software Engineering)
-- Artificial (General) Intelligence (but not quite Machine Learning)
-- Operating System (well, I mean Lisp Machines)
-- Embedded system (IoT, robotics, you name it)
+- Programming Language
+- Artificial Intelligence
+- Operating System
+- Embedded system
 
 
 
