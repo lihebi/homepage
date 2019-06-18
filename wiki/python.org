@@ -78,9 +78,18 @@ from p1 import xxx
 from p2.yyy import foo
 #+END_EXAMPLE
 
+** imsave
+=imsave= is deprecated, change from
 
+#+BEGIN_SRC python
+from scipy.misc import imsave
+#+END_SRC
 
+to
 
+#+BEGIN_SRC python
+from imageio import imwrite as imsave
+#+END_SRC
 
 
 

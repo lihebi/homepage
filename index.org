@@ -15,9 +15,9 @@ and so miss the moon. --- a 1956 letter from Maugham
 #+end_quote
 
 
-*@@html:<font color = "red">@@
-If you like collaboration, please do NOT collaborate with me.
-@@html:</font>@@*
+# *@@html:<font color = "red">@@
+# If you like collaboration, please do NOT collaborate with me.
+# @@html:</font>@@*
 
 
 I'm currently a PhD student in [[https://www.cs.iastate.edu/][CS@ISU]]
@@ -36,9 +36,12 @@ My (research) interests are quite broad:
 * Projects
 
 ** AI, Causality & NLP (Spring 2018 - Present)
-Working ..
-** Robotics (Spring 2018 - Present)
-Working ..
+
+[[https://arxiv.org/abs/1905.10729][[arXiv]​]]
+[[https://arxiv.org/pdf/1905.10729.pdf][[pdf]​]] Li, Hebi, Qi Xiao,
+Shixin Tian, and Jin Tian. "Purifying Adversarial Perturbation with
+Adversarially Trained Auto-encoders." arXiv preprint arXiv:1905.10729
+(2019).
 
 ** Dynamic Analysis on Demand (Summer 2015 - Spring 2018)
 I was researching in Program Language and Analysis. We designed an
