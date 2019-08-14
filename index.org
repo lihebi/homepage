@@ -20,8 +20,6 @@ and so miss the moon. --- a 1956 letter from Maugham
 # @@html:</font>@@*
 
 
-[[file:hn.org][HN articles]]
-
 I'm currently a PhD student in [[https://www.cs.iastate.edu/][CS@ISU]]
 starting 2014 Fall.  I graduated from Electrical Engineering (1010) of
 [[http://en.ustc.edu.cn/][USTC]] in 2014. See details in my
@@ -33,6 +31,9 @@ My (research) interests are quite broad:
 - Operating System
 - Embedded system
 
+Links:
+- [[file:hn.org][My HN article collection]]
+- GitHub [[https://github.com/lihebi][@lihebi]]
 
 
 * Projects
@@ -60,9 +61,9 @@ routes using image processing, climbing the ladders, and finally put
 the followers precisely in front of the sculpture of Jici Yan. You can
 see [[https://www.youtube.com/watch?v=N0EbvINeiy4][a small video]] of
 our robot in the competition that day. Check out the
-[[file:assets/robogame2012-proposal.pdf][proposal (pdf)]] and the
-[[file:assets/robogame2012-technical-report.pdf][technical report
-(pdf)]] in Chinese.
+[[file:assets/robogame2012-proposal.pdf][proposal (pdf, chinese)]] and
+the [[file:assets/robogame2012-technical-report.pdf][technical report
+(pdf, chinese)]].
 
 ** Open Source Tools
 - [[https://github.com/lihebi/hn.el][hn.el]]: A Hacker News Client for

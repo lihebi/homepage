@@ -19,6 +19,20 @@ If sometimes emacs runs slow, you can =profiler-start=, and do the
 slow operations, and =profiler-report=. When finished, stop it by
 =profiler-stop= to avoid overhead.
 
+** DOS/UNIX line ending
+https://emacs.stackexchange.com/questions/5779/how-to-convert-dos-windows-newline-characters-to-unix-format-within-gnu-emacs
+
+#+BEGIN_QUOTE
+If the mode line shows a (DOS) indicator, click on it twice to cycle
+to : meaning Unix newlines and then save the file.
+
+If you can't click on the mode line or prefer a keyboard-based
+solution, run the command C-x RET f (set-buffer-file-coding-system)
+and type unix.
+#+END_QUOTE
+
+
+
 
 * buffer
   - =list-face-displays=
