@@ -20,6 +20,8 @@ and so miss the moon. --- a 1956 letter from Maugham
 # @@html:</font>@@*
 
 
+[[file:hn.org][HN articles]]
+
 I'm currently a PhD student in [[https://www.cs.iastate.edu/][CS@ISU]]
 starting 2014 Fall.  I graduated from Electrical Engineering (1010) of
 [[http://en.ustc.edu.cn/][USTC]] in 2014. See details in my

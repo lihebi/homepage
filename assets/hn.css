@@ -1,0 +1,47 @@
+.hn-title {
+    /* color: red; */
+}
+
+.hn-by {
+    color: blue;
+    margin-left: 1em;
+}
+
+.hn-time {
+    color: grey;
+    display: inline-block;
+    min-width: 100px;
+}
+
+.hn-article {
+    margin-bottom: 1em;
+}
+
+.hn-score {
+    color: green;
+    /* margin-left: 1em; */
+    min-width: 60px;
+    display: inline-block;
+}
+
+.hn-comment {
+    color: grey;
+    min-width: 60px;
+    display: inline-block;
+    /* margin-left: 1em; */
+}
+
+.hn-comment :visited {
+    color: grey;
+}
+
+.hn-tags {
+    /* color: red; */
+    margin-left: 10px;
+}
+
+.hn-tags span {
+    border-radius: 5px;
+    margin-left: 5px;
+    /* border: 2px solid gray; */
+}
