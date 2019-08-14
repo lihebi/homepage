@@ -54,9 +54,8 @@ window.onload = function () {
     }
 
     $.getJSON("assets/hn.json", function(json) {
-        console.log(json); // this will show the info it in firebug console
-        // TODO sort by date
-        // TODO add tags
+        $("#hn-body").append("<p>Total articles: " + json.length + ", Order: newest first</p>")
+        
         header = {"id": "id",
                   // "time": new Date() / 1000,
                   "time": 1 * 3600 * 24,
@@ -71,6 +70,10 @@ window.onload = function () {
 
         $("#hn-body").append("<hr/>")
 
+        // sort by date
+        json.sort(function (a, b) {
+            return b["time"] - a["time"];
+        })
         
         for (j of json) {
             add_article(j)
