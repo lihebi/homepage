@@ -145,3 +145,5 @@ certificate (pdf)]] in 4h 59min.
 [[./assets/marathon_2018.jpg]]
 #+END_CENTER
 
+The current background styling (school paper style) is stealed from
+https://pomax.github.io/bezierinfo/.
