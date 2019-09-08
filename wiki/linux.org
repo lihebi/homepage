@@ -212,8 +212,9 @@ Done. Reboot.
 Whenever you want to update the system:
 #+BEGIN_EXAMPLE
 guix pull
-guix system reconfigure
+sudo -E guix system reconfigure
 guix package -u
+guix package -m manifest-file
 #+END_EXAMPLE
 
 

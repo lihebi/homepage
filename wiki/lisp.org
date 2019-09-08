@@ -1,6 +1,5 @@
 #+TITLE: Lisp Index Page
 
-
 #+BEGIN_QUOTE
 Any sufficiently complicated C or Fortran program contains an ad-hoc,
 informally-specified, bug-ridden, slow implementation of half of
@@ -20,6 +19,32 @@ it accidentally runs on computers.
 
 This is the lisp index page, containing general staff for lisp.
 
+So why I like Scheme?
+- proper lexical scoping
+- Lisp-1: you can define a function anywhere, and bind it to a name in
+  lexical scope
+- hygenic macros, defining DSLs
+- proper module namescoping
+
+Why I like Lisp in general?
+- structural editing
+- proper "structural scoping" by (let). Haskell-like languages still
+  use let xxx bindings as statement, and the binding is effective
+  through the function. Thus still no easy visual marking of the
+  scope (I bet you didn't understand what I said .. I need better words)
+- easy to format: when you mess your code up, just M-q. Although
+  Haskell and F# are good languages, I don't like the choice of
+  indentation as syntax. That makes it hard to modify program
+- REPL, interactive development
+- clear unambiguous syntax, parse tree by default
+- encouraging of functional style code
+- compact code:
+  - small amount of code, scalable for complex systems
+  - no standalone close braces.
+
+Research perspective:
+- gradual typing
+
 There's a [[http://hyperpolyglot.org/lisp][page]] for corresponding
 APIs of common lisp, racket, clojure, emacs lisp.
 
@@ -31,14 +56,14 @@ APIs of common lisp, racket, clojure, emacs lisp.
 
 ** Dialects
 
-Richard P. Gabriel has a [[http://www.nhplace.com/kent/Papers/Technical-Issues.html][paper]] about Lisp-1 and Lisp-2. Basically
-Lisp-1 has seperate namespace for functions and variables, while
-Lisp-2 only have one universal namespace.
+Richard P. Gabriel has a
+[[http://www.nhplace.com/kent/Papers/Technical-Issues.html][paper]]
+about Lisp-1 and Lisp-2. Basically Lisp-1 only have one universal
+namespace, while Lisp-2 has seperate namespace for functions and
+variables.
 
-Lisp-1 includes Elisp, [[file:common-lisp.org][Common Lisp]]. All
-scheme are lisp-2.  [[file:racket.org][Racket]] is the modern scheme
-with batteries.
 
+Scheme and clojure are lisp-1. Elisp and Common Lisp are Lisp-2.
 
 ** Why Lisp?
 As Peter Norvig put in [[https://github.com/norvig/paip-lisp][Paradigms of Artificial Intelligence Programming]]
@@ -186,7 +211,7 @@ Call with current continuation.
 
 A very simple continuation example, to simulate the return statement:
 
-#+BEGIN_SRC scheme
+#+BEGIN_SRC racket
 (display
   (call/cc (lambda (return)
     (display "One ")
@@ -194,7 +219,7 @@ A very simple continuation example, to simulate the return statement:
     (display "Three"))))
 #+END_SRC
 
-#+BEGIN_SRC scheme
+#+BEGIN_SRC racket
 (+ 5 (call/cc (lambda (k)
                 (k (* 2 3))))
    6)
@@ -204,7 +229,7 @@ A very simple continuation example, to simulate the return statement:
 Seems that in order to make continuation useful, we must assign the
 continuation to a global variable, hence first-class continuation:
 
-#+BEGIN_SRC scheme
+#+BEGIN_SRC racket
 (define reset #f)
 (define counter #f)
 
@@ -226,7 +251,7 @@ counter
 
 Implementations of the sandwich example:
 
-#+BEGIN_SRC scheme
+#+BEGIN_SRC racket
 (define sandwich #f)
 (define pocket #f)
 
@@ -252,14 +277,14 @@ Implementations of the sandwich example:
 
 There is a very interesting example in the scheme reference (by Dybvig?):
 
-#+BEGIN_SRC scheme
+#+BEGIN_SRC racket
 (let ([x (call/cc (lambda (k) k))])
   (x (lambda (ignore) "hi")))
 #+END_SRC
 
 What it does, is that, the k here is:
 
-#+BEGIN_SRC scheme
+#+BEGIN_SRC racket
 (lambda (_)
   (let ([x _])
    (x (lambda (ignore) "hi"))))
@@ -268,7 +293,7 @@ What it does, is that, the k here is:
 Thus the it assigns this k to x, and apply x on =(lambda (ignore)
 "hi")=. It will result in:
 
-#+BEGIN_SRC scheme
+#+BEGIN_SRC racket
 (lambda (_)
   (let ([x _])
     (x (lambda (ignore) "hi")))
@@ -283,14 +308,14 @@ Thus the it assigns this k to x, and apply x on =(lambda (ignore)
 
 This is the self application function, which returns "hi". So If we say:
 
-#+BEGIN_SRC scheme
+#+BEGIN_SRC racket
 (let ([x (call/cc (lambda (k) k))])
   (x (lambda (a) (+ a 2))))
 #+END_SRC
 
 It will basically means:
 
-#+BEGIN_SRC scheme
+#+BEGIN_SRC racket
 ((lambda (a) (+ a 2))
  (lambda (a) (+ a 2)))
 #+END_SRC
@@ -299,21 +324,21 @@ Which throws type errors.
 
 If we gives it identify function, it will return the procedure:
 
-#+BEGIN_SRC scheme
+#+BEGIN_SRC racket
 (let ([x (call/cc (lambda (k) k))])
   (x (lambda (a) a)))
 #+END_SRC
 
 If we give it self application function, it will loop forever:
 
-#+BEGIN_SRC scheme
+#+BEGIN_SRC racket
 (let ([x (call/cc (lambda (k) k))])
   (x (lambda (a) (a a))))
 #+END_SRC
 
 As an exercise:
 
-#+BEGIN_SRC scheme
+#+BEGIN_SRC racket
 ((
   (call/cc (lambda (k) k))
   (lambda (x) x))
@@ -322,7 +347,7 @@ As an exercise:
 
 k:
 
-#+BEGIN_SRC scheme
+#+BEGIN_SRC racket
 (lambda (_)
   ((
    _
@@ -332,7 +357,7 @@ k:
 
 Thus:
 
-#+BEGIN_SRC scheme
+#+BEGIN_SRC racket
 (((lambda (_)
     ((
       _
@@ -361,7 +386,7 @@ How to write the factorial code in tail call?
 
 The non-tail call version:
 
-#+BEGIN_SRC scheme
+#+BEGIN_SRC racket
 (define (fact n)
   (cond
    [(zero? n) 1]
@@ -369,7 +394,7 @@ The non-tail call version:
 #+END_SRC
 
 It can also be written in tail call, using accumulator-passing-style (aps):
-#+BEGIN_SRC scheme
+#+BEGIN_SRC racket
 (define (fact-aps n acc)
   (cond
    [(zero? n) acc]
@@ -383,7 +408,7 @@ n, the first version will run out of stack, while the second won't.
 
 Continuous passing style:
 
-#+BEGIN_SRC scheme
+#+BEGIN_SRC racket
 (define (fact-cps n k)
   (cond
    [(zero? n) (k 1)]
@@ -411,12 +436,12 @@ thus observe stack and memory usage.
 
 ** Tail Call Optimization
 First, use the trace library:
-#+BEGIN_SRC scheme
+#+BEGIN_SRC racket
 (require racket/trace)
 #+END_SRC
 
 Tail call:
-#+BEGIN_SRC scheme
+#+BEGIN_SRC racket
 (define (foo n)
   (when (> n 0)
     (foo (sub1 n))))
@@ -425,7 +450,7 @@ Tail call:
 #+END_SRC
 
 Non-tail call:
-#+BEGIN_SRC scheme
+#+BEGIN_SRC racket
 (define (bar n)
   (when (> n 0)
     (identity (bar (sub1 n)))))
@@ -4104,7 +4129,7 @@ hierarchy, e.g. =(ice-9 popen)=. When creating a module, you typically
 supplies what modules to depend on, and what symbols are exported as
 its public interface:
 
-#+BEGIN_SRC scheme
+#+BEGIN_SRC racket
 (define-module (ice-9 popen)
   #:use-module (ice-9 popen)
   #:use-module (ice-9 pclose)
@@ -4113,7 +4138,7 @@ its public interface:
 
 When using a module, the =use-modules= accesses this public interface.
 
-#+BEGIN_SRC scheme
+#+BEGIN_SRC racket
 (use-modules (ice-9 popen))
 (use-modules ((ice-9 popen)
               #:select ((open-pipe . pipe-open) close-pipe)
@@ -4125,7 +4150,7 @@ When using a module, the =use-modules= accesses this public interface.
 
 Another way to access a module is through =@= syntax:
 
-#+BEGIN_SRC scheme
+#+BEGIN_SRC racket
 (define unixy:pipe-open (@ (ice-9 popen) open-pipe))
 (define unixy:close-pipe (@ (ice-9 popen) close-pipe))
 #+END_SRC

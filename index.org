@@ -106,6 +106,12 @@ correct. Read at your own risk.
   Frameworks]]
 - [[file:wiki/ml.org][ML]]: currently very preliminary
 
+# ** Slides
+# These are random slides I was giving. Just for references.
+
+# - [[file:extra-assets/day1.pdf][COMS127 Fall 2019 Intro]]
+# - [[file:extra-assets/day2.pdf][COMS127 Fall 2019 Python Setup]]
+
 
 * Essays
 

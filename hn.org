@@ -4,7 +4,9 @@
 #+HTML_HEAD_EXTRA: <script src="assets/hn.js" type="text/javascript"></script>
 #+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="assets/hn.css" />
 
-This page lists all my hacker news starred articles. It is implemented
-as a js program to read a json file and display.
+This page lists all my hacker news starred articles. I read hacker
+news articles in an Emacs plugin,
+[[https://github.com/lihebi/hn.el][hn.el]] I wrote, and export the
+stars and tags to serve here. Grab a cup of tea and enjoy.
 
 @@html:<div id="hn-body"></div>@@

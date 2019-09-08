@@ -189,9 +189,31 @@ It remains to be seen how to put a set of default bib file instead of specifying
 
 **** code listing
 #+BEGIN_EXAMPLE
-#+ATTR_LATEX: :options frame=shadowbox
-#+ATTR_LATEX: :font \small
+#+ATTR_LATEX: :options frame=shadowbox,label={expressions}
 #+END_EXAMPLE
+
+The options will be passed directly to latex option,
+e.g. when using minted =\begin{minted}[frame=xxx,label=xxx]=.
+
+
+#+BEGIN_EXAMPLE
+#+ATTR_LATEX: :font \small
+#+ATTR_LATEX: :float t
+#+END_EXAMPLE
+
+
+
+You can wrap it inside a minipage
+
+#+BEGIN_EXAMPLE
+#+ATTR_LATEX: :options [t]{0.33\textwidth}
+#+BEGIN_minipage
+...
+#+END_minipage
+#+END_EXAMPLE
+
+
+
 
 
 *** Beamer
@@ -1563,7 +1585,7 @@ The block line:
 #+END_EXAMPLE
 
 *** Class Diagram
-#+BEGIN_SRC plantuml :file wikitmp_class_diagram.png :exports both
+#+BEGIN_SRC plantuml
 abstract class AbstractClass {
   field
   Method()
@@ -1595,7 +1617,7 @@ note left of AbstractClass : note left of A, can be\n<b>top,bottom,left,right</b
 Sequence Diagram is used to describe the communication of /participants/.
 The message can be sent to myself.
 
-#+BEGIN_SRC plantuml :file wikitmp_sequence.png :exports both
+#+BEGIN_SRC plantuml
 title: Some Title
 'this is a comment
 participant Alice
