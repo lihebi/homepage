@@ -40,8 +40,14 @@ Links:
 
 ** AI, Causality & NLP (Spring 2018 - Present)
 
-[[https://arxiv.org/abs/1905.10729][[arXiv]​]]
-[[https://arxiv.org/pdf/1905.10729.pdf][[pdf]​]] Li, Hebi, Qi Xiao,
+# From https://emacs.stackexchange.com/questions/7792
+# Square Bracket Open [
+#+MACRO: BO @@latex:\char91@@@@html:&#91;@@
+# Square Bracket Close ]
+#+MACRO: BC @@latex:\char93@@@@html:&#93;@@
+
+[[https://arxiv.org/abs/1905.10729][{{{BO}}}arXiv{{{BC}}}]]
+[[https://arxiv.org/pdf/1905.10729.pdf][{{{BO}}}pdf{{{BC}}}]] Li, Hebi, Qi Xiao,
 Shixin Tian, and Jin Tian. "Purifying Adversarial Perturbation with
 Adversarially Trained Auto-encoders." arXiv preprint arXiv:1905.10729
 (2019).
