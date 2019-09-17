@@ -74,11 +74,15 @@ blockquote::before{
     /* FIXME what's the effect of clear? */
     clear: right;
     display: block;
-    font-size: 70%;
+    font-size: 90%;
+    max-width: 30%;
     border: 1px solid #8888aa;
     background: #f7f8ff;
     padding: 5px;
     margin: 0 15px 0 15px;
+}
+#table-of-contents ul {
+    padding-inline-start: 20px;
 }
 
 /* h1 { */
