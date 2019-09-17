@@ -79,11 +79,31 @@ blockquote::before{
     border: 1px solid #8888aa;
     background: #f7f8ff;
     padding: 5px;
-    margin: 0 15px 0 15px;
+    margin: 0 15px 3em 15px;
 }
 #table-of-contents ul {
     padding-inline-start: 20px;
 }
+
+
+#me {
+    float: right;
+    padding: 2em;
+}
+
+@media only screen and (max-width: 600px) {
+    #table-of-contents {
+        display: block;
+        float: none;
+        max-width: 100%;
+    }
+    #me {
+        float: none;
+        display: block;
+        margin: auto;
+    }
+}
+
 
 /* h1 { */
 /*   font-size: 2rem; */
