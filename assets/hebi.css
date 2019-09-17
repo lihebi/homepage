@@ -1,13 +1,20 @@
 a {
     text-decoration: underline;
 }
+
+/* link style from from http://fmnt.info/blog/20181029_scheme.html */
 a:visited {
-    color: brown;
+	color: brown;
+	padding: 0 1px;
+	text-decoration: underline;
 }
 a:hover {
-    color: white;
-    background-color: black;
+	background-color: brown;
+	color: #fff;
+	text-decoration: none;
+	text-shadow: 1px 1px 1px #333;
 }
+
 
 /* code { */
 /*     background-color: #F8F8F8; */
