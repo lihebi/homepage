@@ -4,15 +4,15 @@ a {
 
 /* link style from from http://fmnt.info/blog/20181029_scheme.html */
 a:visited {
-	color: brown;
-	padding: 0 1px;
-	text-decoration: underline;
+    color: brown;
+    padding: 0 1px;
+    text-decoration: underline;
 }
 a:hover {
-	background-color: brown;
-	color: #fff;
-	text-decoration: none;
-	text-shadow: 1px 1px 1px #333;
+    background-color: brown;
+    color: #fff;
+    text-decoration: none;
+    text-shadow: 1px 1px 1px #333;
 }
 
 
@@ -56,10 +56,10 @@ body {
 /*     border-collapse: separate; */
 /* } */
 blockquote{
-  /* font-style:italic; */
-  color: #555555;
-  padding-left: 2em;
-  border-left:0.5em solid gray ;
+    /* font-style:italic; */
+    color: #555555;
+    padding-left: 2em;
+    border-left:0.5em solid gray ;
 }
 blockquote::before{
     /* content: "\201C"; */
@@ -100,11 +100,11 @@ blockquote::before{
 
 
 pre {
-  margin: 1rem;
-  padding: 0.5rem 1rem;
-  border: 1px dashed #444;
-  word-wrap: break-word;
-  white-space: pre-wrap;
+    margin: 1rem;
+    padding: 0.5rem 1rem;
+    border: 1px dashed #444;
+    word-wrap: break-word;
+    white-space: pre-wrap;
 }
 
 .figure {
