@@ -1,11 +1,12 @@
 #+TITLE: Hebi Li
-#+OPTIONS: toc:nil num:0
+#+OPTIONS: toc:nil num:2
 
-#+BEGIN_CENTER
-#+ATTR_HTML: :width 200px
+# #+BEGIN_CENTER
+#+ATTR_HTML: :width 200px :style float: right; padding: 2em;
 [[./assets/hebi.png]]
-#+END_CENTER
+# #+END_CENTER
 
+#+TOC: headlines
 
 #+begin_quote
 # so busy yearning for the moon that he never saw the sixpence at his feet
@@ -38,7 +39,9 @@ Links:
 
 * Projects
 
-** AI, Causality & NLP (Spring 2018 - Present)
+** AI, Causality & NLP
+
+Spring 2018 - Present
 
 # From https://emacs.stackexchange.com/questions/7792
 # Square Bracket Open [
@@ -52,14 +55,19 @@ Shixin Tian, and Jin Tian. "Purifying Adversarial Perturbation with
 Adversarially Trained Auto-encoders." arXiv preprint arXiv:1905.10729
 (2019).
 
-** Dynamic Analysis on Demand (Summer 2015 - Spring 2018)
+** Program Analysis
+
+Summer 2015 - Spring 2018
+
 I was researching in Program Language and Analysis. We designed an
 on-demand dynamic analysis framework.
 
 # , called [[https://helium.lihebi.com][Helium]], and is
 # [[https://github.com/lihebi/helium2][open source]].
 
-** USTC RoboGame 2012
+** USTC RoboGame
+
+2012 Summer
 
 I was the leader of a team in USTC RoboGame 2012, and we ranked 3rd
 among 26 teams. The robot precisely fetched a bunch of flowers, found
@@ -143,19 +151,18 @@ great minds.
 - [[file:vehicle.org][vehicle]]
 
 Exercise brings me a lot of joy and energy. I run full marathon every
-year since 2017. See the
-[[file:assets/finisher_certificate_2017.pdf][2017 certificate (pdf)]]
-in 4h 35min and [[file:assets/finisher_certificate_2018.pdf][2018
-certificate (pdf)]] in 4h 59min.
+year since 2017. The [[file:assets/finisher_certificate_2017.pdf][2017
+certificate (pdf)]] in 4h 35min and
+[[file:assets/finisher_certificate_2018.pdf][2018 certificate (pdf)]]
+in 4h 59min.
 
+# #+BEGIN_CENTER
+# #+ATTR_HTML: :width 200px
+# [[./assets/marathon_2017.jpg]]
 
-#+BEGIN_CENTER
-#+ATTR_HTML: :width 200px
-[[./assets/marathon_2017.jpg]]
-
-#+ATTR_HTML: :width 300px
-[[./assets/marathon_2018.jpg]]
-#+END_CENTER
+# #+ATTR_HTML: :width 300px
+# [[./assets/marathon_2018.jpg]]
+# #+END_CENTER
 
 The current background styling (school paper style) is stealed from
 https://pomax.github.io/bezierinfo/.
