@@ -15,6 +15,13 @@ a:hover {
     text-shadow: 1px 1px 1px #333;
 }
 
+/* external link */
+/* from https://waaz.xyz/adding-external-link-indicator-with-css/ */
+/* a:not([href*='lihebi.com']):not([href^='#']):not([href^='/']):after {} */
+a[href^="http"]:after {
+    font-family: 'FontAwesome';
+    content: " \f08e";
+}
 
 /* code { */
 /*     background-color: #F8F8F8; */

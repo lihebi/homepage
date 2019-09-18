@@ -8,6 +8,11 @@ And also this: http://tomasp.net/blog/2018/write-your-own-excel/
 * TODOs
 
 ** wiki internal/external links
+
+*** DONE styling
+    CLOSED: [2019-09-18 Wed 15:45]
+*** js file to change target=_blank
+
 ** wiki quotation author
 ** blog create and last modify time, modify history
 ** TODO https://ambrevar.xyz/ org-publish and last-update is interesting
