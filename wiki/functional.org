@@ -3,6 +3,270 @@
 * References
 - introduction to functional programming cite:1988-Book-Bird-Introduction
 
+* TODO Haskell
+** Tmp
+- referentially transparent :: we can replace any expression by its
+     value without changing the behaviour of the program.
+
+About Applicative and its relation with Monad
+
+*** operators
+
+Use [[https://hoogle.haskell.org/][Hoogle]]
+to search for operator symbols!
+
+**** list difference ~(\\)~
+
+The ~(\\)~ function is list difference (non-associative).  The result
+of ~xs \\ ys~ is a smaller ~xs~, with ~ys~ removed.
+
+**** strictness declaration
+
+From [[https://stackoverflow.com/questions/993112/what-does-the-exclamation-mark-mean-in-a-haskell-declaration][a stackoverflow question]]
+
+#+BEGIN_SRC haskell
+data Foo = Foo Int Int !Int !(Maybe Int)
+#+END_SRC
+
+**** infix operator ~(+)~ and ~``~
+
+Haskell functions ar typically used using prefix notation. However,
+some operations are used infix, such as ~+~. It is possible to use + in
+prefix style, by putting it inside parenthesis ~(+)~.
+
+Additionally, putting backticks around normal prefix functions enables
+you to use them as infix functions. It is typically used for
+2-argument functions, but for more arguments, you need to use extra
+parentheses.
+
+
+**** as-pattern
+#+BEGIN_SRC haskell
+f (x:xs) = x:x:xs
+f s@(x:xs) = x:s
+#+END_SRC
+
+**** tilde
+
+When using patten matching, a tilde makes two things:
+- force matching: you tell the compiler, trust me, this would
+  match. If not matching, it will result in runtime error.
+- lazy matching: the match does not happen until the value is used.
+
+#+BEGIN_SRC haskell
+head' ~(x:xs) = x
+#+END_SRC
+
+**** function composition
+#+BEGIN_SRC haskell
+(f . g) x = f (g x)
+#+END_SRC
+
+It has precedence 9.
+
+**** dollar operator
+
+#+BEGIN_SRC haskell
+($) :: (a -> b) -> a -> b
+#+END_SRC
+
+$ has 0 precedence, the lowest. Thus it is used to change the order of
+operator associativity. Also commonly used to separate large arguments.
+
+#+BEGIN_SRC haskell
+sort $ "hello" ++ "world"
+#+END_SRC
+
+**** Lexical syntax:
+- ~=>~ :: context or class inheritance
+
+**** Defined in Functor:
+- <$>: fmap
+
+**** Defined in Applicative:
+- <*>: used with fmap
+- *>: defined in Functor sequential stmts
+
+***** (2008) Applicative programming with effects
+Applicative type class has the following methods:
+#+BEGIN_SRC haskell
+pure :: a -> f aSource
+(<*>) :: f (a -> b) -> f a -> f b
+liftA2 :: (a -> b -> c) -> f a -> f b -> f c
+(*>) :: f a -> f b -> f b
+(<*) :: f a -> f b -> f a
+#+END_SRC
+
+**** Defined in Alternative
+- ~<|>~ :: ~Nothing <|> Just a = Just a~
+
+** references
+- Haskell language report 2010 https://www.haskell.org/onlinereport/haskell2010/
+- Haskell book, a good tutorial https://en.wikibooks.org/wiki/Haskell
+- A Gentle Introduction to Haskell, Version 98 https://www.haskell.org/tutorial/index.html
+
+
+** layout
+
+Layout is optional:
+
+#+begin_quote
+Haskell *permits the omission of the braces and semicolons* used in
+several grammar productions, by using layout to convey the same
+information. This allows both layout-sensitive and layout-insensitive
+styles of coding, which can be *freely mixed* within one program.
+#+end_quote
+
+Formal layout rules:
+
+#+begin_quote
+The layout (or “off-side”) rule takes effect whenever the _open brace
+is omitted_ after the keyword =where=, =let=, =do=, or =of=. When this
+happens, the indentation of the next lexeme (whether or not on a new
+line) is remembered and the omitted _open brace is inserted_ (the
+whitespace preceding the lexeme may include comments).
+
+For each subsequent line,
+- if it contains only whitespace or is _indented more_, then the
+  previous item is continued (nothing is inserted);
+- if it is _indented the same_ amount, then a new item begins (a
+  _semicolon is inserted_);
+- and if it is _indented less_, then the layout list ends (a _close
+  brace is inserted_).
+- If the indentation of the non-brace lexeme immediately following a
+  =where=, =let=, =do= or =of= is _less than or equal to_ the current
+  indentation level, then instead of starting a layout, an empty list
+  _“{}” is inserted_, and layout processing occurs for the current
+  level (i.e. insert a semicolon or close brace)
+#+end_quote
+
+Explicit open brace must be closed explicitly:
+#+begin_quote
+The layout rule matches only those open braces that it has inserted;
+_an explicit open brace must be matched by an explicit close
+brace_. Within these explicit open braces, no layout processing is
+performed for constructs outside the braces, even if a line is
+indented to the left of an earlier implicit open brace.
+#+end_quote
+
+** lexical staff
+precedence and associative:
+#+begin_quote
+Consecutive unparenthesized operators with the same precedence must
+both be either left or right associative to avoid a syntax error.
+#+end_quote
+
+=lambda=, =let=, conditionals extend as far to the right as possible:
+#+begin_quote
+The grammar is ambiguous regarding the extent of lambda abstractions,
+let expressions, and conditionals. The ambiguity is resolved by the
+meta-rule that each of these constructs extends as far to the right as
+possible.
+#+end_quote
+
+*** fixity declaration
+Determines the binding precedence of an operator. A fixity declaration
+may appear anywhere that a type signature appears.
+
+#+begin_quote
+There are three kinds of fixity, non-, left- and right-associativity
+(infix, infixl, and infixr, respectively), and ten precedence levels,
+0 to 9 inclusive _(level 0 binds least tightly, and level 9 binds most
+tightly)_. If the digit is omitted, level 9 is assumed. Any operator
+lacking a fixity declaration is assumed to be _infixl 9 by default_.
+#+end_quote
+
+There is a table for all operators and their precedence levels.
+
+** decl
+var :: type
+
+** do expression
+
+#+BEGIN_SRC haskell
+do
+  stmt
+  -- stmt can be
+  pat
+  pat <- exp
+  -- this is not the let expression. The binding will take effect in
+  -- the following program
+  let decls
+  -- the last one must be an expression, and cannot have pattern binding
+  exp
+#+END_SRC
+
+
+
+** list comprehension
+
+#+BEGIN_SRC haskell
+[x | xs <- [[(1,2),(3,4)],
+            [(5,4),(3,2)]],
+     (3,x) <- xs]
+#+END_SRC
+
+=<-= is generator syntax, and nested. Each iteration, if a value does
+not match, that value is *skipped*. Thus the above expression
+evaluates to =[4,2]=
+
+In general in Haskell, =<-= will perform patern matching with left
+being pattern.
+
+** function and lambda
+
+#+BEGIN_SRC haskell
+double x = x * x
+  where decls
+\ x y -> x + y
+#+END_SRC
+
+function
+#+BEGIN_SRC haskell
+funlhs var = exp where decls
+funlhs var
+  | guard = exp
+  -- three types of guards
+  | (3,x) <- exp = exp
+  | let decls = exp
+  | boolexp = exp
+  where decls
+#+END_SRC
+
+** let binding
+#+BEGIN_SRC haskell
+let x, y = 5,10 in x + y + 1
+#+END_SRC
+
+** conditional
+#+BEGIN_SRC haskell
+if e1 then e2 else e3
+#+END_SRC
+
+** case expression
+
+#+BEGIN_SRC haskell
+case exp of {
+  pat -> exp where decls
+  -- equivalent to
+  pat | True -> exp
+
+  pat | guard where decls
+  -- which has three kinds of guards
+  pat | (3,x) <- exp
+  pat | let decls
+  pat | boolexp
+}
+#+END_SRC
+
+
+
+
+
+
+
+
+
 * Expression
 An expression can be /reduced/ to an simpler equivalent form.  We say
 an expression is /canonical/ (or in /normal form/) if it cannot be
