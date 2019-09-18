@@ -552,7 +552,7 @@ set of configuration for sending mail. Fire =message-send-and-exit
 (C-c C-c)= to send it, =C-c C-k= to kill it.
 
 The easiest way to use multiple SMTP account is through =msmtp=. The
-configuration of =msmtp=:
+configuration of =msmtp= in =$HOME/.msmtprc= with =600= access permission:
 
 #+BEGIN_EXAMPLE
 defaults
