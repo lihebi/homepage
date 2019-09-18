@@ -111,24 +111,15 @@ blockquote::before{
     }
 }
 
+h1 {
+    border-bottom: 1px solid #444;
+}
 
-/* h1 { */
-/*   font-size: 2rem; */
-/*   padding-bottom: 0.5rem; */
-/*   border-bottom: 1px solid #444; */
-/* } */
-
-/* h2 { */
-/*   font-size: 1.1rem; */
-/* } */
-
-/* h3 { */
-/*   font-size: 0.9rem; */
-/* } */
-/* h4 { */
-/*   font-size: 0.8rem */
-/* } */
-
+h2 {
+    border-bottom: 1px solid gray;
+    /* This prevents the border running into TOC */
+    overflow: hidden;
+}
 
 pre {
     margin: 1rem;
