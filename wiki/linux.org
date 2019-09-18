@@ -2,8 +2,48 @@
 
 * Tmp
 
+** sudo
 =sudo -i= will drop you to root shell, even if you don't know root
 password!
+
+=sudo -E= will use current user's environment variables
+
+
+** compilation and linking
+
+LD_LIBRARY_PATH is searched when the program starts, LIBRARY_PATH is
+searched at link time
+
+Do NOT set LD_LIBRARY_PATH in your login shell profile. Either creat a
+script:
+
+#+begin_example
+LD_LIBRARY_PATH=/path/to/lib1:/path/to/lib2:/path/to/lib3
+export LD_LIBRARY_PATH
+exec /path/to/bin/myprog $@
+#+end_example
+
+Or use =env= to modify one time:
+
+#+begin_example
+env LD_LIBRARY_PATH=/path/to/lib1:/path/to/lib2:/path/to/lib3 ./myprog
+#+end_example
+
+Never:
+
+#+begin_example
+$ export LD_LIBRARY_PATH=/path/to/lib1:/path/to/lib2:/path/to/lib3
+$ ./myprog
+#+end_example
+
+Reference: https://www.hpc.dtu.dk/?page_id=1180
+
+See also: readelf (-l/d), runpath and rpath: The only difference
+between rpath and runpath is the order they are searched
+in. Specifically, their relation to LD_LIBRARY_PATH - rpath is
+searched in before LD_LIBRARY_PATH while runpath is searched in
+after. Seems typically use
+rpath. https://amir.rachum.com/blog/2016/09/17/shared-libraries/
 
 ** Arduino
 
