@@ -1,6 +1,16 @@
 #+TITLE: Quotes
 
 * Tmp
+
+Donald Knuth, in "Computer Programming as an Art" (1974),
+
+#+BEGIN_QUOTE
+The real problem is that programmers have spent far too much time
+worrying about efficiency in the wrong places and at the wrong times;
+*premature optimization is the root of all evil* (or at least most of
+it) in programming.
+#+END_QUOTE
+
 Yoda in "The Empire Strikes Back":
 
 #+BEGIN_QUOTE
