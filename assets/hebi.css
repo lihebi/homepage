@@ -19,8 +19,9 @@ a:hover {
 /* from https://waaz.xyz/adding-external-link-indicator-with-css/ */
 /* a:not([href*='lihebi.com']):not([href^='#']):not([href^='/']):after {} */
 a[href^="http"]:after {
-    font-family: 'FontAwesome';
-    content: " \f08e";
+    /* font-family: 'FontAwesome'; */
+    /* content: " \f08e"; */
+    content: " \279A";
 }
 
 /* code { */
