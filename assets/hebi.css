@@ -21,6 +21,7 @@ a:hover {
 a[href^="http"]:after {
     /* font-family: 'FontAwesome'; */
     /* content: " \f08e"; */
+    /* Alternative \1F517 */
     content: " \279A";
 }
 
