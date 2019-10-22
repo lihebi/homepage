@@ -138,3 +138,69 @@ pre {
 .figure p {
     display: inline;
 }
+
+
+/* TODO Admonitions from
+   https://docs.julialang.org/en/v1.4-dev/manual/calling-c-and-fortran-code/
+   */
+/*
+ * Admonitions
+ *
+ * Colors (title, body)
+ * warning: #f0b37e #ffedcc (orange)
+ * note:    #6ab0de #e7f2fa (blue)
+ * tip:     #1abc9c #dbfaf4 (green)
+*/
+.admonition {
+    border-radius: 3px;
+    background-color: #eeeeee;
+    margin: 1em 0;
+}
+
+.admonition-title {
+    border-radius: 3px 3px 0 0;
+    background-color: #9b9b9b;
+    padding: 0.15em 0.5em;
+}
+
+.admonition-text {
+    padding: 0.5em;
+}
+
+.admonition-text > :first-child {
+    margin-top: 0;
+}
+
+.admonition-text > :last-child {
+    margin-bottom: 0;
+}
+
+.admonition > .admonition-title:before {
+    font-family: "FontAwesome";
+    margin-right: 5px;
+    content: "\f06a";
+}
+
+.admonition.warning > .admonition-title {
+    background-color: #f0b37e;
+}
+
+.admonition.warning {
+    background-color: #ffedcc;
+}
+
+.admonition.note > .admonition-title {
+    background-color: #6ab0de;
+}
+
+.admonition.note {
+    background-color: #e7f2fa;
+}
+
+.admonition.tip > .admonition-title {
+    background-color: #1abc9c;
+}
+
+.admonition.tip {
+    background-color: #dbfaf4;
+}
