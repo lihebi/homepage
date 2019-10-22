@@ -1,0 +1,15 @@
+#+TITLE: Julia
+
+* Julia Libraries
+** Metalhead.jl
+https://github.com/FluxML/Metalhead.jl
+
+Some vision models and dataset
+** ColorTypes.jl
+https://github.com/JuliaGraphics/ColorTypes.jl
+
+** ImageFiltering.jl
+https://github.com/JuliaImages/ImageFiltering.jl
+
+** MacroTools.jl
+https://github.com/MikeInnes/MacroTools.jl
