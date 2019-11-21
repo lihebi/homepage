@@ -150,8 +150,8 @@ great minds.
 - [[file:vehicle.org][vehicle]]
 
 I run full marathon in [[file:assets/finisher_certificate_2017.pdf][2017 (4h
- 35m) (pdf)]], [[file:assets/finisher_certificate_2018.pdf][2018 certificate (4h
- 59m) (pdf)]], and [[file:assets/finisher_certificate_2019.pdf][2019 (4h 46m)
+ 35m) (pdf)]], [[file:assets/finisher_certificate_2018.pdf][2018 (4h 59m)
+ (pdf)]], and [[file:assets/finisher_certificate_2019.pdf][2019 (4h 46m)
  (pdf)]].
 
 # #+BEGIN_CENTER
@@ -161,6 +161,3 @@ I run full marathon in [[file:assets/finisher_certificate_2017.pdf][2017 (4h
 # #+ATTR_HTML: :width 300px
 # [[./assets/marathon_2018.jpg]]
 # #+END_CENTER
-
-The current background styling (school paper style) is stealed from
-https://pomax.github.io/bezierinfo/.

@@ -41,18 +41,25 @@ a[href^="http"]:after {
 html {
     max-width: 1196px;
     margin: auto;
-    background: white;
+    background-color: #F8F8F8;
 }
 body {
-    background: url(./paper.png);
+    /* From https://pomax.github.io/bezierinfo/. */
+    /* background: url(./paper.png); */
+    background-color: white;
+    margin: 16px auto;
+    border: solid #ccc 1px;
+    border-radius: 20px;
+    padding: 1em;
+    /* font-family: monospace; */
+    /* font-family: "New Century Schoolbook", "Century Schoolbook", "Century Schoolbook L", serif; */
+    /* font-size: 13pt; */
+    text-align: justify;
 }
 
 #content {
     margin: auto;
-    padding: 1em;
-    border: solid rgba(255,0,0,.35);
-    border-width: 0 0 0 1px;
-    max-width: 960px;
+    max-width: 1100px;
     background: rgba(255,255,255,.74);
 }
 
@@ -86,9 +93,19 @@ blockquote::before{
     font-size: 90%;
     max-width: 30%;
     border: 1px solid #8888aa;
+    border-radius: 15px;
     background: #f7f8ff;
     padding: 5px;
     margin: 0 15px 3em 15px;
+}
+
+#table-of-contents a {
+    text-decoration: none;
+}
+
+pre.src {
+    overflow: auto;
+    padding-top: 0.5em;
 }
 #table-of-contents ul {
     padding-inline-start: 20px;
@@ -111,10 +128,6 @@ blockquote::before{
         display: block;
         margin: auto;
     }
-}
-
-h1 {
-    border-bottom: 1px solid #444;
 }
 
 h2 {
