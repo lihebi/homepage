@@ -1,4 +1,5 @@
 #+TITLE: Functional Programming
+#+OPTIONS: H:3
 
 * References
 - introduction to functional programming cite:1988-Book-Bird-Introduction

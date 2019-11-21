@@ -38,3 +38,5 @@
   - [[file:wiki/python.org][Python]]
   - [[file:wiki/r.org][R]]
   - [[file:wiki/writing.org][Techniques for Writing]]
+  - draft
+    - [[file:wiki/draft/julia.org][Julia]]

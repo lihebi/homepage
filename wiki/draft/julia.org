@@ -13,3 +13,34 @@ https://github.com/JuliaImages/ImageFiltering.jl
 
 ** MacroTools.jl
 https://github.com/MikeInnes/MacroTools.jl
+
+** Images
+https://github.com/JuliaImages/Images.jl
+
+colorview, channelview, RGB
+
+* Using Pkg
+
+#+begin_example
+using Pkg
+Pkg.add(PackageSpec(url="https://github.com/lihebi/julia-repl", rev="master"))
+#+end_example
+
+To develop a project:
+
+#+begin_example
+Pkg.develop(PackageSpec(url="https://github.com/lihebi/julia-repl"))
+#+end_example
+
+Then view the current pkg status:
+
+#+begin_example
+Pkg.status()
+#+end_example
+
+You will see:
+
+#+begin_example
+EmacsREPL v0.1.0 [`~/.julia/dev/EmacsREPL`]
+#+end_example
+
