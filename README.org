@@ -1,33 +1,3 @@
 #+TITLE: Homepage Source Repository
-* Tmp
-** moving tool tip
-very interesting, see demo at https://www.knopper.net/
 
-And also this: http://tomasp.net/blog/2018/write-your-own-excel/
-
-* TODOs
-
-** wiki internal/external links
-
-*** DONE styling
-    CLOSED: [2019-09-18 Wed 15:45]
-
-*** js file to change target=_blank
-
-Tensorflow page https://www.tensorflow.org/install/docker has the following
-
-#+begin_example
-a[href*="oracle.com"]::after, a.external::after
-content: "open_in_new"
-font: normal normal normal 24px/1 "Material Icons"
-font-size: 18px
-margin: 0 0 0 4px
-vertical-align: text-bottom
-#+end_example
-
-*** change links to have name
-
-** wiki quotation author
-** blog create and last modify time, modify history
-** TODO https://ambrevar.xyz/ org-publish and last-update is interesting
-  [2018-08-29 Wed 04:38]
+https://lihebi.com
