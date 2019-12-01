@@ -137,13 +137,13 @@ The essays are not finished, and will be consistently updated.
 First of all, I document the [[file:quotes.org][quotes]] from the
 great minds.
 
-- [[file:essays/research.org][research]]
-- [[file:essays/global-view.org][global view]]
-- the [[file:essays/future.org][future]]
-- [[file:essays/exponential-growth.org][exponential growth]]
-- [[file:essays/time.org][life and time]]
-- there is the whole [[file:essays/world.org][world]] out there
-- [[file:essays/independence.org][Independence and collaboration]]
+# - [[file:essays/research.org][research]]
+# - [[file:essays/global-view.org][global view]]
+# - the [[file:essays/future.org][future]]
+# - [[file:essays/exponential-growth.org][exponential growth]]
+# - [[file:essays/time.org][life and time]]
+# - there is the whole [[file:essays/world.org][world]] out there
+# - [[file:essays/independence.org][Independence and collaboration]]
 
 * Misc
 
