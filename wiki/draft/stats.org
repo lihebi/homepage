@@ -1,4 +1,4 @@
-#+TITLE: Julia
+#+TITLE: Statistic Computing
 
 * Julia Libraries
 
