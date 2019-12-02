@@ -117,7 +117,8 @@ correct. Read at your own risk.
 - [[file:wiki/algorithm.org][Algorithm]]
 - [[file:wiki/ai.org][AI]] and [[file:wiki/ai-frameworks.org][AI
   Frameworks]]
-- [[file:wiki/ml.org][ML]]: currently very preliminary
+- [[file:wiki/ml.org][ML]]: machine learning theories
+- [[file:wiki/stats.org][stats]]: stats programming (R and julia)
 
 # ** Slides
 # These are random slides I was giving. Just for references.
@@ -153,6 +154,8 @@ I run full marathon in [[file:assets/finisher_certificate_2017.pdf][2017 (4h
  35m) (pdf)]], [[file:assets/finisher_certificate_2018.pdf][2018 (4h 59m)
  (pdf)]], and [[file:assets/finisher_certificate_2019.pdf][2019 (4h 46m)
  (pdf)]].
+
+The site has a full [[file:sitemap.org][site-map]].
 
 # #+BEGIN_CENTER
 # #+ATTR_HTML: :width 200px

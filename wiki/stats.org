@@ -2,6 +2,9 @@
 #+PROPERTY: header-args:R :results output
 
 * R lang
+** References
+- [[https://cran.r-project.org/doc/manuals/r-release/R-intro.html][official introduction tutorial]]
+- [[https://cran.r-project.org/doc/manuals/r-release/R-lang.html][the language reference]]
 
 ** Setting up
 
@@ -389,12 +392,52 @@ The compound statements are the same as C, can be a single statement without the
 
 *** Conditional
 - if: =if (STMT) STMT else if (STMT) STMT else STMT=
-- Switch: =switch (STMT, LIST)=
-  - the STMT is first evaluated
-  - if the value is within 1 and the length of the LIST, evaluate LIST[i], and return
-  - return NULL
-  - Notice that the LIST can be a comma separated argument of switch ... which
-    means switch actually accepts =...=
+
+The switch is quite interesting. It is
+
+#+BEGIN_SRC R
+switch(x, list...)
+#+END_SRC
+
+The semantic is to find x in the list and return the value. If x is not in list,
+return NULL.
+
+An unnamed list has implicit index as name:
+
+#+BEGIN_SRC R
+switch(2,1,2,3)
+#+END_SRC
+
+#+RESULTS:
+: [1] 2
+
+Using name:
+
+#+BEGIN_SRC R
+switch("hello", hello=1, world=2)
+#+END_SRC
+
+#+RESULTS:
+: [1] 1
+
+not found, return NULL:
+
+#+BEGIN_SRC R
+is.null(switch("nothing", hello=1))
+#+END_SRC
+
+#+RESULTS:
+: [1] TRUE
+
+Interestingly, even for named list, we can still use the index:
+
+#+BEGIN_SRC R
+switch(2, hello=1, world=2)
+#+END_SRC
+
+#+RESULTS:
+: [1] 2
+
 
 *** Loop
 - for loop: =for (NAME in VECTOR) STMT=
@@ -574,54 +617,44 @@ Possible =...= arguments:
 
 *** dplyr
 A Grammar of Data Manipulation
-https://cran.r-project.org/web/packages/dplyr/index.html
-https://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html
+- [[https://cran.r-project.org/web/packages/dplyr/index.html][cran page]]
 
 * Julia
 
 ** Julia Libraries
 
 *** Optimizers
-**** Optim.jl
-optimization https://github.com/JuliaNLSolvers/Optim.jl
+**** [[https://github.com/JuliaNLSolvers/Optim.jl][Optim.jl]]
+optimization
 
-**** JuMP.jl
-another optimizer with more solvers https://github.com/JuliaOpt/JuMP.jl
+**** [[https://github.com/JuliaOpt/JuMP.jl][JuMP.jl]]
+another optimizer with more solvers
 
 *** Datasets
-**** METADATA.jl
+**** [[https://github.com/JuliaLang/METADATA.jl][METADATA.jl]]
 Used for [[https://pkg.julialang.org/docs/][official package registry]]
 
-https://github.com/JuliaLang/METADATA.jl
-
-**** Metalhead.jl
-https://github.com/FluxML/Metalhead.jl
+**** [[https://github.com/FluxML/Metalhead.jl][Metalhead.jl]]
 
 Some vision models and dataset
 
 *** Images
-**** ColorTypes.jl
-https://github.com/JuliaGraphics/ColorTypes.jl
+**** [[https://github.com/JuliaGraphics/ColorTypes.jl][ColorTypes.jl]]
 
-**** ImageFiltering.jl
-https://github.com/JuliaImages/ImageFiltering.jl
+**** [[https://github.com/JuliaImages/ImageFiltering.jl][ImageFiltering.jl]]
 
-**** Images
-https://github.com/JuliaImages/Images.jl
+**** [[https://github.com/JuliaImages/Images.jl][Images.jl]]
 
 colorview, channelview, RGB
 
 *** Compiler tools
-**** MacroTools.jl
-https://github.com/MikeInnes/MacroTools.jl
-**** PackageCompiler.jl
+**** [[https://github.com/MikeInnes/MacroTools.jl][MacroTools.jl]]
+
+**** [[https://github.com/JuliaLang/PackageCompiler.jl][PackageCompiler.jl]]
 To remove JIT compile overhead
-https://github.com/JuliaLang/PackageCompiler.jl
 
 *** Probablistic packages
-**** Distributions.jl
-https://github.com/JuliaStats/Distributions.jl
-
+**** [[https://github.com/JuliaStats/Distributions.jl][Distributions.jl]]
 
 ** Using Pkg
 

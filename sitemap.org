@@ -37,7 +37,7 @@
   - [[file:wiki/nlp.org][Natural Language Processing]]
   - [[file:wiki/python.org][Python]]
   - [[file:wiki/r.org][R]]
+  - [[file:wiki/stats.org][Statistic Computing]]
   - [[file:wiki/writing.org][Techniques for Writing]]
   - draft
     - [[file:wiki/draft/draft.org][Draft]]
-    - [[file:wiki/draft/stats.org][Statistic Computing]]
