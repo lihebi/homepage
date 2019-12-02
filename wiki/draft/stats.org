@@ -84,44 +84,41 @@ To see the data, you can use:
 - =class(data$col)= get type
 - =levels(data$col)= if it is factor, get the values
 
-** Objects
-Objects have mode and length.  The =typeof= gets the type of an
-object, while =mode= retrieves the mode of an object.  =length= gets
-the length of the vector.
+** Scope
 
+The scope is pretty weired, it is lexical scoping, but assign to the variable
+has no effect. You have to use =<<-= to assign.
 
-Objects have attributes.  =names= is used for indexing =dim= is the
-dimension of a matrix =dimnames= is the character names of the
-dimensions
 
 #+BEGIN_SRC R
-x <- c(1,2,3,4)
-names(x)
-dim(x)
+f <- function() {
+  var <- 0
+  list(
+    print = function() {
+      print(var)
+    },
+    add1 = function() {
+      var <- var + 1
+    },
+    sub1 = function() {
+      var <<- var - 1
+    })}
+l <- f()
+l$print()
+l$add1()
+l$print()
+l$sub1()
+l$print()
 #+END_SRC
 
 #+RESULTS:
-: NULL
-: NULL
+: [1] 0
+: [1] 0
+: [1] -1
 
 
 
-The missing values are =NA=, tested by =is.na=.  Illegal
-computations produces =NaN=, e.g. =0/0=.
-
-Compound objects are /factors/ (a.k.a. enumerators) and /data
-frames/ (lists of objects all have the same length).  Vectors are
-the array of objects of the same mode.  List can contain the objects
-of different modes.  A /data frame/ is a list with class
-"data.frame".
-
-Using bracket expression with predicates to select part of data is
-very useful. Inside the bracket, the column names do not need to
-have prefix.
-
-Type Conversion: you can change a type of a vector by
-- =as.factor(x)=
-- as.numeric()
+** Objects
 
 *** Vector
 Create a vector by =c()=, which is append:
@@ -135,6 +132,17 @@ c(x, 0, x)
 #+RESULTS:
 : [1] 1 2 3
 : [1] 1 2 3 0 1 2 3
+
+Vectors are the array of objects of the same mode (type).
+
+#+BEGIN_SRC R
+c(1, "hello")
+#+END_SRC
+
+#+RESULTS:
+: [1] "1"     "hello"
+
+
 
 To create a sequence:
 #+BEGIN_SRC R
@@ -180,6 +188,7 @@ rep(x, each=3)
 #+RESULTS:
 : [1] 1 2 3 1 2 3 1 2 3
 : [1] 1 1 1 2 2 2 3 3 3
+
 
 The length, mode, typeof
 #+BEGIN_SRC R
@@ -254,14 +263,14 @@ x[c("hello", "world")]
 #+END_SRC
 
 #+RESULTS:
-: hello world  lala 
-:     1     2     3 
-: <NA> 
-:   NA 
-: hello 
-:     1 
-: hello world 
-:     1     2 
+: hello world  lala
+:     1     2     3
+: <NA>
+:   NA
+: hello
+:     1
+: hello world
+:     1     2
 
 
 
@@ -279,6 +288,28 @@ dim(x)
 : [2,]    2    4    6    8
 : [1] 2 4
 
+*** list
+list is a misnomer, it is a dict
+
+#+BEGIN_SRC R
+l <- list(hello=1, "world"=2)
+l
+l$hello
+l$world
+#+END_SRC
+
+#+RESULTS:
+: $hello
+: [1] 1
+:
+: $world
+: [1] 2
+:
+: [1] 1
+: [1] 2
+
+
+
 *** Data frame
 - =na.omit= :: can omit the NA values in data frame
 
@@ -289,6 +320,13 @@ Use =names= to work on data frames will emit the names.
   You can use a vector as index.
 - Using =[[]]= to index will give the value, dropping names.
   You cannot use a vector as index.
+
+*** type conversion
+you can change a type of a vector by
+- =as.factor(x)=
+- as.numeric()
+
+
 
 *** TODO data loading
 
@@ -310,7 +348,8 @@ Use =names= to work on data frames will emit the names.
 
 
 *** TODO missing value
-is.na
+The missing values are =NA=, tested by =is.na=.  Illegal computations produces
+=NaN=, e.g. =0/0=.
 
 *** TODO set
 subset
@@ -409,9 +448,37 @@ The =eval= is used to evaluate it.
 ** Models
 *** Linear model
 
+A linear model is created *and fitted* by =lm()= function, with the model
+formula and data frame. For example:
+
 #+BEGIN_SRC R
-fm = lm(y ~ x1 + x2, data = mydataframe)
+df = data.frame(x=c(1,2,3), y=c(2,4,6))
+fm = lm(y ~ x, data=df)
+summary(fm)
 #+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+Call:
+lm(formula = y ~ x, data = df)
+
+Residuals:
+1 2 3
+0 0 0
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)
+(Intercept)        0          0      NA       NA
+x                  2          0     Inf   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0 on 1 degrees of freedom
+Multiple R-squared:      1,	Adjusted R-squared:      1
+F-statistic:   Inf on 1 and 1 DF,  p-value: < 2.2e-16
+
+#+end_example
 
 The fitted model in the variable =fm= can be accessed by:
 - =coef=: extract the coefficients
@@ -420,6 +487,7 @@ The fitted model in the variable =fm= can be accessed by:
 - =plot=: produce four plots: residuals, fitted values, diagnostics.
 - =predict(OBJECT, newdata=DATA.FRAME)=: use the model to predict
 - =residuals=: extract the residuals
+- =summary()=
 
 The models can be updated, if the formula only changes a little bit.  In the
 following example, the =.= means the corresponding part of the original formula.
@@ -495,7 +563,7 @@ qplot(totbill, tip, geom="point", colour=day, data=tips) # scatter plot with col
 #+END_SRC
 *** plot(x, y, ...)
 Possible =...= arguments:
-- =type= what type of plot: 
+- =type= what type of plot:
   - =p= for points,
   - =l= for lines,
   - =b= for both,
@@ -637,4 +705,3 @@ Constant <- function(data) {
   return(ret)}
 
 #+END_SRC
-
