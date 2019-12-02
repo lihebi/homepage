@@ -119,6 +119,34 @@ l$print()
 : [1] 0
 : [1] -1
 
+The function parameter is always local, changing it have no effect outside:
+
+#+BEGIN_SRC R
+f <- function (var) {
+  var[1] <- 8
+}
+x <- c(1,2,3)
+f(x)
+x
+#+END_SRC
+
+#+RESULTS:
+: [1] 1 2 3
+
+But you can NOT even change a global variable, even using =<<-=:
+
+#+BEGIN_SRC R
+x <- 1
+f <- function() {
+  x <<- 2
+}
+x
+#+END_SRC
+
+#+RESULTS:
+: [1] 1
+
+
 
 
 ** Objects
