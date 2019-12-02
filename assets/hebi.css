@@ -103,10 +103,6 @@ blockquote::before{
     text-decoration: none;
 }
 
-pre.src {
-    overflow: auto;
-    padding-top: 0.5em;
-}
 #table-of-contents ul {
     padding-inline-start: 20px;
 }
@@ -143,6 +139,17 @@ pre {
     word-wrap: break-word;
     white-space: pre-wrap;
 }
+pre.src {
+    overflow: auto;
+    padding-top: 0.5em;
+}
+/* output of org src */
+pre.example {
+    border: none;
+    color: gray;
+    /* border-left: 3px solid gray; */
+}
+
 
 .figure {
     display: inline;
