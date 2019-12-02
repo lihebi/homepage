@@ -1,23 +1,48 @@
 #+TITLE: Julia
 
 * Julia Libraries
-** Metalhead.jl
+
+** Optimizers
+*** Optim.jl
+optimization https://github.com/JuliaNLSolvers/Optim.jl
+
+*** JuMP.jl
+another optimizer with more solvers https://github.com/JuliaOpt/JuMP.jl
+
+** Datasets
+*** METADATA.jl
+Used for [[https://pkg.julialang.org/docs/][official package registry]]
+
+https://github.com/JuliaLang/METADATA.jl
+
+*** Metalhead.jl
 https://github.com/FluxML/Metalhead.jl
 
 Some vision models and dataset
-** ColorTypes.jl
-https://github.com/JuliaGraphics/ColorTypes.jl
-
-** ImageFiltering.jl
-https://github.com/JuliaImages/ImageFiltering.jl
-
-** MacroTools.jl
-https://github.com/MikeInnes/MacroTools.jl
 
 ** Images
+*** ColorTypes.jl
+https://github.com/JuliaGraphics/ColorTypes.jl
+
+*** ImageFiltering.jl
+https://github.com/JuliaImages/ImageFiltering.jl
+
+*** Images
 https://github.com/JuliaImages/Images.jl
 
 colorview, channelview, RGB
+
+** Compiler tools
+*** MacroTools.jl
+https://github.com/MikeInnes/MacroTools.jl
+*** PackageCompiler.jl
+To remove JIT compile overhead
+https://github.com/JuliaLang/PackageCompiler.jl
+
+** Probablistic packages
+*** Distributions.jl
+https://github.com/JuliaStats/Distributions.jl
+
 
 * Using Pkg
 
