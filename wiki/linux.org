@@ -193,11 +193,27 @@ To build a nix script
 nix-build xxx.nix
 #+end_example
 
+The script should return a derivation, i.e. the result of applying
+=stdenv.mkDerivation= function.
+
 To access pkgs in .nix:
 #+begin_example
 pkgs = import <nixpkgs> {};
 #+end_example
 
+
+If you are in a nixpkgs local checkout root directory, you can use that and
+specify a package to build:
+
+#+begin_example
+nix-build -A rPackages.RcppArmadillo
+#+end_example
+
+You can also use your current default path, ='<nixpkgs>'= (HEBI: How to is it resolved?)
+
+#+begin_example
+nix-build '<nixpkgs>' -A rPackages.RcppArmadillo
+#+end_example
 
 ** package management
 
@@ -259,18 +275,18 @@ Add the unstable channel:
 sudo nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs
 #+end_example
 
-Do a full upgrade:
-
-#+begin_example
-sudo nixos-rebuild switch --upgrade
-#+end_example
-
-Note that the channel setting is per-user, so for system upgrade, you need to set the root's channel.
-
-Remove a channel:
+Note that I'll need to remove the old channel to use the new channel:
 
 #+begin_example
 nix-channel --remove nixpkgs
+#+end_example
+
+However, when doing nixos-rebuild, it complains about missing =nixos=, which I
+guess is hardcoded. So I'll need to add the package as name "nixos" instead of
+"nixpkgs":
+
+#+begin_example
+sudo nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixos
 #+end_example
 
 Obtain the latest content from the channels:
@@ -279,7 +295,17 @@ Obtain the latest content from the channels:
 nix-channel --update
 #+end_example
 
-To upgrade all your packages
+Do a full upgrade:
+
+#+begin_example
+sudo nixos-rebuild switch --upgrade
+#+end_example
+
+This command will do channel update for you.
+
+Note that the channel setting is per-user, so for system upgrade, you need to set the root's channel.
+
+To upgrade all your local packages that are installed via =nix-env=:
 
 #+begin_example
 nix-env -u
