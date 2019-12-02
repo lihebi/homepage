@@ -133,7 +133,8 @@ x
 #+RESULTS:
 : [1] 1 2 3
 
-But you can NOT even change a global variable, even using =<<-=:
+It is call by value, for all objects. You can NOT even change a global variable,
+even using =<<-=:
 
 #+BEGIN_SRC R
 x <- 1
@@ -149,7 +150,20 @@ x
 
 
 
-** Objects
+** Types
+
+*** primitives
+
+Looks like all numbers are double by default:
+
+#+BEGIN_SRC R
+typeof(1)
+typeof(1L)
+#+END_SRC
+
+#+RESULTS:
+: [1] "double"
+: [1] "integer"
 
 *** Vector
 Create a vector by =c()=, which is append:
@@ -511,9 +525,13 @@ f(1,2,3)
 
 
 ** Quote (!!)
-The quote will wrap the expression into an object without evaluating it.
-The resulting object has the mode of =call=.
-The =eval= is used to evaluate it.
+The quote will wrap the expression into an object without evaluating it.  The
+resulting object has the mode of =call=.  The =eval= is used to evaluate it.
+
+- =quote=
+- =substitute=
+- =eval=
+- =call=
 
 
 ** Models
