@@ -4,6 +4,7 @@
 - [[file:index.org][Hebi Li]]
 - [[file:history.org][History of Computing]]
 - [[file:README.org][Homepage Source Repository]]
+- [[file:notes.org][Implementation Notes]]
 - [[file:quotes.org][Quotes]]
 - [[file:vehicle.org][Vehicle]]
 - [[file:hn.org][my Hacker News starred articles]]
@@ -28,7 +29,6 @@
   - [[file:wiki/camping.org][Camping]]
   - [[file:wiki/circuit.org][Circuit]]
   - [[file:wiki/database.org][Data base]]
-  - [[file:wiki/draft.org][Draft]]
   - [[file:wiki/emacs.org][Emacs]]
   - [[file:wiki/functional.org][Functional Programming]]
   - [[file:wiki/linux.org][Linux]]
@@ -39,4 +39,5 @@
   - [[file:wiki/r.org][R]]
   - [[file:wiki/writing.org][Techniques for Writing]]
   - draft
-    - [[file:wiki/draft/julia.org][Julia]]
+    - [[file:wiki/draft/draft.org][Draft]]
+    - [[file:wiki/draft/stats.org][Statistic Computing]]
