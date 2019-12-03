@@ -99,6 +99,7 @@ To see the data, you can use:
 - =summary(dataset)= shows some information like max,min,mean
 - =class(data$col)= get type
 - =levels(data$col)= if it is factor, get the values
+- =stopifnot()=: the assert
 
 ** Scope
 
