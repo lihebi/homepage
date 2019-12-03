@@ -67,6 +67,19 @@ Finally, =q()= quit R.
 
 The =print= function can output the value of a variable.
 
+#+BEGIN_SRC R
+print("hello")
+cat("world", "!", "\n")
+print(c(1,2,3))
+#+END_SRC
+
+#+RESULTS:
+: [1] "hello"
+: world !
+: [1] 1 2 3
+
+
+
 To enter the debugger, a call to =browser= function suffices.  This allows you
 to browse the values at that point.  A more powerful debugger is by a call to
 =debug= with the function name as argument.  Each time that function is called,
