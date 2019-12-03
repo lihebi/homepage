@@ -712,6 +712,35 @@ and after that all graphics output will be sent to that device.
   dev.off() # finished
   #+END_SRC
 
+** FFI
+
+To call a C function in R, first load the C shared library:
+
+#+BEGIN_SRC R
+dyn.load()
+dyn.unload()
+#+END_SRC
+
+Then, you can directly call a C function:
+
+#+BEGIN_SRC R
+.C("foo", as.double(a), as.integer(b))
+#+END_SRC
+
+Or, if you need to pass a R object to the C function, you use
+
+#+BEGIN_SRC R
+.Call("foo", a, b)
+.External("foo", a, b)
+#+END_SRC
+
+R also provides a command to create shared object, instead of using raw gcc:
+
+#+begin_example
+R CMD SHLIB foo.c
+#+end_example
+
+
 ** Packages
 *** ggplot2
 #+BEGIN_SRC R
