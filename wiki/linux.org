@@ -215,6 +215,22 @@ You can also use your current default path, ='<nixpkgs>'= (HEBI: How to is it re
 nix-build '<nixpkgs>' -A rPackages.RcppArmadillo
 #+end_example
 
+Compute hash of a file:
+
+#+begin_example
+nix-hash --type sha256 --flat --base32 veewee-0.4.5.1.gem
+#+end_example
+
+Importantly, the default is MD5, =--flat= to hash content of each file path in
+the package, which is the same behavior of GNU =sha1sum=, and =--base32= use
+base-32 representation rather than hexadecimal, and all Nix expression use base32.
+
+Or you can use nix-prefetch-url:
+
+#+begin_example
+nix-prefetch-url <url>
+#+end_example
+
 ** package management
 
 search
