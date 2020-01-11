@@ -185,6 +185,26 @@ Inside REPL, you can query the value of each option.
 
 =/var/log= goes into =~/.nix-profile/var/log/=
 
+** Install nix without root
+
+from [[https://nixos.wiki/wiki/Nix_Installation_Guide][nix wiki tutorial]], using the [[https://github.com/nix-community/nix-user-chroot][nix-user-chroot]] project, basically:
+
+#+begin_example
+mkdir -m 0755 ~/.nix
+nix-user-chroot ~/.nix bash -c 'curl https://nixos.org/nix/install | sh'
+#+end_example
+
+This will update ~$HOME/.bash_profile~, to drop in the nix environment:
+
+#+begin_example
+nix-user-chroot ~/.nix bash -l
+#+end_example
+
+-l loads the ~$HOME/.bash_profile~, and all nix commands will be available,
+=/nix= is under your user.
+
+
+
 ** package development
 
 To build a nix script
@@ -326,6 +346,34 @@ To upgrade all your local packages that are installed via =nix-env=:
 #+begin_example
 nix-env -u
 #+end_example
+
+** FHS
+
+There are cases you have to run some binary, for example language packages
+installed via other package managers such as julia's, downloaded binaries. There
+are two things you need to take care for making it work:
+1. the interpreter, typically =/lib64/ld-linux-x86-64.so.2=. You can set it
+   manually via =/nix/store/xxx-glibc-xxx/lib/ld-linux-x86-64.so.2 /path/to/executable=. 
+2. the libraries. You need to =ldd <binary>= to find what's the missing
+   libraries, and add the correct path to =LD_LIBRARY_PATH= *in the wrapper
+   script*.
+
+When you put it a wrapper file in the same directory as original executable, you
+want =$(dirname "$0")/gksqt-real=.
+
+
+An example for Plots.jl julia library, which build GR plotting backend and use
+its binary, the path is =~/.julia/packages/GR/oiZD3/deps/gr/bin/gksqt=. I move
+it to =gksqt-real= and create =gksqt= in the same directory with the following
+content:
+
+#+begin_example
+env LD_LIBRARY_PATH=/nix/store/1hf6bdlckrmmyv1n4ncimy2g1sx4bx0c-qt-4.8.7/lib/:\
+    /nix/store/1mr01vwvg7922xp0sgd4gry54swrx19m-gcc-8.3.0-lib/lib/\
+    /nix/store/8d94mp12ca2gihchw4r7jfmpdww8f2ha-glibc-2.27/lib/ld-linux-x86-64.so.2 $(dirname "$0")/gksqt-real
+#+end_example
+
+reference: [[https://unix.stackexchange.com/questions/522822/different-methods-to-run-a-non-nixos-executable-on-nixos][stackexchange-522822]]
 
 * GuixSD
 

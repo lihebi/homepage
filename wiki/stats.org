@@ -774,12 +774,18 @@ A Grammar of Data Manipulation
 
 ** Julia Libraries
 
+*** reference
+- juliastats: https://juliastats.org/
+
 *** Optimizers
 **** [[https://github.com/JuliaNLSolvers/Optim.jl][Optim.jl]]
 optimization
 
 **** [[https://github.com/JuliaOpt/JuMP.jl][JuMP.jl]]
 another optimizer with more solvers
+
+*** Plots
+**** [[https://github.com/JuliaPlots/Plots.jl][Plots.jl]]
 
 *** Datasets
 **** [[https://github.com/JuliaLang/METADATA.jl][METADATA.jl]]
@@ -788,6 +794,31 @@ Used for [[https://pkg.julialang.org/docs/][official package registry]]
 **** [[https://github.com/FluxML/Metalhead.jl][Metalhead.jl]]
 
 Some vision models and dataset
+
+**** [[https://github.com/JuliaData/DataFrames.jl][DataFrames.jl]]
+
+*** Graph
+**** [[https://github.com/JuliaGraphs/LightGraphs.jl][LightGraphs.jl]]
+A great package for
+- just the graph
+- generate different random graphs
+- traversal
+- plotting
+- algorithms:
+  - shortest path
+  - minimum spanning tree
+- distance metrics
+**** [[https://github.com/JuliaGraphs/MetaGraphs.jl][MetaGraphs.jl]]
+LightGraphs with arbitrary data on nodes.
+
+**** [[https://github.com/GiovineItalia/Compose.jl][Compose.jl]]
+
+The racket/pict for Julia.
+
+**** [[https://github.com/IainNZ/GraphLayout.jl][GraphLayout.jl]]
+Alternatives:
+- [[https://github.com/Keno/GraphViz.jl][GraphViz.jl]]
+- [[https://github.com/sisl/TikzGraphs.jl][TikzGraphs.jl]]
 
 *** Images
 **** [[https://github.com/JuliaGraphics/ColorTypes.jl][ColorTypes.jl]]
@@ -806,6 +837,7 @@ To remove JIT compile overhead
 
 *** Probablistic packages
 **** [[https://github.com/JuliaStats/Distributions.jl][Distributions.jl]]
+**** [[https://github.com/JuliaStats/GLM.jl][GLM.jl]] (!!!)
 
 ** Using Pkg
 

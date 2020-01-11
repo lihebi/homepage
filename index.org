@@ -14,6 +14,10 @@ and so miss the moon. --- a 1956 letter from Maugham
 #+end_quote
 
 
+#+begin_quote
+Do the right thing, in the right way.
+#+end_quote
+
 # *@@html:<font color = "red">@@
 # If you like collaboration, please do NOT collaborate with me.
 # @@html:</font>@@*
@@ -24,7 +28,7 @@ starting 2014 Fall.  I graduated from Electrical Engineering (1010) of
 [[http://en.ustc.edu.cn/][USTC]] in 2014. See details in my
 [[file:CV-Hebi.pdf][CV(pdf)]].
 
-My (research) interests are quite broad:
+My research interests:
 - Programming Language
 - Artificial Intelligence
 - Operating System
@@ -68,24 +72,33 @@ on-demand dynamic analysis framework.
 
 2012 Summer
 
-I was the leader of a team in USTC RoboGame 2012, and we ranked 3rd
-among 26 teams. The robot precisely fetched a bunch of flowers, found
-routes using image processing, climbing the ladders, and finally put
-the followers precisely in front of the sculpture of Jici Yan. You can
-see [[https://www.youtube.com/watch?v=N0EbvINeiy4][a small video]] of
-our robot in the competition that day. Check out the
-[[file:assets/robogame2012-proposal.pdf][proposal (pdf, chinese)]] and
-the [[file:assets/robogame2012-technical-report.pdf][technical report
-(pdf, chinese)]].
+I was the leader of a team in USTC RoboGame 2012, and we ranked 3rd among 26
+teams. The robot precisely fetched a bunch of flowers, found routes using image
+processing, climbing the ladders, and finally put the followers precisely in
+front of the sculpture of Jici Yan. You can see [[https://www.youtube.com/watch?v=N0EbvINeiy4][a small video]] of our robot in
+the competition that day. Check out the [[file:assets/robogame2012-proposal.pdf][proposal (pdf, chinese)]] and the
+[[file:assets/robogame2012-technical-report.pdf][technical report (pdf, chinese)]].
 
-** Open Source Tools
-- [[https://github.com/lihebi/hn.el][hn.el]]: A Hacker News Client for
-  Emacs
-- [[https://github.com/lihebi/simple-drill.el][simple-drill.el]]: A
-  Flashcard Program for Emacs
-- [[https://github.com/lihebi/smart-scholar.el][smart-scholar.el]]: An
-  Emacs plugin for downloading and managing bibs for CS conferences
-# - [[https://github.com/lihebi/anti-rouge][AntiRouge]]
+** Open Source Code
+Random:
+- [[https://github.com/lihebi/biber][biber]]: crawl CS conferences for bib files, the output bib files are at
+  [[https://github.com/lihebi/biber-dist][biber-dist]]
+# - [[https://github.com/lihebi/homepage][lihebi/homepage]]: source of this site
+# - [[https://github.com/lihebi/hebicc][lihebi/hebicc]]: a (incomplete) C parser written in racket
+
+Emacs tools:
+- [[https://github.com/lihebi/hn.el][hn.el]]: A Hacker News Client for Emacs
+- [[https://github.com/lihebi/simple-drill.el][simple-drill.el]]: A Flashcard Program for Emacs
+- [[https://github.com/lihebi/smart-scholar.el][smart-scholar.el]]: dynamically loading bib files for org-ref in Emacs
+- [[https://github.com/lihebi/repo-tracker.el][repo-tracker.el]]: track all local projects for git status
+
+# Configurations:
+# - [[https://github.com/lihebi/nixos][lihebi/nixos]]: my nixos packages and configuration
+# - [[https://github.com/lihebi/guix-channel][lihebi/guix-channel]]: Guix System packages and configuration
+# - [[https://github.com/lihebi/dothebi][lihebi/dothebi]]: my Unix dot files
+# - [[https://github.com/lihebi/docker-files][lihebi/docker-files]]: some docker machines
+# - [[https://github.com/lihebi/emacs.d][lihebi/emacs.d]]: emacs configuration
+# - [[https://github.com/lihebi/stumpwm.d][lihebi/stumpwm.d]]: stumpwm configuration
 
 * Wiki
 
