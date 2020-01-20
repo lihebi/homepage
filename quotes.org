@@ -417,6 +417,13 @@ cultivate friendships; be happy.
 You don't need people to give you advice that doesn't surprise you.
 #+END_QUOTE
 
+#+begin_quote
+The difference between design and research seems to be a question of new versus
+good. Design doesn’t have to be new, but it has to be good. Research doesn’t
+have to be good, but it has to be new.
+#+end_quote
+
+
 ** Peter Norvig
 #+BEGIN_QUOTE
 PowerPoint doesn't kill meetings. People kill meetings. But using
