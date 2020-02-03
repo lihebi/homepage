@@ -73,7 +73,7 @@ For the current tensorflow (1.12, as of 11/6/2018), install
 pip3 install --user tensorflow-gpu
 #+END_EXAMPLE
 
-test 
+test
 
 #+BEGIN_EXAMPLE
 tf.Session().list_devices()
@@ -88,6 +88,84 @@ sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
 
 
 
+* V2Ray
+- offical document: https://www.v2ray.com/
+- A good tutorial https://guide.v2fly.org/
+
+Server:
+
+Install docker (https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-18-04)
+
+#+begin_example
+sudo apt update
+sudo apt install apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+sudo apt update
+sudo apt install docker-ce
+sudo systemctl status docker
+#+end_example
+
+pull the docker image
+#+begin_example
+sudo docker pull v2ray/official
+sudo docker run -d --name v2ray\
+ -v /etc/v2ray:/etc/v2ray\
+ -p 8888:8888\
+ v2ray/official
+ v2ray -config=/etc/v2ray/config.json
+#+end_example
+
+In one line for eazy copy:
+#+begin_example
+sudo docker run -d --name v2ray -v /etc/v2ray:/etc/v2ray -p 8888:8888 v2ray/official v2ray -config=/etc/v2ray/config.json
+#+end_example
+
+
+Here the /etc/v2ray is mounted, the port 8888 is mapped, and the command is
+=v2ray -config=/xxx=. So basically it means we just need
+=/etc/v2ray/config.json= which is:
+
+Then operate the container
+#+begin_example
+sudo docker container start v2ray
+sudo docker container stop v2ray
+sudo docker container restart v2ray
+sudo docker container logs v2ray
+#+end_example
+
+In case of changing config, you need recreate a container
+#+begin_example
+sudo docker container stop v2ray
+sudo docker container rm v2ray
+#+end_example
+
+You can generate uuid using =uuidgen=
+
+307b01e8-7d71-4e1c-a410-98c016e776c6
+
+#+BEGIN_SRC json
+{
+    "inbounds": [
+        {
+            "port": 8888,
+            "protocol": "vmess",
+            "settings": {
+                "clients": [
+                    {"id": "307b01e8-7d71-4e1c-a410-98c016e776c6",
+                     "alterId": 64}
+                ]
+            }}],
+    "outbounds": [
+        {
+            "protocol": "freedom",
+            "settings": {}
+        }
+    ]
+}
+#+END_SRC
+
+How about client?
 
 
 * Installation
@@ -353,7 +431,7 @@ There are cases you have to run some binary, for example language packages
 installed via other package managers such as julia's, downloaded binaries. There
 are two things you need to take care for making it work:
 1. the interpreter, typically =/lib64/ld-linux-x86-64.so.2=. You can set it
-   manually via =/nix/store/xxx-glibc-xxx/lib/ld-linux-x86-64.so.2 /path/to/executable=. 
+   manually via =/nix/store/xxx-glibc-xxx/lib/ld-linux-x86-64.so.2 /path/to/executable=.
 2. the libraries. You need to =ldd <binary>= to find what's the missing
    libraries, and add the correct path to =LD_LIBRARY_PATH= *in the wrapper
    script*.
@@ -787,8 +865,8 @@ $HTTP["url"] =~ "^/git/.*/git-receive-pack$" {
         include "git-auth.conf"
 }
 
-# alias.url += ( "/cgit" => "/usr/share/webapps/cgit/cgit.cgi" )                                           
-# alias.url += ( "/cgit" => "/usr/lib/cgit/cgit.cgi" )                                                     
+# alias.url += ( "/cgit" => "/usr/share/webapps/cgit/cgit.cgi" )
+# alias.url += ( "/cgit" => "/usr/lib/cgit/cgit.cgi" )
 url.redirect += ("^/$" => "/cgit/")
 $HTTP["url"] =~ "^/cgit" {
     server.document-root = "/usr/share/webapps"
@@ -863,11 +941,11 @@ readme=:README.rst
 readme=:readme.rst
 readme=:README.html
 readme=:readme.html
-readme=:README.htm                                                                             
-readme=:readme.htm                                                                             
-readme=:README.txt                                                                             
-readme=:readme.txt                                                                             
-readme=:README                                                                                 
+readme=:README.htm
+readme=:readme.htm
+readme=:README.txt
+readme=:readme.txt
+readme=:README
 readme=:readme
 
 section=hebi
@@ -1108,16 +1186,16 @@ be quoted clear password.  If the network is open, you can use
 =key_mgmt=NONE= in place of =psk=
 
 After the configuration, you can actually connect to a WPA/WEP
-protected network, where 
+protected network, where
 
 #+begin_example
 wpa_supplicant -B -i <interface> -c <(wpa_passphrase <MYSSID> <passphrase>)
 #+end_example
 
-connect to a 
+connect to a
 - -b: fork into background
 - -i interface
-- -c: path to configuration file. 
+- -c: path to configuration file.
 
 Alternatively, you can use the config file
 #+begin_example
@@ -2416,7 +2494,7 @@ docker rm $(docker ps -a -q)
 When you make any changes to the container, you can view the
 difference made from the base image via =docker diff <ID>=. When
 desired, you can create a new image based on the current running
-instance, via =docker commit=: 
+instance, via =docker commit=:
 
 #+begin_example
 docker commit <ID> my-new-image
@@ -2925,7 +3003,7 @@ they will be automatically terminated when main() finishes.
   int main () {
     int rc;
     int i;
-	
+
     pthread_t threads[NUM_THREADS];
     pthread_attr_t attr;
     void *status;
@@ -2937,7 +3015,7 @@ they will be automatically terminated when main() finishes.
     for( i=0; i < NUM_THREADS; i++ ){
       cout << "main() : creating thread, " << i << endl;
       rc = pthread_create(&threads[i], &attr, wait, (void *)i );
-		
+
       if (rc){
         cout << "Error:unable to create thread," << rc << endl;
         exit(-1);
@@ -2946,15 +3024,15 @@ they will be automatically terminated when main() finishes.
 
     // free attribute and wait for the other threads
     pthread_attr_destroy(&attr);
-	
+
     for( i=0; i < NUM_THREADS; i++ ){
       rc = pthread_join(threads[i], &status);
-		
+
       if (rc){
         cout << "Error:unable to join," << rc << endl;
         exit(-1);
       }
-		
+
       cout << "Main: completed thread id :" << i ;
       cout << "  exiting with status :" << status << endl;
     }
@@ -2979,7 +3057,7 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp);
 - sort -k 4 -n
 - tee
 #+begin_src sh
-  for name in data/github-bench/*; do 
+  for name in data/github-bench/*; do
       echo "===== $name"\
           | tee -a log.txt; { time helium --create-cache $name; } 2>&1\
           | tee -a log.txt; done
