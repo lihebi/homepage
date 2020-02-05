@@ -78,6 +78,26 @@ from p1 import xxx
 from p2.yyy import foo
 #+END_EXAMPLE
 
+** pip mirror
+- ustc mirror: http://pypi.mirrors.ustc.edu.cn/simple/
+
+to use one-time, simply:
+
+#+begin_example
+pip3 install xxx -i https://pypi.mirrors.ustc.edu.cn/simple/
+
+# don't need this when using https
+# --trusted-host pypi.mirrors.ustc.edu.cn
+#+end_example
+
+global configuration *seems* to be:
+#+begin_example
+pip3 config set global.index-url https://mirrors.ustc.edu.cn/pypi/web/simple
+#+end_example
+
+In China, pytorch cannot be installed due to 1. large 2. cpu only has a specific
+url. Thus I'm using conda mirror https://mirrors.tuna.tsinghua.edu.cn/help/anaconda/
+
 ** imsave
 =imsave= is deprecated, change from
 
