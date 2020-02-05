@@ -91,59 +91,39 @@ sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
 * V2Ray
 - offical document: https://www.v2ray.com/
 - A good tutorial https://guide.v2fly.org/
+- providers:
+  - https://www.v2aky.com/
+  - https://neoproxy.org
+  - https://service.v2ray.cx/
+- linode speed test: https://www.linode.com/speed-test/
+- digital ocean speed test: http://speedtest-sgp1.digitalocean.com/
 
 Server:
 
 Install docker (https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-18-04)
 
 #+begin_example
-sudo apt update
-sudo apt install apt-transport-https ca-certificates curl software-properties-common
+apt update -y
+apt install -y apt-transport-https ca-certificates curl software-properties-common
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
-sudo apt update
-sudo apt install docker-ce
-sudo systemctl status docker
+add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+apt update -y
+apt install -y docker-ce
+systemctl status docker
 #+end_example
 
 pull the docker image
 #+begin_example
 sudo docker pull v2ray/official
-sudo docker run -d --name v2ray\
- -v /etc/v2ray:/etc/v2ray\
- -p 8888:8888\
- v2ray/official
- v2ray -config=/etc/v2ray/config.json
 #+end_example
 
-In one line for eazy copy:
+Create =/etc/v2ray/config.json= with
 #+begin_example
-sudo docker run -d --name v2ray -v /etc/v2ray:/etc/v2ray -p 8888:8888 v2ray/official v2ray -config=/etc/v2ray/config.json
+mkdir /etc/v2ray
+touch /etc/v2ray/config.json
 #+end_example
 
-
-Here the /etc/v2ray is mounted, the port 8888 is mapped, and the command is
-=v2ray -config=/xxx=. So basically it means we just need
-=/etc/v2ray/config.json= which is:
-
-Then operate the container
-#+begin_example
-sudo docker container start v2ray
-sudo docker container stop v2ray
-sudo docker container restart v2ray
-sudo docker container logs v2ray
-#+end_example
-
-In case of changing config, you need recreate a container
-#+begin_example
-sudo docker container stop v2ray
-sudo docker container rm v2ray
-#+end_example
-
-You can generate uuid using =uuidgen=
-
-307b01e8-7d71-4e1c-a410-98c016e776c6
-
+the config is:
 #+BEGIN_SRC json
 {
     "inbounds": [
@@ -165,7 +145,41 @@ You can generate uuid using =uuidgen=
 }
 #+END_SRC
 
-How about client?
+You can generate uuid using =uuidgen=
+
+307b01e8-7d71-4e1c-a410-98c016e776c6
+
+The command to run the container:
+#+begin_example
+docker run -d --name v2ray\
+ -v /etc/v2ray:/etc/v2ray\
+ -p 8888:8888\
+ v2ray/official
+ v2ray -config=/etc/v2ray/config.json
+#+end_example
+
+Here the /etc/v2ray is mounted, the port 8888 is mapped, and the command is
+=v2ray -config=/xxx=.
+
+In one line for eazy copy:
+#+begin_example
+docker run -d --name v2ray -v /etc/v2ray:/etc/v2ray -p 8888:8888 v2ray/official v2ray -config=/etc/v2ray/config.json
+#+end_example
+
+Then operate the container
+#+begin_example
+docker container start v2ray
+docker container stop v2ray
+docker container restart v2ray
+docker container logs v2ray
+#+end_example
+
+In case of changing config, you need recreate a container
+#+begin_example
+docker container stop v2ray
+docker container rm v2ray
+#+end_example
+
 
 
 * Installation
