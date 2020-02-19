@@ -6,6 +6,12 @@
 # - Bisp is a Lisp
 # - or my plan-B for lisp
 
+#+begin_quote
+Bisp is a lisp, with a little less parenthesis, infix/postfix-notation when
+it makes sense, Julia-like optional static typing and multi-dispatching.
+#+end_quote
+
+
 * Rationale
 
 Parenthesis is a good thing, as always, because:
@@ -13,7 +19,7 @@ Parenthesis is a good thing, as always, because:
 - unambiguous
 - structural editing
 
-However, abusing parenthesis creates readability problem, less elegent than
+However, too much parenthesis creates readability problem, less elegent than
 Haskell, OCaml and Julia.
 
 # For example, compare
@@ -49,36 +55,43 @@ Haskell, OCaml and Julia.
 # #+END_SRC
 
 And due to insisting on parenthesis, some intuitive syntax becomes cubersome:
-- hard to do *inline type annotations*. Prior art: typed racket, contracts,
-  clojure specs
 - *struct field accessing*, the dot-notation, is missing
 - hard to do *array indexing and slicing*, e.g. arr[3,0:7,:]
+
+Lisp sytems traditionally use dynamic typing. But static typing can be very
+useful annotations for programming in general, and is crutial for
+multi-dispatching describe below. It is hard to add *inline type annotations*
+elegently due that additional parenthesis must be created for grouping purpose.
+Prior art: typed racket, contracts, clojure specs.
+
 
 Lisp dialects also fall short on *multi-dispatch generic
 functions*. Multi-dispatch generic functions is a great feature of Julia. It
 allows to override the same function name for different type and number of
 arguments. This matters a lot to save the namespace of functions, and makes the
-program elegent and extensible. Howver, in lisp dialects the support for
-multi-dispatch is not that good due to no proper type systems, for example
-generic method in racket and gerbil, defmulti in clojure.
+program elegent and extensible.  Prior art: generic method in racket and gerbil,
+defmulti in clojure.
+
+Bisp is designed to maintain the good part of lisp, while overcoming the
+afore-mentioned cons.
+
+# Howver, in lisp dialects the support for multi-dispatch is not that good due to
+# lack of proper static typing annottions.
 
 
-Thus my design goal for Bisp includes:
-- retain all the *good parts of parenthesis*: syntactic abstraction, unambiguity,
-  structural editing
-- *less parenthesis when appropriate* for better readability
-  # by introducing other operators and infix notation when appropriate:
-  # - reduce parenthesis that does not hurt unambiguity:
-  #   - let binding: use clojure's syntax
-  # - introduce operators other than parenthesis
-  # - use infix notation when appropriate: default values for functions defs
-- *dot-notation* for struct field accessing
-- support multi-dimensional arrays: *array indexing and slicing*
-- *multi-dispatch generic methods*, by default
+# Thus my design goal for Bisp includes:
+# - retain all the *good parts of parenthesis*: syntactic abstraction, unambiguity,
+#   structural editing
+# - *less parenthesis when appropriate* for better readability
+#   # by introducing other operators and infix notation when appropriate:
+#   # - reduce parenthesis that does not hurt unambiguity:
+#   #   - let binding: use clojure's syntax
+#   # - introduce operators other than parenthesis
+#   # - use infix notation when appropriate: default values for functions defs
+# - *dot-notation* for struct field accessing
+# - support multi-dimensional arrays: *array indexing and slicing*
+# - *multi-dispatch generic methods*, by default
 
-
-In a word, Bisp is a lisp with a little less parenthesis, infix/postfix-notation
-when approprite, and multi-dispatching.
 
 * Implementation
 The semantic is mostly identical to that of Julia. Thus, it is probably best to
