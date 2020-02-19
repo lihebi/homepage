@@ -1,0 +1,349 @@
+#+TITLE: Bisp
+
+
+# About the name
+# - B-lisp
+# - Bisp is a Lisp
+# - or my plan-B for lisp
+
+* Rationale
+
+Parenthesis is a good thing, as always, because:
+- easy to parse, thus easy for syntax extension
+- unambiguous
+- structural editing
+
+However, abusing parenthesis creates readability problem, less elegent than
+Haskell, OCaml and Julia.
+
+# For example, compare
+
+# OCaml (elegent):
+
+# #+BEGIN_SRC ocaml
+# let compose f g = fun x -> f (g x)
+# let
+#   a = 1 and
+#   b = 2
+# in
+#   a + b
+# #+END_SRC
+
+# Haskell (elegent):
+
+# #+BEGIN_SRC haskell
+# compose f g = \x -> f (g x)
+# a + b where
+#   a = 1
+#   b = 2
+# #+END_SRC
+
+# and Racket (a bit verbose):
+
+# #+BEGIN_SRC racket
+# (define (compose f g)
+#   (lambda (x) (f (g x))))
+# (let ([a 1]
+#       [b 2])
+#   (+ a b))
+# #+END_SRC
+
+And due to insisting on parenthesis, some intuitive syntax becomes cubersome:
+- hard to do *inline type annotations*. Prior art: typed racket, contracts,
+  clojure specs
+- *struct field accessing*, the dot-notation, is missing
+- hard to do *array indexing and slicing*, e.g. arr[3,0:7,:]
+
+Lisp dialects also fall short on *multi-dispatch generic
+functions*. Multi-dispatch generic functions is a great feature of Julia. It
+allows to override the same function name for different type and number of
+arguments. This matters a lot to save the namespace of functions, and makes the
+program elegent and extensible. Howver, in lisp dialects the support for
+multi-dispatch is not that good due to no proper type systems, for example
+generic method in racket and gerbil, defmulti in clojure.
+
+
+Thus my design goal for Bisp includes:
+- retain all the *good parts of parenthesis*: syntactic abstraction, unambiguity,
+  structural editing
+- *less parenthesis when appropriate* for better readability
+  # by introducing other operators and infix notation when appropriate:
+  # - reduce parenthesis that does not hurt unambiguity:
+  #   - let binding: use clojure's syntax
+  # - introduce operators other than parenthesis
+  # - use infix notation when appropriate: default values for functions defs
+- *dot-notation* for struct field accessing
+- support multi-dimensional arrays: *array indexing and slicing*
+- *multi-dispatch generic methods*, by default
+
+
+In a word, Bisp is a lisp with a little less parenthesis, infix/postfix-notation
+when approprite, and multi-dispatching.
+
+* Implementation
+The semantic is mostly identical to that of Julia. Thus, it is probably best to
+implement the syntax atop Julia or Julia's IR.
+
+It might also make sense to freely mix Julia and Bisp at the top-level and by a
+=(JL 1+2*3)= syntax for e.g. mathematical equations:
+
+#+BEGIN_SRC clojure
+;; julia code
+struct Pad end
+foo(a,b) = a + b
+;; Bisp code
+(defn bar [a] (foo a 1))
+(def var (JL
+          1 .+ ones(3,2) .* zeros(2,3)))
+#+END_SRC
+
+Julia and Bisp functions can be freely called by each other as well.
+
+In summary, implementing Bisp on top of Julia gives:
+- easy to implement
+- Julia's JIT compiler, optimization, LLVM backend provides a solid performance
+  fundation.
+- access to all those Julia libraries, thus this might be the first lisp-for-statistics
+
+
+* The Language
+
+** Field Accessing with Dot-Notation
+
+# FIXME 50% or 600px whichever is larger
+# @@html:<div class="hebi-left">@@
+# @@html:<div style="width: 550px; float: left; margin-right: 20px;">@@
+
+Prior art: cubersome struct field accessing, the dot-notation is missing
+
+#+BEGIN_SRC racket
+;; struct
+(struct Rect w h)
+(let ([r (Rect 2 3)])
+  ;; field accessing is cubersome
+  (* (Rect-w r)
+     (Rect-h r)))
+#+END_SRC
+
+The problems:
+- =(foo-a x)=, not elegent
+- The pattern matching with destructuring binds
+  - fragile
+  - have to bind all the fields
+
+# @@html:</div>@@
+
+Instead, Bisp uses dot-notation:
+
+#+BEGIN_SRC clojure
+(defstruct Rect
+  w::Number h)
+
+(defstruct Circle r)
+
+(let [a (Rect)
+      b (Circle)]
+  ;; access using dot notation
+  (+ a.w b.r))
+#+END_SRC
+
+# @@html:</div>@@
+
+** Multi-Dimensional Array: Indexing and Slicing
+
+
+Prior art: hard to do array indexing and slicing, e.g. the racket way:
+
+#+BEGIN_SRC racket
+;; array indexing and slicing
+(array-ref arr #(2 3))
+(array-set! brr #(2 3) 10)
+(array-slice-ref arr (list (::) (:: #f #f -1)))
+#+END_SRC
+
+
+Bisp uses postfix indexing and slicing:
+
+#+BEGIN_SRC clojure
+;; define an array
+(def arr (ones 3 2))
+;; indexing: I found comma probably makes it more clear here
+arr[1, 2]
+;; slicing
+arr[:, 0:1]
+
+;; array type
+(defn foo [a::Array{Any 3} b]
+  nil)
+#+END_SRC
+
+** COMMENT variable let-binding
+
+#+BEGIN_SRC clojure
+(let [a 1
+      b::Int 2
+      c (+ a b)]
+  (+ a b c))
+#+END_SRC
+
+** Optional Inline Type Annotation
+
+Previous lisp is hard to do inline type annotations.  Prior art: typed racket,
+contracts, clojure specs.
+
+For example, typed racket:
+
+#+BEGIN_SRC racket
+;; outline annotation
+(: distance (-> pt pt Real))
+(define (distance p1 p2)
+  (sqrt (+ (sqr (- (pt-x p2) (pt-x p1)))
+           (sqr (- (pt-y p2) (pt-y p1))))))
+
+;; inline annotations
+(let ([x : Number 7])
+  (add1 x))
+(lambda ([x : Number] [y : String]) (+ x 5))
+#+END_SRC
+
+The problems:
+- I prefer inline type annotation
+- the inline notation of the typed racket introduces extra parenthesis, due to
+  added spaced words.
+
+Instead, the type annotations in Bisp simply uses =y::String= *without extra
+spaces*, and it should be nice and clear:
+
+#+BEGIN_SRC clojure
+;; optional type
+(defn foo [a::Number b] nil)
+(defn foo [a::String b] nil)
+;; union type
+(defn foo [a::Union{Integer, Float} b] nil)
+#+END_SRC
+
+Support parametric types
+
+#+BEGIN_SRC clojure
+;; parametric type
+(defn foo [a::Number b c::T d::T
+           #:where (<: T Real)]
+  nil)
+#+END_SRC
+
+** TODO COMMENT patten matching
+
+** Multi-Dispatch Generic Functions by Default
+
+# By default we use method with multiple dispatching.
+
+# I found gerbil's defmethod is a generic method with multiple dispatch, but it
+# does not have proper type sytems (in terms of subtyping, union typing, etc. It
+# does have struct type dispatch).
+
+ALL functions are generic methods. You define the same name multiple times
+(instead of define =foobar-number=, =foobar-string=), and they are dispatched
+upon calling:
+
+#+BEGIN_SRC clojure
+;; by default, all functions are methods
+(defn foo [a] nil)
+(defn foo [a b] "no annotation")
+;; optional type
+(defn foo [a::Number b] "number")
+(defn foo [a::String b] "string")
+
+foo
+; => generic function with 4 methods
+#+END_SRC
+
+** function defs, default and keyword arguments
+Bisp is lisp-1, i.e. unified namespace for functions and variables. Functions
+are first-class, the following defs are equivalent:
+
+#+BEGIN_SRC clojure
+(defn foo [a b] nil)
+;; same as
+(def foo (λ [a b] nil))
+#+END_SRC
+
+Default arguments are given by infix notation. You don't specify type and
+default value together because it can be inferred by the value. All default
+values must be after non-default ones.
+
+#+BEGIN_SRC clojure
+(defn foo [a b=3 c="default"] nil)
+;; keyword arguments separated by #:key. Here default values can be in any order
+#+END_SRC
+
+Keyword arguments are whatever after =&=:
+
+#+BEGIN_SRC clojure
+(defn foo [a::Number b c=3
+           & x::String y z="defz"]
+  nil)
+;; function call with keyword arguments
+(foo 1 2 x="X" y=8)
+#+END_SRC
+
+varargs support with intuitive =...= syntax as Julia, in both function defs and
+callsite, and wherever makes sense:
+
+#+BEGIN_SRC clojure
+;; var args in both function definition and callsite
+(defn foo [a::String b::Number args...]
+  body)
+(foo "hello" 8 '(a l i s t)...)
+
+;; also support slicing inside a list or wherever appropriate, not just function callsite
+(1 2 '(3 4 5)... 6 7)
+#+END_SRC
+
+
+
+
+* COMMENT Other language and platform features
+
+** hierarchical Module
+
+#+BEGIN_SRC racket
+(import lib1
+        "/path/to/file.lisp"
+        (only-in lib2 foo bar)
+        (open :std/lib/name lib3))
+(export foo-1 bar-2)
+(export (all-defined-out))
+
+;; use
+(lib1.foo 1 2)
+(foo "from-lib2")
+#+END_SRC
+
+** platform
+- small kernel
+- embedded system friendly: optional rust's borrow sematic in place of garbage
+  collection?
+- SOTA optimization for performance: and support JIT, AOT compilation
+
+** purely functional package management
+like Julia, Nix
+
+** custom show
+Do not show everything to save the emacs buffer. And to easily
+- examine the data
+- recreate context for debugging without poluting current context
+
+** Undecided language syntax
+*** Infix notation for mathematicas
+#+BEGIN_SRC racket
+(let ([a (1 + 2 * 3)])
+  a)
+#+END_SRC
+
+*** the case-lambda syntax
+#+BEGIN_SRC clojure
+(defn* my-case-λ
+  ([a b] (+ a b))
+  ([a] (+ a 1))
+  ([a::String] (+ a 1)))
+#+END_SRC
