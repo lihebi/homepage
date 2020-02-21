@@ -35,7 +35,7 @@ My research interests:
 - Embedded system
 
 Links:
-- [[file:hn.org][My HN article collection]]
+- [[file:hn.org][My favorite HN articles]]
 - GitHub [[https://github.com/lihebi][@lihebi]]
 
 
@@ -79,8 +79,8 @@ front of the sculpture of Jici Yan. You can see [[https://www.youtube.com/watch?
 the competition that day. Check out the [[file:assets/robogame2012-proposal.pdf][proposal (pdf, chinese)]] and the
 [[file:assets/robogame2012-technical-report.pdf][technical report (pdf, chinese)]].
 
-** Open Source Code
-Random:
+** Other random projects
+- [[file:bisp.org][bisp (WIP)]]: everyone has his own lisp
 - [[https://github.com/lihebi/biber][biber]]: crawl CS conferences for bib files, the output bib files are at
   [[https://github.com/lihebi/biber-dist][biber-dist]]
 # - [[https://github.com/lihebi/homepage][lihebi/homepage]]: source of this site

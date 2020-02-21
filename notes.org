@@ -1,6 +1,10 @@
 #+TITLE: Implementation Notes
 
 * Tmp
+
+** article progress
+as in https://believermag.com/the-people-of-las-vegas/
+also here https://thecorrespondent.com/283/why-poor-people-make-poor-decisions/37442933638-a4773584
 ** moving tool tip
 very interesting, see demo at https://www.knopper.net/
 
