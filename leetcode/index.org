@@ -4,7 +4,7 @@
 * [#A] approaches
 ** TODO [[https://leetcode.com/tag/dynamic-programming/][dynamic programming]]
 
-*** [[https://leetcode.com/problems/remove-boxes/][546 remove-boxes]]
+*** [[https://leetcode.com/problems/remove-boxes/][546 remove-boxes]] (extra-state DP)
 
 This is very good problem. This extends simple DP with
 1. two dp variables, i and j
@@ -14,7 +14,7 @@ Reference: [[https://leetcode.com/problems/remove-boxes/discuss/101310/Java-top-
 
 See the following graph:
 
-#+ATTR_HTML: :width 600
+#+ATTR_HTML: :style max-width:100%
 [[./assets/a.png]]
 
 The first case, directly consume the left =k+l= a's, and DP on the rest:
@@ -79,18 +79,123 @@ def test():
     removeBoxes([1,1,1])
 #+END_SRC
 
-
-
-
-
-
-
-
-**** [[https://leetcode.com/problems/burst-balloons/][312 burst-balloons]]
+*** [[https://leetcode.com/problems/burst-balloons/][312 burst-balloons]] (complement's DP)
 
 This related, and contains not only one k, but two ks for left and right.
 
-See [[https://leetcode.com/problems/burst-balloons/discuss/76228/share-some-analysis-and-explanations][this post]].
+See [[https://leetcode.com/problems/burst-balloons/discuss/76228/][this post]] and [[https://leetcode.com/problems/burst-balloons/discuss/76229/][this]].
+
+This actually /much easier/, and not related to remove boxes at all. But there's
+one tricky thing to notice: =dp(i,j)= should indicates the maximum coins we get
+when we *burst all bolloons* in =[i:j]=.
+
+#+BEGIN_SRC python
+def maxCoins(self, nums: List[int]) -> int:
+    n = len(nums)
+    mem = np.zeros((n, n), int)
+    def coins(i, j, k):
+        return nums[k] * (nums[i] if i>=0 else 1) * (nums[j] if j<n else 1)
+    def dp(i, j):
+        # the max coins we get when we burst all bolloons [i:j]
+        if i > j: return 0
+        if i == j: return coins(i-1,j+1,i)
+        if mem[i,j] > 0: return mem[i,j]
+
+        cands = []
+        for k in range(i,j+1):
+            cand = dp(i, k-1) + dp(k+1, j) + coins(i-1, j+1, k)
+            cands.append(cand)
+        res = max(cands)
+
+        mem[i,j] = res
+        return res
+    return dp(0, n-1)
+
+# 167
+maxCoins([3,1,5,8])
+#+END_SRC
+
+*** [[https://leetcode.com/problems/super-egg-drop/][887 egg drop]] (complement's DP)
+See the first discussion in [[https://leetcode.com/problems/super-egg-drop/discuss/158974][this post]].  This looks like a number trick, but
+turns out not. Looks like we have to use DP. There are several tricks:
+1. Work on *=dp(M,K)= instead of =dp(N,K)=*. I.e. in M moves and K eggs, what is
+   the largest number N of floors we can check.
+2. the dp equation is tricky:
+
+#+begin_example
+dp(m,k) = dp(m-1,k-1) + dp(m-1,k) + 1
+#+end_example
+
+We first try =dp(m-1,k-1)=, i.e. one less move, one less eggs, so that we have
+room for next experiment. So, the first floor we try is =dp(m-1,k-1)+1=. If it
+breaks, we use check the lower floors with =dp(m-1,k-1)=. If it doesn't break,
+we still have =k= eggs, and we can check =dp(m-1,k)= more. Thus the equation.
+
+Reference to [[https://leetcode.com/problems/number-of-music-playlists/discuss/180338][this post]].
+
+#+BEGIN_SRC python
+import math
+import numpy as np
+class Solution:
+    def superEggDrop(self, K: int, N: int) -> int:
+        mem = np.zeros((N+1,K+1), int)
+        def dp(m,k):
+            if m==0 or k==0: return 0
+            if m==1 and k==1: return 1
+            if mem[m,k] > 0: return mem[m,k]
+            res = dp(m-1, k-1) + dp(m-1,k) + 1
+            mem[m,k] = res
+            return res
+        for m in range(N+1):
+            if dp(m,K) >= N:
+                return m
+        assert False
+
+Solution().superEggDrop(1,2)    # 2
+Solution().superEggDrop(2,6)    # 3
+Solution().superEggDrop(3,14)   # 4
+Solution().superEggDrop(2,2)    # 2
+#+END_SRC
+
+
+*** [[https://leetcode.com/problems/number-of-music-playlists/][(920) number of playlists]]
+
+The second requirement is ambigious. Other than that, the DP equation is pretty
+regular. However, two things worth noticing:
+1. the initial condition
+2. the recursion version is so much slower
+
+#+BEGIN_SRC python
+class Solution:
+    def numMusicPlaylists(self, N: int, L: int, K: int) -> int:
+        mod = 10 ** 9 + 7
+        mem = np.zeros((N+1, L+1), int)
+        def dp(n, l):
+            if l == 0 and n == 0: return 1
+            if n == 0 and l > 0: return 0
+            if l == 0 and n > 0: return 0
+            if mem[n,l] >0: return mem[n,l]
+            res = dp(n-1, l-1) * n + dp(n, l-1) * max(n-K, 0)
+            mem[n,l] = res % mod
+            return mem[n,l]
+        # return dp(N,L) % mod
+        #
+        # ok, this is much faster!!
+        mem[0,0] = 1
+        for ni in range(1,N+1):
+            for li in range(ni,L+1):
+                mem[ni,li] = (mem[ni-1,li-1] * ni + mem[ni,li-1] * max(ni-K,0)) % mod
+        return mem[N,L]
+
+Solution().numMusicPlaylists(3,3,1)  # 6
+Solution().numMusicPlaylists(2,3,0)  # 6
+Solution().numMusicPlaylists(2,3,1)  # 2
+Solution().numMusicPlaylists(1,1,0)  # 1
+
+Solution().numMusicPlaylists(16, 16, 4)  # 789741546
+Solution().numMusicPlaylists(25, 28, 5)  # 906368459
+#+END_SRC
+
 
 ** TODO [[https://leetcode.com/tag/recursion/][recursion]]
 ** TODO [[https://leetcode.com/tag/divide-and-conquer/][divide and conquer]]

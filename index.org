@@ -170,6 +170,8 @@ I run full marathon in [[file:assets/finisher_certificate_2017.pdf][2017 (4h
 
 The site has a full [[file:sitemap.org][site-map]].
 
+[[file:leetcode/index.org][leetcode notes]]
+
 # #+BEGIN_CENTER
 # #+ATTR_HTML: :width 200px
 # [[./assets/marathon_2017.jpg]]
