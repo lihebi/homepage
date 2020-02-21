@@ -99,6 +99,18 @@ blockquote::before{
     margin: 0 15px 3em 15px;
 }
 
+/* for side-by-side divs FIXME this should apply to .outline-* */
+/* div.outline-3 { */
+/*     clear: both; */
+/* } */
+
+/* div.hebi-left { */
+/*     /\* or 60% *\/ */
+/*     max-width: 600px; */
+/*     float: left; */
+/*     margin-right: 20px; */
+/* } */
+
 #table-of-contents a {
     text-decoration: none;
 }
@@ -151,13 +163,14 @@ pre.example {
 }
 
 
-.figure {
-    display: inline;
-}
+/* FIXME why display: inline? */
+/* .figure { */
+/*     display: inline; */
+/* } */
 
-.figure p {
-    display: inline;
-}
+/* .figure p { */
+/*     display: inline; */
+/* } */
 
 
 /* TODO Admonitions from

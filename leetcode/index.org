@@ -1,0 +1,108 @@
+#+TITLE: Leetcode Notes
+
+
+* [#A] approaches
+** TODO [[https://leetcode.com/tag/dynamic-programming/][dynamic programming]]
+
+*** [[https://leetcode.com/problems/remove-boxes/][546 remove-boxes]]
+
+This is very good problem. This extends simple DP with
+1. two dp variables, i and j
+2. one more state variable k
+
+Reference: [[https://leetcode.com/problems/remove-boxes/discuss/101310/Java-top-down-and-bottom-up-DP-solutions][A good post]].
+
+See the following graph:
+
+#+ATTR_HTML: :width 600
+[[./assets/a.png]]
+
+The first case, directly consume the left =k+l= a's, and DP on the rest:
+
+$$T_l(i,j,k) = T(i+l,j,0) + (k+l)^2$$
+
+For each m, consume =[i+l:m-1]=, and DP on rest:
+
+$$T_m(i,j,k) = T(i+l,m-1,0) + T(m,j,k+l)$$
+
+The l is computed by:
+
+#+BEGIN_SRC python
+def get_l(i, j):
+    l = 1
+    while l <= j-i and boxes[i+l] == boxes[i]:
+        l += 1
+    return l
+#+END_SRC
+
+The list of m is computed by:
+#+BEGIN_SRC python
+def get_ms(i, j, l):
+    res = []
+    for m in range(i+l,j+1):
+        if boxes[m] == boxes[i]:
+            res.append(m)
+    return res
+#+END_SRC
+
+The full DP logic:
+
+#+BEGIN_SRC python
+n = len(boxes)
+mem = np.zeros((n,n,n), int)
+def dp(i, j, k):
+    # the max point of T[i:j]
+    if i > j: return 0
+    if i == j: return (k+1)*(k+1)
+    if mem[i,j,k] > 0: return mem[i,j,k]
+
+    l = get_l(i, j)
+    res = dp(i+l, j, 0) + (k+l) ** 2
+
+    ms = get_ms(i, j, l)
+    for m in ms:
+        cand = dp(i+l,m-1,0) + dp(m,j,k+l)
+        if cand > res: res = cand
+
+    mem[i,j,k] = res
+    return res
+# the final output:
+dp(0, n-1, 0)
+#+END_SRC
+
+Some tests:
+#+BEGIN_SRC python
+def test():
+    # 23
+    removeBoxes([1, 3, 2, 2, 2, 3, 4, 3, 1])
+    # 9
+    removeBoxes([1,1,1])
+#+END_SRC
+
+
+
+
+
+
+
+
+**** [[https://leetcode.com/problems/burst-balloons/][312 burst-balloons]]
+
+This related, and contains not only one k, but two ks for left and right.
+
+See [[https://leetcode.com/problems/burst-balloons/discuss/76228/share-some-analysis-and-explanations][this post]].
+
+** TODO [[https://leetcode.com/tag/recursion/][recursion]]
+** TODO [[https://leetcode.com/tag/divide-and-conquer/][divide and conquer]]
+
+* [#A] special problems
+** TODO [#A] [[https://leetcode.com/tag/bit-manipulation/][bit manipulation]]
+** TODO [[https://leetcode.com/tag/union-find/][union find (29)]]
+This looks interesting
+
+** TODO [[https://leetcode.com/tag/two-pointers/][two pointers]]
+(HEBI: ??) but looks interesting
+
+** TODO [[https://leetcode.com/tag/sliding-window/][sliding window]]
+Looks like sequence matching
+

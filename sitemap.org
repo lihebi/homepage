@@ -1,13 +1,15 @@
 #+TITLE: Sitemap for project homepage-org
 
+- [[file:bisp.org][Bisp]]
 - [[file:hebi.org][Extra Index]]
 - [[file:index.org][Hebi Li]]
 - [[file:history.org][History of Computing]]
 - [[file:README.org][Homepage Source Repository]]
 - [[file:notes.org][Implementation Notes]]
 - [[file:quotes.org][Quotes]]
+- [[file:tmp.org][Tmp]]
 - [[file:vehicle.org][Vehicle]]
-- [[file:hn.org][my Hacker News starred articles]]
+- [[file:hn.org][my favorite Hacker News articles]]
 - art
   - [[file:art/README.org][Art]]
   - [[file:art/index.org][Art index]]
@@ -22,6 +24,8 @@
   - [[file:essays/future.org][The future]]
   - [[file:essays/time.org][Time]]
   - [[file:essays/world.org][World and Space]]
+- leetcode
+  - [[file:leetcode/index.org][Leetcode Notes]]
 - wiki
   - [[file:wiki/ai-frameworks.org][AI Frameworks]]
   - [[file:wiki/algorithm.org][Algorithm]]
