@@ -1,10 +1,44 @@
 #+TITLE: Leetcode Notes
 
+* random tricks
+
+integer to binary string: =bin(324)=
+
+sort with multiple keys:
+#+BEGIN_SRC python
+sorted([0,1,2,3,4,5,6,7,8], key=lambda x: (x%3, x))
+#+END_SRC
+
+- ord
+- chr
+
+=@lru_cache= decorator can be used for implementing DP, but looks like I have
+to  use it carefully to always increase the argument:
+
+#+BEGIN_SRC python
+from functools import lru_cache
+
+@lru_cache(maxsize=None)
+def fibonacci_recursive(n):
+#+END_SRC
+
+9//2 is same as math.floor(9/2)
+
+
+** string functions
+
+#+BEGIN_SRC python
+'hello'.count('l')
+'hello'.index('e')
+#+END_SRC
+
 
 * [#A] approaches
 ** TODO [[https://leetcode.com/tag/dynamic-programming/][dynamic programming]]
 
-*** [[https://leetcode.com/problems/remove-boxes/][546 remove-boxes]] (extra-state DP)
+*** (extra-state DP)
+
+[[https://leetcode.com/problems/remove-boxes/][546 remove-boxes]]
 
 This is very good problem. This extends simple DP with
 1. two dp variables, i and j
@@ -79,7 +113,9 @@ def test():
     removeBoxes([1,1,1])
 #+END_SRC
 
-*** [[https://leetcode.com/problems/burst-balloons/][312 burst-balloons]] (complement's DP)
+*** complement's DP
+
+[[https://leetcode.com/problems/burst-balloons/][312 burst-balloons]]
 
 This related, and contains not only one k, but two ks for left and right.
 
@@ -115,7 +151,10 @@ def maxCoins(self, nums: List[int]) -> int:
 maxCoins([3,1,5,8])
 #+END_SRC
 
-*** [[https://leetcode.com/problems/super-egg-drop/][887 egg drop]] (complement's DP)
+*** complement's DP
+
+[[https://leetcode.com/problems/super-egg-drop/][887 egg drop]]
+
 See the first discussion in [[https://leetcode.com/problems/super-egg-drop/discuss/158974][this post]].  This looks like a number trick, but
 turns out not. Looks like we have to use DP. There are several tricks:
 1. Work on *=dp(M,K)= instead of =dp(N,K)=*. I.e. in M moves and K eggs, what is
@@ -157,8 +196,131 @@ Solution().superEggDrop(3,14)   # 4
 Solution().superEggDrop(2,2)    # 2
 #+END_SRC
 
+*** Palindromic
 
-*** [[https://leetcode.com/problems/number-of-music-playlists/][(920) number of playlists]]
+[[https://leetcode.com/problems/count-different-palindromic-subsequences/][730. Count Different Palindromic Subsequences]]
+
+This could be the standard reference to Palindromic problems. It is quite
+clever. Not a lot of discussions, most are pretty bad, except [[https://leetcode.com/problems/count-different-palindromic-subsequences/discuss/272297/DP-C%2B%2B-Clear-solution-explained][this post]]. So the
+idea:
+
+For non-distinct:
+
+- dp(i,j) means the result for S[i:j]
+- if S[i] ! S[j]:
+  - dp(i,j) = dp(i+1,j) + dp(i,j-1) - dp(i+1,j-1)
+  - i.e. remove the overlap
+- if S[i] == S[j]:
+  - first, same: dp(i,j) = dp(i+1,j) + dp(i,j-1) - dp(i+1,j-1)
+  - but, with additional: + dp(i+1,j-1) + 1
+  - so finally: dp(i,j) = dp(i+1,j) + dp(i,j-1) + 1
+
+But non-distinct is not really meaningful. So here's the distince one:
+
+- dp(i,j,a) means number of distinct palindromic bordered by 'a inside S[i:j]
+- if S[i] == S[j] == a: *very important*
+  - dp(i,j,a) = sum([dp(i+1,j-1,x) for x in a,b,c,d]) + 2
+- else: dp(i,j,a) = dp(i+1,j,a) + dp(i,j-1,a) - dp(i+1,j-1,a)
+
+
+*One more thing*: the initial value must be -1, otherwise there might be
+infinite loop!
+
+#+BEGIN_SRC python
+class Solution:
+    def countPalindromicSubsequences(self, S: str) -> int:
+        mod = 10 ** 9 + 7
+        mem = [[[-1 for _ in range(4)] for _ in range(len(S))] for _ in range(len(S))]
+        def dp(i,j,a):
+            if i > j: return 0
+            elif i == j:
+                if S[i] == a: return 1
+                else: return 0
+
+            if mem[i][j][ord(a)-ord('a')] >= 0:
+                return mem[i][j][ord(a)-ord('a')]
+
+            # number of distinct pal bordered by 'a inside S[i:j]
+            if S[i] == S[j] == a:
+                res = 2
+                for b in ['a', 'b', 'c', 'd']:
+                    res += dp(i+1, j-1, b)
+            else:
+                res = dp(i+1,j,a)
+                res += dp(i,j-1,a)
+                res -= dp(i+1,j-1,a)
+            mem[i][j][ord(a)-ord('a')] = res % mod
+            return res
+        res = 0
+        for a in ['a', 'b', 'c', 'd']:
+            res += dp(0,len(S)-1,a)
+        return res % mod
+#+END_SRC
+
+*** nested DP
+
+[[https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/][188. Best Time to Buy and Sell Stock IV]]
+
+This is pretty interesting. Turns out the DP equation is not very difficulty to
+write.
+
+- =dp(day, ntrans)= means from 1:day days, up to ntrans transactions, what is
+  the max profit.
+- dp(day, ntrans) = max(max([dp(t,ntrans-1) + prices[day] - prices[t] for t in range(day-1)]), dp(day-1,ntrans))
+
+The interesting part:
+1. there's a loop in the DP equation
+2. the loop actually turns out to be slow, and itself can be calculated using
+   DP, so it is "nested DP"
+
+#+BEGIN_SRC python
+class Solution:
+    def maxProfit(self, k: int, prices: List[int]) -> int:
+        # HACK this fails at one test case, even to allocate the memory
+        # https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/discuss/426692/
+        if k > len(prices):
+            res = 0
+            for i in range(len(prices)-1):
+                res += max(0, prices[i+1] - prices[i])
+            return res
+        mem = [[-1 for _ in range(k+1)] for _ in range(len(prices))]
+        mem2 = [[None for _ in range(k+1)] for _ in range(len(prices))]
+        def dp2(t, ntrans):
+            this = dp(t, ntrans) - prices[t]
+            if t == 0: return this
+            if mem2[t][ntrans] != None: return mem2[t][ntrans]
+            res = max(dp2(t-1, ntrans), this)
+            mem2[t][ntrans] = res
+            return res
+        def dp(day, ntrans):
+            if day <= 0: return 0
+            if ntrans == 0: return 0
+            if mem[day][ntrans] >= 0: return mem[day][ntrans]
+            # Non-DP solution, TLE at some test cases
+            # max_tmp = 0
+            # for t in range(day):
+            #     tmp = dp(t, ntrans-1)
+            #     tmp += prices[day] - prices[t]
+            #     if tmp > max_tmp:
+            #         max_tmp = tmp
+            max_tmp = dp2(day-1, ntrans-1) + prices[day]
+            mem[day][ntrans] = max(max_tmp, dp(day-1, ntrans))
+            # print(day, ntrans, mem[day][ntrans])
+            return mem[day][ntrans]
+        return dp(len(prices)-1, k)
+def test():
+    # 2
+    Solution().maxProfit(2, [2,4,1])
+    # 7
+    Solution().maxProfit(2, [3,2,6,5,0,3])
+    # 0
+    Solution().maxProfit(2, [])
+    Solution().maxProfit(100, l)
+#+END_SRC
+
+*** Other (easy) DP problems
+
+**** [[https://leetcode.com/problems/number-of-music-playlists/][(920) number of playlists]]
 
 The second requirement is ambigious. Other than that, the DP equation is pretty
 regular. However, two things worth noticing:
@@ -267,22 +429,6 @@ This looks interesting
 ** TODO [[https://leetcode.com/tag/sliding-window/][sliding window]]
 Looks like sequence matching
 
-* random tricks
-
-integer to binary string: =bin(324)=
-
-sort with multiple keys:
-#+BEGIN_SRC python
-sorted([0,1,2,3,4,5,6,7,8], key=lambda x: (x%3, x))
-#+END_SRC
-
-** string functions
-
-#+BEGIN_SRC python
-'hello'.count('l')
-'hello'.index('e')
-#+END_SRC
-
 
 
 * data structures
@@ -311,6 +457,7 @@ class Solution:
         stop = set()
         self.flag = True
         def visit(item):
+            # cycle
             if item in done:
                 self.flag = False
                 return
@@ -322,6 +469,7 @@ class Solution:
             l = leftChild[item]
             r = rightChild[item]
             visit(item)
+            # early return if cycle
             if self.flag:
                 travel(l)
                 travel(r)
@@ -330,9 +478,10 @@ class Solution:
                 travel(i)
                 stop.add(i)
                 done.remove(i)
-        # count stop
         if not self.flag: return False
+        # separated graph
         if len(stop) > 1: return False
+        # early stoped (should be unnecessary)
         if len(done) != n-1: return False
         return True
 #+END_SRC
@@ -345,3 +494,163 @@ class Solution:
 *** segment tree
 
 ** TODO [#A] graph
+
+* Tricky problems
+
+** [[https://leetcode.com/problems/count-the-repetitions/][466. Count The Repetitions]] (ultra large but repetitive subsequence finding)
+
+#+begin_quote
+Define S = [s,n] as the string S which consists of n connected strings s. For
+example, ["abc", 3] ="abcabcabc".
+
+On the other hand, we define that string s1 can be obtained from string s2 if we
+can remove some characters from s2 such that it becomes s1. For example, “abc”
+can be obtained from “abdbec” based on our definition, but it can not be
+obtained from “acbbe”.
+
+You are given two non-empty strings s1 and s2 (each at most 100 characters long)
+and two integers 0 ≤ n1 ≤ 106 and 1 ≤ n2 ≤ 106. Now consider the strings S1 and
+S2, where S1=[s1,n1] and S2=[s2,n2]. Find the maximum integer M such that [S2,M]
+can be obtained from S1.
+#+end_quote
+
+To translate:
+
+#+begin_quote python
+def rep(s,n) = s * n
+S1 = rep(s1, n1)
+S2 = rep(s2, n2)
+# roughly: find how many S2 in S1
+#+end_quote
+
+
+This is not DP. It is "repetitive patterns".
+
+First, we are finding =s2= inside =s1=. Thus, we need to first have a map of
+finding =s2= in =s1[i:]=:
+
+#+BEGIN_SRC python
+        mem = [None for _ in range(len(s1))]
+        def fill_mem():
+            i = 0
+            for i in range(len(s1)):
+                idx = i
+                ct = 0
+                for c in s2:
+                    idx = (s1+s1).index(c, idx)
+                    if idx + 1 >= len(s1):
+                        ct += 1
+                    idx = (idx + 1) % len(s1)
+                mem[i] = (idx, ct)
+
+        try:
+            fill_mem()
+        except Exception as e:
+            return 0
+#+END_SRC
+
+
+
+Then, to save computation, we need to find the repetitive patterns:
+
+For example, we have:
+
+|   i | j | ct |
+|-----+---+----|
+|   0 | 5 |  0 |
+|   5 | 7 |  0 |
+|-----+---+----|
+|   7 | 9 |  0 |
+|   9 | 3 |  1 |
+|   3 | 7 |  0 |
+|-----+---+----|
+|   7 | 9 |  0 |
+|   9 | 3 |  1 |
+|   3 | 7 |  0 |
+|-----+---+----|
+| ... |   |    |
+
+Now we found the pattern. It starts from 7, takes one s1, and produces 3 s2.
+
+#+BEGIN_SRC python
+        def find_circle():
+            # use that to come up with a repetitive patten
+            repetitive = set()
+            # find the circle
+            i = 0
+            while True:
+                if i in repetitive: return i
+                repetitive.add(i)
+                i, _ = mem[i]
+                i = i % len(s1)
+
+        circle_i = find_circle()
+#+END_SRC
+
+Then, for the circle, we need to get the number of =s1= used, and the number of =s2= matched:
+
+#+BEGIN_SRC python
+        def find_circle_t(ci):
+            i = ci
+            # number of s1 consumed in the circle
+            res_from = 0
+            # number of s2 found in the circle
+            res_to = 0
+            while True:
+                i, c = mem[i]
+                res_to += 1
+                res_from += c
+                if i >= len(s1):
+                    res_from += 1
+                    i = i % len(s1)
+                if i == ci:
+                    return res_from, res_to
+
+
+        circle_from, circle_to = find_circle_t(circle_i)
+#+END_SRC
+
+Finally, we count s2 in s1 by using the repetitive pattern. The actual number
+is pretty sensitivie to off-by-one problems.
+
+#+BEGIN_SRC python
+        # the actual count s2 in s1
+        count = 1
+        idx = 0
+        res = 0
+        while count <= n1:
+            if idx == circle_i:
+                # fast forward
+                rep = math.floor((n1 - count) / circle_from)
+                res += rep * circle_to
+                count += rep * circle_from
+                # print('fast forward', rep, res, count)
+            idx, ct = mem[idx]
+            count += ct
+            res += 1
+            # if not matching exactly in the last s1, subtract one because we
+            # used more
+            if idx != 0: res -= 1
+        # use n2 is fairly easy
+        return math.floor((res - 1) / n2)
+#+END_SRC
+
+Wow, that's a lot of code. It is possible to mix these logic together, but I
+suspect that would be hard to understand.
+
+Some tests:
+#+BEGIN_SRC python
+def test():
+    # 2
+    Solution().getMaxRepetitions("acb", 4, "ab", 2)
+    # 3
+    Solution().getMaxRepetitions("abacb", 6, "bcaa", 1)
+    # 4
+    Solution().getMaxRepetitions("aaa", 3, "aa", 1)
+    # 2
+    Solution().getMaxRepetitions("bacaba", 3, "abacab", 1)
+    # 0
+    Solution().getMaxRepetitions("musicforever", 10, "lovelive", 100000)
+    # 170
+    Solution().getMaxRepetitions("aaaaaaaaaaaaaaaaa", 10000000, "a", 1000000)
+#+END_SRC
