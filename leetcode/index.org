@@ -25,6 +25,17 @@ def fibonacci_recursive(n):
 9//2 is same as math.floor(9/2)
 
 
+- indices = np.argsort(nums)
+
+#+BEGIN_SRC python
+sorted(range(n), key=cmp_to_key(lambda x,y: x-y))
+#+END_SRC
+
+#+BEGIN_SRC python
+c = Counter(lst)
+c['key']
+#+END_SRC
+
 ** string functions
 
 #+BEGIN_SRC python
@@ -654,3 +665,63 @@ def test():
     # 170
     Solution().getMaxRepetitions("aaaaaaaaaaaaaaaaa", 10000000, "a", 1000000)
 #+END_SRC
+
+
+** [[https://leetcode.com/contest/weekly-contest-178/problems/rank-teams-by-votes/][1366. Rank Teams by Votes]]
+1. use defaultdict
+2. use char as dict key
+3. +1 instead of pairwise comparison!!
+4. sorted with multiple keys
+
+#+BEGIN_SRC python
+from collections import defaultdict
+
+class Solution:
+    def rankTeams(self, votes: List[str]) -> str:
+        n = len(votes[0])
+        rank = defaultdict(lambda: [0] * n)
+        for vote in votes:
+            for idx, ch in enumerate(vote):
+                rank[ch][idx] += 1
+        ranking = sorted(rank.items(), key=lambda xs: (xs[1], -ord(xs[0])), reverse=True)
+        return "".join(x for x, _ in ranking)
+#+END_SRC
+
+And compare to my code:
+
+#+BEGIN_SRC python
+from collections import Counter
+from functools import cmp_to_key
+class Solution:
+    def rankTeams(self, votes: List[str]) -> str:
+        n = len(votes[0])
+        rank = [[0 for _ in range(n)] for _ in range(n)]
+        alphas = votes[0]
+        d = {}
+        for i,a in enumerate(alphas):
+            d[a] = i
+        for i in range(n):
+            c = Counter([d[vote[i]] for vote in votes])
+            for j in range(n):
+                for k in range(n):
+                    if rank[j][k] == 0:
+                        if c[j] > c[k]:
+                            rank[j][k] = 1
+                        elif c[j] < c[k]:
+                            rank[j][k] = -1
+
+        # use the rank
+        def cmp(x,y):
+            if rank[x][y] == 0:
+                return ord(alphas[y]) - ord(alphas[x])
+            else:
+                return rank[x][y]
+        res = sorted(range(n), key=cmp_to_key(cmp), reverse=True)
+        s = sorted(votes[0], key=lambda x: alphas[i])
+        return ''.join([s[i] for i in res])
+#+END_SRC
+
+
+
+
+
