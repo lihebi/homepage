@@ -1,0 +1,159 @@
+#+TITLE: Julia
+
+* Julia
+
+** Macros
+Julia macros are hygienic:
+
+#+begin_quote
+First, variables within a macro result are classified as either local or
+global. A variable is considered local if it is assigned to (and not declared
+global), declared local, or used as a function argument name. Otherwise, it is
+considered global.
+
+Local variables are then renamed to be unique (using the gensym function, which
+generates new symbols), and global variables are resolved within the macro
+definition environment.
+#+end_quote
+
+And you can escape the hygienic by =esc=, e.g.
+
+#+BEGIN_SRC julia
+macro zerox()
+    return esc(:(x = 0))
+end
+#+END_SRC
+
+A common pattern:
+
+#+BEGIN_SRC julia
+for op = (:sin, :cos, :tan, :log, :exp)
+    eval(:(Base.$op(a::MyNumber) = MyNumber($op(a.x))))
+end
+#+END_SRC
+
+** profiling
+- manual: https://docs.julialang.org/en/v1/manual/profile/
+- graphical viewer: [[https://github.com/timholy/ProfileView.jl][timholy/ProfileView.jl]]
+
+#+BEGIN_SRC julia
+Profile.init(n = 10^7, delay = 0.01)
+Profile.clear()
+
+@profile foo()
+
+Profile.print()
+#+END_SRC
+
+
+
+** Julia Libraries
+
+*** Tmp
+- [[https://github.com/timholy/Revise.jl][timholy/Revise.jl]]
+
+*** reference
+- juliastats: https://juliastats.org/
+
+- [[https://github.com/kmsquire/Match.jl][kmsquire/Match.jl]]
+- [[https://github.com/JuliaStats/RDatasets.jl][JuliaStats/RDatasets.jl]]: Interface to the [[https://github.com/vincentarelbundock/Rdatasets][vincentarelbundock/Rdatasets]]
+
+*** ML library
+- [[https://github.com/cstjean/ScikitLearn.jl][cstjean/ScikitLearn.jl]]
+- [[https://github.com/mpastell/LIBSVM.jl][mpastell/LIBSVM.jl]]: Interface to [[https://www.csie.ntu.edu.tw/~cjlin/libsvm/][libsvm]]
+
+*** Optimizers
+- [[https://github.com/JuliaNLSolvers/Optim.jl][Optim.jl]]: optimization
+- [[https://github.com/JuliaOpt/JuMP.jl][JuMP.jl]]: another optimizer with more solvers
+
+*** GPU computing
+
+- CuArrays.jl: https://github.com/JuliaGPU/CuArrays.jl
+- CUDAapi.jl: https://github.com/JuliaGPU/CUDAapi.jl
+- CUDAdrv.jl: https://github.com/JuliaGPU/CUDAdrv.jl
+- CUDAnative.jl: https://github.com/JuliaGPU/CUDAnative.jl
+
+*** Plots
+- [[https://github.com/JuliaPlots/Plots.jl][JuliaPlots/Plots.jl]]
+- [[https://github.com/JuliaPlots/StatsPlots.jl][JuliaPlots/StatsPlots.jl]]
+- [[https://github.com/JuliaPlots/RecipesBase.jl][JuliaPlots/RecipesBase.jl]]
+
+*** Datasets
+- [[https://github.com/JuliaLang/METADATA.jl][METADATA.jl]]: Used for [[https://pkg.julialang.org/docs/][official package registry]]
+- [[https://github.com/FluxML/Metalhead.jl][Metalhead.jl]]: Some vision models and dataset
+- [[https://github.com/JuliaData/DataFrames.jl][DataFrames.jl]]
+
+*** Images
+- [[https://github.com/JuliaGraphics/ColorTypes.jl][ColorTypes.jl]]
+- [[https://github.com/JuliaImages/ImageFiltering.jl][ImageFiltering.jl]]
+- [[https://github.com/JuliaImages/Images.jl][Images.jl]]
+
+colorview, channelview, RGB
+*** Graph
+**** [[https://github.com/JuliaGraphs/LightGraphs.jl][LightGraphs.jl]]
+A great package for
+- just the graph
+- generate different random graphs
+- traversal
+- plotting
+- algorithms:
+  - shortest path
+  - minimum spanning tree
+- distance metrics
+**** [[https://github.com/JuliaGraphs/MetaGraphs.jl][MetaGraphs.jl]]
+LightGraphs with arbitrary data on nodes.
+
+**** [[https://github.com/GiovineItalia/Compose.jl][Compose.jl]]
+
+The racket/pict for Julia.
+
+**** [[https://github.com/IainNZ/GraphLayout.jl][GraphLayout.jl]]
+Alternatives:
+- [[https://github.com/Keno/GraphViz.jl][GraphViz.jl]]
+- [[https://github.com/sisl/TikzGraphs.jl][TikzGraphs.jl]]
+
+
+*** Compiler tools
+- [[https://github.com/MikeInnes/MacroTools.jl][MacroTools.jl]]
+- [[https://github.com/JuliaLang/PackageCompiler.jl][PackageCompiler.jl]]: To remove JIT compile overhead
+
+*** Probablistic packages
+- [[https://github.com/JuliaStats/Distributions.jl][Distributions.jl]]
+- [[https://github.com/JuliaStats/GLM.jl][GLM.jl]] (!!!)
+
+** Using Pkg
+
+#+BEGIN_SRC julia
+using Pkg
+Pkg.add(PackageSpec(url="https://github.com/lihebi/julia-repl", rev="master"))
+#+END_SRC
+
+To develop a project:
+
+#+BEGIN_SRC julia
+Pkg.develop(PackageSpec(url="https://github.com/lihebi/julia-repl"))
+#+END_SRC
+
+Then view the current pkg status:
+
+#+BEGIN_SRC julia
+Pkg.status()
+#+END_SRC
+
+You will see:
+
+#+BEGIN_SRC julia
+EmacsREPL v0.1.0 [`~/.julia/dev/EmacsREPL`]
+#+END_SRC
+
+** Useful functions
+- =sortperm(v)=: Return a permutation vector I that puts v[I] in sorted order.
+- =findfirst(predicate::Function, A)=: Return the index or key of the first
+  element of A for which predicate returns true.
+- =mapreduce(f, op, itrs...; [init])=: Apply function f to each element(s) in
+  itrs, and then reduce the result using the binary function op
+
+intuitive ones:
+- reverse
+- abs
+- median

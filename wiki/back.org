@@ -1,0 +1,100 @@
+#+TITLE: Backup writing for all wiki pages
+* Pep8
+Indent:
+- *function and class* should be separated by *2 lines*
+- *In a class*, function should be separated by *1 line*
+- 1 space before and after variable assignment
+
+Naming
+- function, variable, attribute: =func_var_attr=
+- protected instance attributes: =_protected_field=
+- private instance attributes: =__private_field=
+- class and exception: =ClassExceptionName=
+- module level constants: =CONSTANT=
+- instance method of class should use =self= as first parameter, refer to the object
+- class method should use =cls= as first parameter, refer to the class
+
+Expression
+
+| use           | DONT use              |
+|---------------+-----------------------|
+| =a is not b=  | +=not a is b=+        |
+| =if not list= | +~if len(list) == 0~+ |
+
+Import
+- always use absolute path
+- if must use relative, use =from . import foo= instead of +=import foo=+
+
+** document
+One can use one line or multi-line document.
+The doc string can be retrieved by =func.__doc__=.
+#+BEGIN_SRC python
+def func():
+  """one line doc"""
+
+def func():
+  """The outline
+
+  The above empty line is required.
+  Here's the detailed documentation.
+  """
+#+END_SRC
+
+
+* R
+
+- For vectors, =[]= returns the element.
+- For lists, =[]= will return the the element inside a list, while =[[]]= will
+  return the single element.
+- =$= can be used for indexing with character.
+- The empty index =[]= will returns the entire vector with /irrelevant/
+  attributes removed. The only retained ones are the =names=, =dim= and
+  =dimnames= attributes.
+
+
+#+begin_src R
+dim(z) <- c(3,5,100)~
+z[2,,]
+z[,,]
+#+end_src
+
+*** data example
+
+#+BEGIN_SRC R
+## (HEBI: Command line arguments)
+args = commandArgs(trailingOnly=TRUE)
+csvfile = args[1]
+csv = read.csv(csvfile, header=TRUE)
+
+total_test <- dim(csv)[[1]]
+sub = subset(csv, reach_code>=5)
+total_reach_poi <- dim(sub)[[1]]
+sub = subset(csv, reach_code==5 & status_code == 1)
+total_fail_poi <- dim(sub)[[1]]
+
+sub <- sub[1:(length(csv)-2)]
+## (HEBI: calling a function)
+funcs = TransferFunction(sub);
+
+## (HEBI: define a function)
+Constant <- function(data) {
+  ## (HEBI: return value as a vector)
+  ret <- c()
+  i <- 1
+  ## (HEBI: a for loop using the vector as range)
+  for (i in c(1:length(data))) {
+    col = data[i];
+    ## (HEBI: Get the name of a column)
+    name = names(col);
+    if (substr(name, 1, 6) == "output") {
+      ## (HEBI: remove of NA)
+      newcol = col[!is.na(col)];
+      if (length(newcol) > 2) {
+        value <- newcol[1]
+        ## (HEBI: check the value of the vector is all the same)
+        if (length(newcol[newcol != value]) == 0) {
+          ## (HEBI: pushing a new value to the return vector)
+          ret <- c(ret, paste("name = ",  value))}}}}
+  return(ret)}
+
+#+END_SRC
