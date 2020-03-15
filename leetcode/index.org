@@ -453,6 +453,39 @@ Looks like sequence matching
 
 ** TODO [#A] tree
 
+**** balanced binary search tree
+e.g. [[https://leetcode.com/problems/balance-a-binary-search-tree/][1382. Balance a Binary Search Tree]]. You first sort the array. Then, pick
+the middle as root and recursively solve the left and right.
+
+#+BEGIN_SRC python
+class Solution:
+    def balanceBST(self, root: TreeNode) -> TreeNode:
+        # 1. traverse the tree, get an ordered list
+        # 2. construct a new BST:
+        #    - find the middle
+        #    - solve the left/right half
+        vals = []
+        def recur(node):
+            if node == None: return
+            recur(node.left)
+            vals.append(node.val)
+            recur(node.right)
+        recur(root)
+        print(vals)
+        # construct a new BST
+        def construct(low, high):
+            if low > high: return None
+            mid = (high - low) // 2 + low
+            node = TreeNode(vals[mid])
+            node.left = construct(low, mid-1)
+            node.right = construct(mid+1, high)
+            return node
+        return construct(0, len(vals)-1)
+#+END_SRC
+
+
+
+
 **** [[https://leetcode.com/problems/validate-binary-tree-nodes/][1361. Validate Binary Tree Nodes]]
 
 This is a pretty typical problem. The tree is valid if there's no (not
@@ -670,8 +703,8 @@ def test():
 ** [[https://leetcode.com/contest/weekly-contest-178/problems/rank-teams-by-votes/][1366. Rank Teams by Votes]]
 1. use defaultdict
 2. use char as dict key
-3. +1 instead of pairwise comparison!!
-4. sorted with multiple keys
+3. +1 instead of pairwise comparison matrix!!
+4. sorted with multiple keys (nested tuples in this case)
 
 #+BEGIN_SRC python
 from collections import defaultdict
@@ -680,9 +713,21 @@ class Solution:
     def rankTeams(self, votes: List[str]) -> str:
         n = len(votes[0])
         rank = defaultdict(lambda: [0] * n)
+
+        # "ABC"
+        # "BCA"
+        # "ACB"
+
         for vote in votes:
             for idx, ch in enumerate(vote):
                 rank[ch][idx] += 1
+
+        # d = {"A": [2,0,1],
+        #      "B": [1,1,1],
+        #      "C": [0,2,1]}
+
+        # !!!
+        # sorted([((2,0,1),'c'), ((2,0,1),'b'), ((1,1,1),'w')])
         ranking = sorted(rank.items(), key=lambda xs: (xs[1], -ord(xs[0])), reverse=True)
         return "".join(x for x, _ in ranking)
 #+END_SRC
@@ -723,5 +768,136 @@ class Solution:
 
 
 
+** [[https://leetcode.com/contest/biweekly-contest-21/problems/find-the-longest-substring-containing-vowels-in-even-counts/][1371. Find the Longest Substring Containing Vowels in Even Counts]]
+[[https://leetcode.com/problems/find-the-longest-substring-containing-vowels-in-even-counts/discuss/531850/Python-solution-in-O(n)-time-and-O(1)-space-explained][this post]]
+
+#+BEGIN_SRC python
+def findTheLongestSubstring(s: str) -> int:
+    vowels = {'a': 1, 'e': 2, 'i': 4, 'o': 8, 'u': 16}
+    d, n, r = {0: -1}, 0, 0
+    for i, c in enumerate(s):
+        if c in vowels:
+            n ^= vowels[c]
+        if n not in d:
+            d[n] = i
+        else:
+            r = max(r, i - d[n])
+        print(d, i, n, r)
+    return r
+#+END_SRC
+
+
+The trick is: scan the string from left to right, and *record the current status
+of even or odd of 'aeiou'*.
+
+Or maybe better for understanding:
+
+#+BEGIN_SRC python
+def encode(l):
+    res = 0
+    for i in range(len(l)):
+        res += l[i] << i
+    return res
+def findsub(s):
+    status = [0,0,0,0,0]
+    d = {0: -1}
+    m = {'a': 0, 'e': 1, 'i': 2, 'o': 3, 'u': 4}
+    res = 0
+    for i,c in enumerate(s):
+        if c in m:
+            status[m[c]] ^= 1
+        enc = encode(status)
+        print(status)
+        if enc not in d:
+            d[enc] = i
+        else:
+            res = max(res, i-d[enc])
+    return res
+#+END_SRC
+
+
+Note some tricks:
+1. use dict m instead of calling ord and chr
+2. status can be just encoded as bits in a number
+
+My bad solution using deque and divide and conquer:
+
+#+BEGIN_SRC python
+from collections import deque
+
+class Solution:
+    def findTheLongestSubstring(self, s: str) -> int:
+        # 1. find the index of aeiou
+        # 2. merge the index
+        # I actually don't need to record all indices
+        qs = [deque() for _ in range(5)]
+        for i,c in enumerate(s):
+            if c == 'a':
+                qs[0].append(i)
+            if c == 'e':
+                qs[1].append(i)
+            if c == 'i':
+                qs[2].append(i)
+            if c == 'o':
+                qs[3].append(i)
+            if c == 'u':
+                qs[4].append(i)
+        # print(qs)
+        res = 0
+        mem = []
+        def recur(qs, start, end):
+            if start > end: return
+            for s,e in mem:
+                if start > s and end < e: return
+            # modify qs
+            nonlocal res
+            for q in qs:
+                while len(q) > 0 and q[0] < start:
+                    q.popleft()
+                while len(q) > 0 and q[-1] > end:
+                    q.pop()
+            # check if even
+            for q in qs:
+                if len(q) % 2 == 1:
+                    recur([q.copy() for q in qs], q[0]+1, end)
+                    recur([q.copy() for q in qs], start, q[-1]-1)
+                    mem.append((start, end))
+                    return
+            res = max(res, end - start + 1)
+            mem.append((start, end))
+        recur(qs, 0, len(s)-1)
+        return res
+#+END_SRC
+
+** [[https://leetcode.com/contest/weekly-contest-180/problems/maximum-performance-of-a-team/][5359. Maximum Performance of a Team]]
+
+See [[https://leetcode.com/problems/maximum-performance-of-a-team/discuss/539711/Python-Heap][this post]]. The idea is to first order engineers by efficiency then by
+speed. Add the first k, keep track of the current efficiency (actually is the
+current engineer).
+
+Then, swap out the lowest speed with current engineer. Record the max result
+each time.
+
+Another point is keep an eye on the =heapq= python library.
+
+#+BEGIN_SRC python
+import heapq
+class Solution:
+    def maxPerformance(self, n: int, speed: List[int], efficiency: List[int], k: int) -> int:
+        engineers = [(speed[i],efficiency[i]) for i in range(n)]
+        engineers.sort(key = lambda x : (-x[1],x[0]))
+        result = 0
+        heap = []
+        totalSum = 0
+        print(engineers)
+        for i in range(n):
+            while len(heap) >= k:
+                totalSum -= heapq.heappop(heap)
+            result = max(result , (totalSum + engineers[i][0]) * engineers[i][1] )
+            heapq.heappush(heap,engineers[i][0])
+            print(heap, result)
+            totalSum += engineers[i][0]
+        return result % (10 ** 9 + 7)
+#+END_SRC
 
 
