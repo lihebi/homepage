@@ -1,7 +1,8 @@
 #+TITLE: Implementation Notes
 
 * Tmp
-
+** TOC
+this is a great example: https://johtela.github.io/vscode-modaledit/docs/.vscode/settings.html
 ** article progress
 as in https://believermag.com/the-people-of-las-vegas/
 also here https://thecorrespondent.com/283/why-poor-people-make-poor-decisions/37442933638-a4773584

@@ -278,6 +278,8 @@ The width is defined by =org-image-actual-width=
 
 Use =#+ATTR_HTML: :width 300px= to set the html export size.
 
+Reference: [[https://orgmode.org/worg/org-tutorials/images-and-xhtml-export.html][a good tutorial]].
+
 ** org-ref
 **** Commands
 - =C-c ]=: insert citation, typically with helm: =org-ref-helm-insert-cite-link=

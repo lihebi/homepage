@@ -1,19 +1,18 @@
-#+TITLE: Python
+#+TITLE: Python, the language
 
 #+BEGIN_QUOTE
-Pseudocode which runs.
+Pseudocode which runs. -- Peter Norvig (?)
 #+END_QUOTE
 
 #+BEGIN_QUOTE
 The best program to do a job is one which already ships the solution.
 #+END_QUOTE
 
-Aphorism 13 in the Zen of Python by Tim Peters:
-
 #+BEGIN_QUOTE
 There should be one – and preferably only one – obvious way to do it.
-#+END_QUOTE
 
+-- Aphorism 13 in the Zen of Python by Tim Peters:
+#+END_QUOTE
 
 Python is nice, sure.  But only until it stats warping your mind in
 the very late of the game. See https://www.draketo.de/proj/py2guile/
@@ -25,7 +24,321 @@ comply with the requirements of your language, then it is likely that
 something is wrong with the language.
 #+END_QUOTE
 
-* Random
+* Tools & Reference
+
+For python 3
+- https://docs.python.org/3/reference/
+- https://docs.python.org/3/library/
+
+** Emacs support
+Install the =elpy= package. It provides:
+- =C-c C-c= runs the shell and send the current buffer
+- =C-c C-d= runs =elpy-doc=
+- =C-c C-t= runs =elpy-test=, which runs the unittest discover
+
+To enable linter python in emacs, use pylint. It will use =pylint=
+executable. And it also needs the configure file. Generate it:
+
+#+BEGIN_EXAMPLE
+pylint --generate-rcfile > ~/.pylintrc
+#+END_EXAMPLE
+** pip mirror
+- ustc mirror: http://pypi.mirrors.ustc.edu.cn/simple/
+
+to use one-time, simply:
+
+#+begin_example
+pip3 install xxx -i https://pypi.mirrors.ustc.edu.cn/simple/
+
+# don't need this when using https
+# --trusted-host pypi.mirrors.ustc.edu.cn
+#+end_example
+
+global configuration *seems* to be:
+#+begin_example
+pip3 config set global.index-url https://mirrors.ustc.edu.cn/pypi/web/simple
+#+end_example
+
+In China, pytorch cannot be installed due to 1. large 2. cpu only has a specific
+url. Thus I'm using conda mirror https://mirrors.tuna.tsinghua.edu.cn/help/anaconda/
+
+* Language
+
+
+** data type
+- type(obj): get the type of obj
+
+Numerical functions:
+- abs(x): absolute value
+- divmod(a,b): a pair (a // b, a % b)
+- max(arg1, arg2, *args)
+- min(arg1, arg2, *args)
+- pow(x,y): x^y
+- round(x, ndigits=0)
+- sum(iterable)
+
+Boolean:
+- all(iterable): true if all items are true. empty => True
+- any(iterable): true if any item is true. empty => False
+- cmp(x,y)
+  - x<y => negative
+  - x=y => 0
+  - x>y => positive
+
+*** conversion
+- =chr()=: ASCII to char
+- =ord()=: char to ASCII
+
+- =float(x)=
+- =long(x)=
+- =bool(x)=: convert x to bool
+- ~int()~: string to integer
+- ~str()~: integer to string
+  - =hex(x)=: convert integer to lowercase hex string prefix with '0x'
+  - =oct(x)=: integer to octal string
+  - =bin(x)=: an integer to binary string
+
+** Scoping
+There're four levels:
+- current scope
+- parent scope
+- module scope (global)
+- built-in scope
+
+=nonlocal= keyword specify this variable should be referenced to the parent scope.
+But, this will not reach global.
+Instead, the =global= keyword declares the listed variables to be in the module level scope.
+
+#+BEGIN_QUOTE
+The nonlocal statement causes the listed identifiers to refer to previously bound variables in the nearest enclosing scope excluding globals.
+#+END_QUOTE
+
+As an example:
+#+BEGIN_SRC python
+var = 0 # global
+
+def outer():
+  var = 1 # parent
+  def inner():
+    nonlocal var
+    var = 2 # local
+    global var
+    var =3
+  inner()
+  # var = 2
+
+outer()
+# global var = 3
+#+END_SRC
+
+** Conditional
+If else or:
+#+BEGIN_SRC python
+var = d.get('key') or 0
+# is equal to:
+var = d.get('key') if d.get('key') else 0
+#+END_SRC
+
+** Loop
+
+- len(s): length
+- next(iterator)
+- range(stop): [0,stop)
+- range(start, stop, step=1)
+
+
+** Function
+*** Function def and call
+The default value of an argument is evaluated once at the function
+definition. Thus, the object is shared for all the invoke of the
+function. This is typically not desired behavior.
+
+#+BEGIN_SRC python
+def foo(a=[]):
+    a.append(3)
+    return a
+foo()
+foo()
+# => [3,3] !!!
+#+END_SRC
+
+Python function pass-by-object. If you pass a list, you can modify the
+list, and the original list is modified.
+
+#+BEGIN_SRC python
+a = [1,2]
+def foo(x):
+    x.append(3)
+foo(a)
+a # => [1,2,3]
+#+END_SRC
+
+*** Lambda
+#+BEGIN_SRC python
+lambda x : x+2
+lambda x: x%2==0
+#+END_SRC
+
+The usage of lambda is often in /map/ and /filter/.
+- ~map(lambda_exp, mylist)~ will execute the lambda expression on each element
+  of the list, and return a list containing the results.
+*** variadic parameter
+use =*args= syntax, and =args= will be a /tuple/:
+#+BEGIN_SRC python
+  def foo(*args):
+    for a in args:
+      print a
+#+END_SRC
+
+use =**args= to capture all /keyword arguments/.
+
+#+BEGIN_SRC python
+def bar(**kwargs):
+  for a in kwargs:
+    print a, kwargs[a]
+#+END_SRC
+
+Combine them together:
+#+BEGIN_SRC python
+def foobar(kind, *args, **kwargs):
+  pass
+#+END_SRC
+
+Also, there's a concept for the reverse thing: unpack argument list from a list, with =*list=:
+#+BEGIN_SRC python
+def foo(a,b):
+  pass
+
+l = [1,2]
+foo(*l)
+#+END_SRC
+
+on python3, this syntax can appear on left side
+#+BEGIN_SRC python
+first, *rest = [1,2,3,4]
+first,*l,last = [1,2,3,4]
+#+END_SRC
+
+** Meta Programming
+
+Basically =eval= (return value) and =exec= (no return value), with
+either string or /code object/ created by =compile=. They can use the
+names bound by current namespace.
+
+#+BEGIN_SRC python
+eval("1+2")
+a=2
+eval("1+a")
+def foo(a):
+    return a+3
+eval("foo(a)")
+# no return
+exec("foo(a)")
+eval(compile("1+a", '', 'eval'))
+#+END_SRC
+
+
+** Exception
+To give a quick feel:
+#+BEGIN_SRC python
+try:
+  pass
+except TypeError as e: # capture the exception into a variable
+  pass
+except AnotherError: # does not capture
+  pass
+except: # all exception
+  pass
+else: # if doesn't raise an exception
+  pass
+finally:
+  pass
+#+END_SRC
+
+*** Built-in exceptions
+#+BEGIN_EXAMPLE
+BaseException
+ +-- SystemExit
+ +-- KeyboardInterrupt
+ +-- GeneratorExit
+ +-- Exception
+      +-- StopIteration
+      +-- StandardError
+      |    +-- BufferError
+      |    +-- ArithmeticError
+      |    |    +-- FloatingPointError
+      |    |    +-- OverflowError
+      |    |    +-- ZeroDivisionError
+      |    +-- AssertionError
+      |    +-- AttributeError
+      |    +-- EnvironmentError
+      |    |    +-- IOError
+      |    |    +-- OSError
+      |    |         +-- WindowsError (Windows)
+      |    |         +-- VMSError (VMS)
+      |    +-- EOFError
+      |    +-- ImportError
+      |    +-- LookupError
+      |    |    +-- IndexError
+      |    |    +-- KeyError
+      |    +-- MemoryError
+      |    +-- NameError
+      |    |    +-- UnboundLocalError
+      |    +-- ReferenceError
+      |    +-- RuntimeError
+      |    |    +-- NotImplementedError
+      |    +-- SyntaxError
+      |    |    +-- IndentationError
+      |    |         +-- TabError
+      |    +-- SystemError
+      |    +-- TypeError
+      |    +-- ValueError
+      |         +-- UnicodeError
+      |              +-- UnicodeDecodeError
+      |              +-- UnicodeEncodeError
+      |              +-- UnicodeTranslateError
+      +-- Warning
+           +-- DeprecationWarning
+           +-- PendingDeprecationWarning
+           +-- RuntimeWarning
+           +-- SyntaxWarning
+           +-- UserWarning
+           +-- FutureWarning
+	   +-- ImportWarning
+	   +-- UnicodeWarning
+	   +-- BytesWarning
+#+END_EXAMPLE
+
+
+** Module
+Exposing API: the following only expose =foo= but not =bar=.
+#+BEGIN_SRC python
+__all__ = ['foo']
+def foo():
+  pass
+def bar():
+  pass
+#+END_SRC
+
+*** importing
+The local structure directory must contain the =__init__.py= file to be able to import.
+#+BEGIN_EXAMPLE
+|-- main.py
+|-- mypackage
+    |-- __init__.py
+    |-- a.py
+    |-- b.py
+    |-- subdir
+        |-- __init__.py
+        |-- c.py
+#+END_EXAMPLE
+
+The import statements should be:
+#+BEGIN_SRC python
+from mypackage import a
+from mypackage.b import foo as myfoo
+from mypackage.subdir import c
+#+END_SRC
 
 #+BEGIN_EXAMPLE
 export PYTHONPATH="$PYTHONPATH:/home/hebi/github/reading/models"
@@ -78,86 +391,61 @@ from p1 import xxx
 from p2.yyy import foo
 #+END_EXAMPLE
 
-** pip mirror
-- ustc mirror: http://pypi.mirrors.ustc.edu.cn/simple/
 
-to use one-time, simply:
 
-#+begin_example
-pip3 install xxx -i https://pypi.mirrors.ustc.edu.cn/simple/
+* Collections
 
-# don't need this when using https
-# --trusted-host pypi.mirrors.ustc.edu.cn
-#+end_example
-
-global configuration *seems* to be:
-#+begin_example
-pip3 config set global.index-url https://mirrors.ustc.edu.cn/pypi/web/simple
-#+end_example
-
-In China, pytorch cannot be installed due to 1. large 2. cpu only has a specific
-url. Thus I'm using conda mirror https://mirrors.tuna.tsinghua.edu.cn/help/anaconda/
-
-** imsave
-=imsave= is deprecated, change from
-
+** List
+*** TODO tuple
+*** TODO sorted
+sort a dictionary by value:
 #+BEGIN_SRC python
-from scipy.misc import imsave
+sorted(dict1, key=dict1.get) # => list
+sorted(dict1, key=dict1.get, reverse=True)
 #+END_SRC
 
-to
-
+*** Slicing
+The slicing syntax is =l[start:end:step]=.
+The slicing will return a /new/ list. Change to that list will not change the original one.
 #+BEGIN_SRC python
-from imageio import imwrite as imsave
+l[4]
+l[4:]
+l[::2]
+l[:-1]
 #+END_SRC
 
-
-
-** Meta Programming
-
-Basically =eval= (return value) and =exec= (no return value), with
-either string or /code object/ created by =compile=. They can use the
-names bound by current namespace.
-
+However, assign to the slicing itself /will change/ the original one:
 #+BEGIN_SRC python
-eval("1+2")
-a=2
-eval("1+a")
-def foo(a):
-    return a+3
-eval("foo(a)")
-# no return
-exec("foo(a)")
-eval(compile("1+a", '', 'eval'))
+l[1:2] = [4,5,6]
 #+END_SRC
 
-** Function def and call
-The default value of an argument is evaluated once at the function
-definition. Thus, the object is shared for all the invoke of the
-function. This is typically not desired behavior.
-
+Also, assign to a new variable only assign the reference:
 #+BEGIN_SRC python
-def foo(a=[]):
-    a.append(3)
-    return a
-foo()
-foo()
-# => [3,3] !!!
+a = [1,2,3]
+b = a # only a reference
 #+END_SRC
 
-Python function pass-by-object. If you pass a list, you can modify the
-list, and the original list is modified.
+*** create a list
+- ~range(stop)~
+- ~range(start, stop[, step])~
+
+Creating a matrix:
+#+BEGIN_SRC python
+newmat=[[-1 for x in range(height)] for y in range(width)]
+#+END_SRC
+
+list comprehension
 
 #+BEGIN_SRC python
-a = [1,2]
-def foo(x):
-    x.append(3)
-foo(a)
-a # => [1,2,3]
+even_squares = [x**2 for x in l if x%2 == 0]
 #+END_SRC
 
 
-** List object model
+*** Modify a list
+- list.append
+- list.pop
+
+*** List object model
 
 Lists are mutable.  The behavior of slicing is a bit confusing. If the
 slicing is used directly as the target of an assignment statement, it
@@ -222,140 +510,21 @@ String is immutable sequence, thus cannot be assigned. Thus it is
 fairly safe to use string.
 
 
-* Language
-The ultimate reference:
-# - language reference: https://docs.python.org/2/reference/
-# - standard library: https://docs.python.org/2/library
+** String
 
-For python 3
-- https://docs.python.org/3.7/reference/
-- https://docs.python.org/3.7/library/
-
-
-=atom= is the most basic expression, while the =enclosure= is interesting.
-
-#+BEGIN_EXAMPLE
-atom      ::=  identifier | literal | enclosure
-enclosure ::=  parenth_form | list_display | dict_display | set_display
-               | generator_expression | yield_atom
-#+END_EXAMPLE
-
-The =display= is a special syntax for python to create lists and dicts, using /comprehension/.
-
-#+BEGIN_EXAMPLE
-list_display ::=  "[" [starred_list | comprehension] "]"
-set_display ::=  "{" (starred_list | comprehension) "}"
-
-dict_display       ::=  "{" [key_datum_list | dict_comprehension] "}"
-key_datum_list     ::=  key_datum ("," key_datum)* [","]
-key_datum          ::=  expression ":" expression | "**" or_expr
-dict_comprehension ::=  expression ":" expression comp_for
-#+END_EXAMPLE
-
-And the comprehension grammar:
-#+BEGIN_EXAMPLE
-comprehension ::=  expression comp_for
-comp_for      ::=  [ASYNC] "for" target_list "in" or_test [comp_iter]
-comp_iter     ::=  comp_for | comp_if
-comp_if       ::=  "if" expression_nocond [comp_iter]
-#+END_EXAMPLE
-
-The =comp_for= non-terminal contains one or more =for= clause, and zero or more =if= clause.
-
-The evaluation of these displays will evaluate from left to right, so
-the last assignment will prevail in the case of set and dict. The
-comprehension is executed by nesting the for and if clauses from left
-to right.
-
-So some examples:
-
-#+BEGIN_SRC python
-((a,b) for a in range(2) for b in range(3))
-[(a,b) for a in range(2) for b in range(3)]
-{(a,b) for a in range(2) for b in range(3)}
-
-{a:b for a in (1,2) for b in (3,4)}
-#+END_SRC
-
-Note the out-most braces are required, which also creates a scope.
-
-* Emacs support
-Install the =elpy= package. It provides:
-- =C-c C-c= runs the shell and send the current buffer
-- =C-c C-d= runs =elpy-doc=
-- =C-c C-t= runs =elpy-test=, which runs the unittest discover
-
-To enable linter python in emacs, use pylint. It will use =pylint=
-executable. And it also needs the configure file. Generate it:
-
-#+BEGIN_EXAMPLE
-pylint --generate-rcfile > ~/.pylintrc
-#+END_EXAMPLE
-
-
-* Unit Test
-#+BEGIN_SRC python
-class MyTest(unittest.TestCase):
-    def test_me(self):
-        self.assertEqual(1,2)
-unittest.main()
-#+END_SRC
-
-python unit test can support automatic test discovery. To use that,
-the file must be named =test_xxx.py=, and run the =python -m unittest discover=.
-
-* Concept
-
-** Scoping
-There're four levels:
-- current scope
-- parent scope
-- module scope (global)
-- built-in scope
-
-=nonlocal= keyword specify this variable should be referenced to the parent scope.
-But, this will not reach global.
-Instead, the =global= keyword declares the listed variables to be in the module level scope.
-
-#+BEGIN_QUOTE
-The nonlocal statement causes the listed identifiers to refer to previously bound variables in the nearest enclosing scope excluding globals.
-#+END_QUOTE
-
-As an example:
-#+BEGIN_SRC python
-var = 0 # global
-
-def outer():
-  var = 1 # parent
-  def inner():
-    nonlocal var
-    var = 2 # local
-    global var
-    var =3
-  inner()
-  # var = 2
-
-outer()
-# global var = 3
-#+END_SRC
-
-** Collection
-
-*** String
-
-**** Concatenation
+*** Concatenation
 - concatenate two strings directly by =+=.
 - need to convert integer to string before concatenate: =s + str(35)=
 - "".join(lst) works
 
-**** split
+*** split
 - ~str.split(sep=None)~ :: default by white space
 - ~str.strip()~ :: strip out white space at both begin and end
 - ~str.replace(old, new)~ :: replace /all/.
 - ~str.startswith(s)~ ::
 - ~str.endswith(s)~ ::
 
-**** Slicing
+*** Slicing
 String is an immutable object. It can use slicing. E.g. reversing a
 string is as easy as ="hello"[::-1]=!
 
@@ -374,43 +543,7 @@ can I include the first one in the list??
 Thus if want to get a reverse of a sub-string, I would get sub-string
 first and then reverse it.
 
-*** TODO tuple
-*** List
-**** Slicing
-The slicing syntax is =l[start:end:step]=.
-The slicing will return a /new/ list. Change to that list will not change the original one.
-#+BEGIN_SRC python
-l[4]
-l[4:]
-l[::2]
-l[:-1]
-#+END_SRC
-
-However, assign to the slicing itself /will change/ the original one:
-#+BEGIN_SRC python
-l[1:2] = [4,5,6]
-#+END_SRC
-
-Also, assign to a new variable only assign the reference:
-#+BEGIN_SRC python
-a = [1,2,3]
-b = a # only a reference
-#+END_SRC
-
-**** create a list
-- ~range(stop)~
-- ~range(start, stop[, step])~
-
-Creating a matrix:
-#+BEGIN_SRC python
-newmat=[[-1 for x in range(height)] for y in range(width)]
-#+END_SRC
-
-**** Modify a list
-- list.append
-- list.pop
-
-*** Dictionary
+** Dictionary
 Create:
 #+BEGIN_SRC python
 x = {'a': 1, 'b': 2}
@@ -437,238 +570,21 @@ if x in s:
   pass
 #+END_SRC
 
-** Algorithm
-*** TODO sort
-sort a dictionary by value:
-#+BEGIN_SRC python
-sorted(dict1, key=dict1.get) # => list
-sorted(dict1, key=dict1.get, reverse=True)
-#+END_SRC
-
-
-** Function
-*** variadic parameter
-use =*args= syntax, and =args= will be a /tuple/:
-#+BEGIN_SRC python
-  def foo(*args):
-    for a in args:
-      print a
-#+END_SRC
-
-use =**args= to capture all /keyword arguments/.
-
-#+BEGIN_SRC python
-def bar(**kwargs):
-  for a in kwargs:
-    print a, kwargs[a]
-#+END_SRC
-
-Combine them together:
-#+BEGIN_SRC python
-def foobar(kind, *args, **kwargs):
-  pass
-#+END_SRC
-
-Also, there's a concept for the reverse thing: unpack argument list from a list, with =*list=:
-#+BEGIN_SRC python
-def foo(a,b):
-  pass
-
-l = [1,2]
-foo(*l)
-#+END_SRC
-
-on python3, this syntax can appear on left side
-#+BEGIN_SRC python
-first, *rest = [1,2,3,4]
-first,*l,last = [1,2,3,4]
-#+END_SRC
-
-** Exception
-To give a quick feel:
-#+BEGIN_SRC python
-try:
-  pass
-except TypeError as e: # capture the exception into a variable
-  pass
-except AnotherError: # does not capture
-  pass
-except: # all exception
-  pass
-else: # if doesn't raise an exception
-  pass
-finally:
-  pass
-#+END_SRC
-
-** Lambda
-#+BEGIN_SRC python
-lambda x : x+2
-lambda x: x%2==0
-#+END_SRC
-
-The usage of lambda is often in /map/ and /filter/.
-- ~map(lambda_exp, mylist)~ will execute the lambda expression on each element of the list, and return a list containing the results.
-
-** Packaging
-Exposing API: the following only expose =foo= but not =bar=.
-#+BEGIN_SRC python
-__all__ = ['foo']
-def foo():
-  pass
-def bar():
-  pass
-#+END_SRC
-
-*** importing
-The local structure directory must contain the =__init__.py= file to be able to import.
-#+BEGIN_EXAMPLE
-|-- main.py
-|-- mypackage
-    |-- __init__.py
-    |-- a.py
-    |-- b.py
-    |-- subdir
-        |-- __init__.py
-        |-- c.py
-#+END_EXAMPLE
-
-The import statements should be:
-#+BEGIN_SRC python
-from mypackage import a
-from mypackage.b import foo as myfoo
-from mypackage.subdir import c
-#+END_SRC
-
-
-** Thread
-#+BEGIN_SRC python
-from threading import Thread
-
-class MyThread(Thread):
-  def __init__(self, arg):
-    Thread.__init__(self)
-    self.arg = arg
-  def run(self):
-    pass
-
-t = MyThread(arg)
-t.start()
-#+END_SRC
-
-* Type
-** Boolean
-- =not True=
-
-** Integer
-- ~i += 1~
-
-** conversion
-- string to integer: ~int('45')~
-- integer to string: ~str(45)~
-- ASCII to char: ~chr(100)~ returns 'd'
-- char to ASCII: ~ord('d')~ returns 100
-
-* Black Tech
-If else or:
-#+BEGIN_SRC python
-var = d.get('key') or 0
-# is equal to:
-var = d.get('key') if d.get('key') else 0
-#+END_SRC
-
-list comprehension
-
-#+BEGIN_SRC python
-even_squares = [x**2 for x in l if x%2 == 0]
-#+END_SRC
-
-* Pep8
-Indent:
-- *function and class* should be separated by *2 lines*
-- *In a class*, function should be separated by *1 line*
-- 1 space before and after variable assignment
-
-Naming
-- function, variable, attribute: =func_var_attr=
-- protected instance attributes: =_protected_field=
-- private instance attributes: =__private_field=
-- class and exception: =ClassExceptionName=
-- module level constants: =CONSTANT=
-- instance method of class should use =self= as first parameter, refer to the object
-- class method should use =cls= as first parameter, refer to the class
-
-Expression
-
-| use           | DONT use              |
-|---------------+-----------------------|
-| =a is not b=  | +=not a is b=+        |
-| =if not list= | +~if len(list) == 0~+ |
-
-Import
-- always use absolute path
-- if must use relative, use =from . import foo= instead of +=import foo=+
-
-** document
-One can use one line or multi-line document.
-The doc string can be retrieved by =func.__doc__=.
-#+BEGIN_SRC python
-def func():
-  """one line doc"""
-
-def func():
-  """The outline
-
-  The above empty line is required.
-  Here's the detailed documentation.
-  """
-#+END_SRC
-
-* IO
-#+BEGIN_SRC python
-print('xxx', end='')
-#+END_SRC
-
-#+BEGIN_SRC python
-  f = open('text.txt')
-  f.read() # return all content
-
-  f = open('text.txt')
-  for line in f:
-      print(line)
-
-  with open('a.txt') as f:
-      for line in f:
-          print(line)
-#+END_SRC
-
-read from stdin:
-#+BEGIN_SRC python
-for line in sys.stdin:
-  print(line)
-#+END_SRC
-
-get command line argument: =sys.argv=
-
-
-* Operating System
-
-** Work filesystem:
-#+BEGIN_SRC python
-import os
-for root,dirs,files in os.walk('.'):
-  for f in files:
-    print f
-#+END_SRC
-
-- =os.path.abspath('relative/path/to/file')=
-- =os.path.exists("/path/to/file")=
-- =os.rename('old', 'new')=
-- =os.path.isfile=
 
 
 
-** Shell command
+* Standard Library
+
+
+** Operating System
+
+*** Env
+- os.environ['HOME']
+- os.getenv(name)
+- os.putenv(name, value)
+- os.unsetenv(name)
+
+*** Shell command
 - =os.system= :: simply run command
 #+BEGIN_SRC python
 os.system("some command")
@@ -691,121 +607,146 @@ s = subprocess.check_output('wc -l', stdin=p.stdout)
 #+BEGIN_SRC python
 return_code = subprocess.call("echo Hello World", shell=True, stdout=subprocess.DEVNULL)
 #+END_SRC
+*** Process
+- os.abort()
+- os.execl(path, arg0, arg1, ...)
+- os.execle(path, arg0, arg1, ..., env)
+- os.execlp(file, arg0, arg1, ...)
+- os.execlpe(file, arg0, arg1, ..., env)
+- os.execv(path, args)
+- os.execve(path, args, env)
+- os.execvp(file, args)
+- os.execvpe(file, args, env)
+- os.folk
+- os.wait()
 
-* Standard Library
-** Built-in exceptions
-#+BEGIN_EXAMPLE
-BaseException
- +-- SystemExit
- +-- KeyboardInterrupt
- +-- GeneratorExit
- +-- Exception
-      +-- StopIteration
-      +-- StandardError
-      |    +-- BufferError
-      |    +-- ArithmeticError
-      |    |    +-- FloatingPointError
-      |    |    +-- OverflowError
-      |    |    +-- ZeroDivisionError
-      |    +-- AssertionError
-      |    +-- AttributeError
-      |    +-- EnvironmentError
-      |    |    +-- IOError
-      |    |    +-- OSError
-      |    |         +-- WindowsError (Windows)
-      |    |         +-- VMSError (VMS)
-      |    +-- EOFError
-      |    +-- ImportError
-      |    +-- LookupError
-      |    |    +-- IndexError
-      |    |    +-- KeyError
-      |    +-- MemoryError
-      |    +-- NameError
-      |    |    +-- UnboundLocalError
-      |    +-- ReferenceError
-      |    +-- RuntimeError
-      |    |    +-- NotImplementedError
-      |    +-- SyntaxError
-      |    |    +-- IndentationError
-      |    |         +-- TabError
-      |    +-- SystemError
-      |    +-- TypeError
-      |    +-- ValueError
-      |         +-- UnicodeError
-      |              +-- UnicodeDecodeError
-      |              +-- UnicodeEncodeError
-      |              +-- UnicodeTranslateError
-      +-- Warning
-           +-- DeprecationWarning
-           +-- PendingDeprecationWarning
-           +-- RuntimeWarning
-           +-- SyntaxWarning
-           +-- UserWarning
-           +-- FutureWarning
-	   +-- ImportWarning
-	   +-- UnicodeWarning
-	   +-- BytesWarning
-#+END_EXAMPLE
 
-** Built-in
-These functions are always available.
+- os.system(cmd): run cmd, return exit code
+- os.times(): 5-tuple
+  - user time
+  - system time
+  - childrens user time
+  - childrens system time
+  - elapsed real time
 
-Numbers:
-- abs(x): absolute value
-- divmod(a,b): a pair (a // b, a % b)
-- max(arg1, arg2, *args)
-- min(arg1, arg2, *args)
-- pow(x,y): x^y
-- round(x, ndigits=0)
-- sum(iterable)
+** IO
 
-Convertion
-- int(x)
-- float(x)
-- long(x)
-- chr(x): ASCII to char
-- ord(c): char to ASCII
-- bool(x): convert x to bool
-- hex(x): convert integer to lowercase hex string prefix with '0x'
-- oct(x): integer to octal string
-- bin(x): an integer to binary string
+*** File IO
+Reading:
+- read()
+- readline(size=1)
+- readlines()
 
-Boolean:
-- all(iterable): true if all items are true. empty => True
-- any(iterable): true if any item is true. empty => False
-- cmp(x,y)
-  - x<y => negative
-  - x=y => 0
-  - x>y => positive
+Seeking:
+- seek(offset=0)
+  - 0 start
+  - 1 current
+  - 2 end
+- tell(): current position
 
-Symbol Table
-- locals()
-- globals()
-- dir()
+Writing:
+- write(s): finally the string!
+- writelines(lines): write a list of lines
+- flush()
 
-Creation
-- dict
-- list
-- set
-- tuple
+#+BEGIN_SRC python
+  f = open('text.txt')
+  f.read() # return all content
 
-Other
-- len(s): length
-- next(iterator)
-- print(*objects, sep='', end='\n', file=sys.stdout)
-- range(stop): [0,stop)
-- range(start, stop, step=1)
-- sorted(iterable, cmp, key, reverse=False)
-  - key=lambda x: x[1]
-- type(obj): get the type of obj
-- open(name, mode): return an object of file type.
-  - r,w,a,b; + for read and write
+  f = open('text.txt')
+  for line in f:
+      print(line)
 
-** Printing
+  with open('a.txt') as f:
+      for line in f:
+          print(line)
+#+END_SRC
+
+Other IO:
+- f = io.StringIO("some string"): in memory text stream
+- f = io.BytesIO(b"some binary data \x00\x01")
+
+*** Printing
 - pprint.pprint(object, stream=None): pretty print
 - 'string {0}, {hello}'.format('yes', hello=2)
 
+#+BEGIN_SRC python
+print('xxx', end='')
+#+END_SRC
+
+read from stdin:
+#+BEGIN_SRC python
+for line in sys.stdin:
+  print(line)
+#+END_SRC
+
+*** redirect stdout
+#+BEGIN_SRC python
+from contextlib import redirect_stdout
+with open('xxx.txt', 'w') as f:
+    redirect_stdout(f)
+#+END_SRC
+
+Or:
+#+BEGIN_SRC python
+sys.stdout = f
+#+END_SRC
+
+The file handle can be:
+#+BEGIN_SRC python
+f = open(os.devnull, 'w')
+#+END_SRC
+
+It can also be a predefined handle, like =sys.stderr=:
+
+#+BEGIN_SRC python
+with redirect_stdout(sys.stderr):
+    help(dir)
+#+END_SRC
+
+
 ** File System
+
+*** os.walk
+#+BEGIN_SRC python
+import os
+for root,dirs,files in os.walk('.'):
+  for f in files:
+    print f
+#+END_SRC
+
+- =os.path.abspath('relative/path/to/file')=
+- =os.path.exists("/path/to/file")=
+- =os.rename('old', 'new')=
+- =os.path.isfile=
+
+*** FS Operations
+- os.getcwd(): current working directory
+- os.chdir(path): change cwd
+- os.mkdir(path)
+- ~os.listdir(path='.')~: list all in this dir. E.g. ~for item in os.listdir('/path'): print (item)~
+- =os.makedirs(path)=: GOOD this is the way to go the make directories
+- ~os.remove(path)~: remove a file
+- ~os.rmdir()~: remove an empty dir.
+- os.removedirs(path): foo/bar/aaa will try to remove aaa, than bar,
+  then foo. Don't use! To recursively remove all contents, use
+  =shutil.rmtree=
+- os.rename(src, dst)
+- os.renames(old, new)
+- os.rmdir(path): only work if dir is empty
+- os.tempnam(): a reasonable absolute name for creating temporary file
+  - seems to be vulnerable
+- os.walk(top, topdown=True): for each directory including top itself,
+  it yields 3-tuple (dirpath, dirnames, filenames). E.g. ~for root,dirs,files in os.walk('/path'): for f in files: print (f);~
+
+*** shutil
+- copy(src,dst)
+- copytree(src, dst): recursive
+- rmtree(path): rm -r
+- move(src, dst)
+
+popen family is deprecated. Use subprocess.
+
 *** os.path
 If parameter is not listed, it means a single path.
 
@@ -870,116 +811,30 @@ Some interesting APIs that don't have counterparts:
 - =Path.iterdir()= gives a list of directory items
 - =Path.parts= gives a list of string
 
-
-
-
 *** TODO tempfile
 
-** os
-*** Env
-- os.environ['HOME']
-- os.getenv(name)
-- os.putenv(name, value)
-- os.unsetenv(name)
+** unittest
 
-*** Filesystem
-- os.getcwd(): current working directory
-- os.chdir(path): change cwd
-- os.mkdir(path)
-- ~os.listdir(path='.')~: list all in this dir. E.g. ~for item in os.listdir('/path'): print (item)~
-- =os.makedirs(path)=: GOOD this is the way to go the make directories
-- ~os.remove(path)~: remove a file
-- ~os.rmdir()~: remove an empty dir.
-- os.removedirs(path): foo/bar/aaa will try to remove aaa, than bar,
-  then foo. Don't use! To recursively remove all contents, use
-  =shutil.rmtree=
-- os.rename(src, dst)
-- os.renames(old, new)
-- os.rmdir(path): only work if dir is empty
-- os.tempnam(): a reasonable absolute name for creating temporary file
-  - seems to be vulnerable
-- os.walk(top, topdown=True): for each directory including top itself,
-  it yields 3-tuple (dirpath, dirnames, filenames). E.g. ~for root,dirs,files in os.walk('/path'): for f in files: print (f);~
+#+BEGIN_SRC python
+class MyTest(unittest.TestCase):
+    def test_me(self):
+        self.assertEqual(1,2)
+unittest.main()
+#+END_SRC
 
-*** shutil
-- copy(src,dst)
-- copytree(src, dst): recursive
-- rmtree(path): rm -r
-- move(src, dst)
-
-popen family is deprecated. Use subprocess.
-
-*** Process
-- os.abort()
-- os.execl(path, arg0, arg1, ...)
-- os.execle(path, arg0, arg1, ..., env)
-- os.execlp(file, arg0, arg1, ...)
-- os.execlpe(file, arg0, arg1, ..., env)
-- os.execv(path, args)
-- os.execve(path, args, env)
-- os.execvp(file, args)
-- os.execvpe(file, args, env)
-- os.folk
-- os.wait()
-
-
-- os.system(cmd): run cmd, return exit code
-- os.times(): 5-tuple
-  - user time
-  - system time
-  - childrens user time
-  - childrens system time
-  - elapsed real time
-
-** io
-- f = open('file.txt')
-- f = io.StringIO("some string"): in memory text stream
-- f = open('file', 'rb')
-- f = io.BytesIO(b"some binary data \x00\x01")
-- support /with statement/: =with open('file.txt') as file:=
-*** IOBase
-Methods:
-- close()
-- flush()
-- readline(): return one line
-- readlines(): return a list of lines
-- seek(offset=0)
-  - 0 start
-  - 1 current
-  - 2 end
-- tell(): current position
-- writelines(lines): write a list of lines
-
-*** RawIOBase : IOBase (should not use directly)
-- read()
-- readall()
-- readinto(b)
-- write(b)
-
-*** BufferedIOBase
-- read(): read all
-- write(b)
-*** FileIO : RawIOBase
-*** BytesIO : BufferedIOBase
-*** BufferedReader(raw)
-- peek()
-- read()
-*** BufferedWriter(raw)
-- flush()
-- write()
-*** TextIOBase : IOBase
-- read()
-- readline(size=1)
-- seek(offset=0)
-- tell()
-- write(s): finally the string!
-*** TextIOWrapper(buffer) : TextIOBase
-*** StringIO
-- getvalue()
+python unit test can support automatic test discovery. To use that,
+the file must be named =test_xxx.py=, and run the =python -m unittest discover=.
 
 ** time
+Create time object:
 - time.sleep(secs)
 - time.time(): time in seconds since epoch
+- gmtime(): in seconds, from epoch
+- localtime(): convert gmtime() to local
+- clock(): processor time as floating number in seconds
+
+The returned time object is =class time.struct_time=: returned by gmtime(),
+localtime() and strptime().  Time to format string:
 
 - strptime(string[, format]): parse a string into time object
   - format default: "%a %b %d %H:%M:%S %Y"
@@ -995,11 +850,53 @@ Methods:
   - %p: AM or PM
   - %M: Minute [00,59]
   - %S: second [00,61]
-- gmtime(): in seconds, from epoch
-- localtime(): convert gmtime() to local
-- clock(): processor time as floating number in seconds
 
-class time.struct_time: returned by gmtime(), localtime() and strptime()
+*** datetime
+
+- =date= has year, month, day
+- =time= has hour, minute, second
+- =datetime= has both
+
+#+BEGIN_SRC python
+import datetime
+
+t1 = datetime.date.fromisoformat('2019-12-04')
+t2 = datetime.date.fromisoformat('2018-11-24')
+
+delta = t1 - t2
+delta.days
+
+t3 = datetime.date.today()
+t4 = datetime.date.date(2019, 12, 20)
+
+t0 = datetime.date.fromtimestamp(time.time())
+#+END_SRC
+
+** csv
+#+BEGIN_SRC python
+import csv
+with open('some.csv', newline='') as f:
+    reader = csv.reader(f)
+    for row in reader:
+        print(row)
+
+import csv
+with open('some.csv', 'w', newline='') as f:
+    writer = csv.writer(f)
+    writer.writerow(row)
+    writer.writerows(someiterable)
+#+END_SRC
+
+** Json
+
+#+BEGIN_SRC python
+import json
+json.dumps({"C": 0, "D": 1})
+json.loads("a string of json")
+
+json.dump(obj, fp, indent=2)
+json.load(fp)
+#+END_SRC
 
 ** argparse
 #+BEGIN_SRC python
@@ -1047,34 +944,6 @@ Finally, =help= option can be used to provide help string, and it can
 be printed out using =parser.print_help()=.  To test the parser, you
 can use =parser.parse_args(['-f', '1', 'bar'])=.
 
-** contextlib
-#+BEGIN_SRC python
-from contextlib import redirect_stdout
-with open('xxx.txt', 'w') as f:
-    redirect_stdout(f)
-#+END_SRC
-
-Or:
-#+BEGIN_SRC python
-sys.stdout = f
-#+END_SRC
-
-The file handle can be:
-#+BEGIN_SRC python
-f = open(os.devnull, 'w')
-#+END_SRC
-
-It can also be a predefined handle, like =sys.stderr=:
-
-#+BEGIN_SRC python
-with redirect_stdout(sys.stderr):
-    help(dir)
-#+END_SRC
-
-
-
-
-
 
 ** Regular Expression
 
@@ -1106,9 +975,25 @@ re.search("pattern", "string", re.IGNORECASE)
 m = re.findall("[pattern]", "string")
 #+END_SRC
 
-** Concurrent
+** Concurrent programming
 
 *** threading
+
+#+BEGIN_SRC python
+from threading import Thread
+
+class MyThread(Thread):
+  def __init__(self, arg):
+    Thread.__init__(self)
+    self.arg = arg
+  def run(self):
+    pass
+
+t = MyThread(arg)
+t.start()
+#+END_SRC
+
+
 The package name is =threading=, the object is =Thread=.
 
 Functions
@@ -1210,7 +1095,7 @@ Thread.  It seems to use fork but don't have explicit exec on the
 document?? Wired and seems just do something thread can do (except the
 sharing of memory of course).
 
-*** Process (subprocess module)
+*** subprocess
 - subprocess.run(args, *, stdin=None, input=None, stdout=None,
   stderr=None, shell=False, timeout=None, check=False)
   - run the command and wait for it to complete. Return a
@@ -1276,7 +1161,27 @@ Popen object
   - None indicate hasn't terminated
   - -N means terminated by signal N
 
-** Internet
+
+
+
+* Third party libraries
+
+
+** urllib
+#+BEGIN_SRC python
+from urllib import request
+import json
+
+url = 'https://api.github.com'
+api = '/search/repositories'
+query = 'language:C&stars:>10&per_page='+size
+response = request.urlopen(url+api+"?q="+query)
+
+s = response.read().decode('utf8')
+j = json.loads(s)
+# j will be a mix of list and dict
+#+END_SRC
+
 *** urllib.request
 package urllib.request
 
@@ -1319,35 +1224,6 @@ methods:
 - unquote_plus(string)
 - urlencode(query)
 
-** Data
-*** Json
-
-#+BEGIN_SRC python
-import json
-json.dumps({"C": 0, "D": 1})
-json.loads("a string of json")
-
-json.dump(obj, fp, indent=2)
-json.load(fp)
-#+END_SRC
-
-* Third party libraries
-
-
-** urllib
-#+BEGIN_SRC python
-from urllib import request
-import json
-
-url = 'https://api.github.com'
-api = '/search/repositories'
-query = 'language:C&stars:>10&per_page='+size
-response = request.urlopen(url+api+"?q="+query)
-
-s = response.read().decode('utf8')
-j = json.loads(s)
-# j will be a mix of list and dict
-#+END_SRC
 
 ** XML
 
@@ -1419,13 +1295,78 @@ has some support for id and class, the =select= is easier to use.
 
 
 ** click http://click.pocoo.org/5/
+
+** pandas
+
+Looks like it is a dataframe library
+
+** numpy
+C-implementation of multi-dimensional arrays
+
+** scipy
+scitific computing algorithms, including:
+
+- linaer algebra
+- optimization
+- interpolation
+- integration and differential equation
+- clustering algorithms
+- statistical distributions
+
+** scikit-learn
+Learning library.
+- [[https://scikit-learn.org/stable/index.html][website]]
+- [[https://scikit-learn.org/stable/user_guide.html][user guide]]
+
+Supervised learning:
+- linear models
+- SVM
+- Gaussian Processes
+- Naive Bayes
+- Decision Trees
+- KNN
+
+
+Unsupervised learning:
+- Gaussian Mixture Models
+- Manifold learning
+- clustering
+  - k-means
+
+
+Other topics
+- Ensemble methods
+- Feature Selection
+- Outlier detection
+- model selection
+  - grid search
+  - cross validation
+
 ** matplotlib
+
 #+BEGIN_SRC python
 import matplotlib.pyplot as plt
+#+END_SRC
 
-# plot some random staff
+Reference
+- [[https://matplotlib.org/gallery/index.html][gallery]]
+- [[https://matplotlib.org/tutorials/index.html][tutorials]]
+- [[https://matplotlib.org/api/pyplot_summary.html][pyplot API]]
+
+*** type of figures
+
+- plt.bar
+- plt.scatter
+- plt.plot: line plot
+- plt.hist
+- plt.pie
+
+#+BEGIN_SRC python
 plt.plot([1,2,3,4])
-plt.show()
+#+END_SRC
+
+Image via =plt.imshow()=:
+#+BEGIN_SRC python
 
 # plot a mnist digit
 (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
@@ -1439,15 +1380,24 @@ plt.show()
 
 #+END_SRC
 
-plot to a file
-#+BEGIN_SRC python
-pylab.ioff()
-plot([1, 2, 3])
-savefig("/tmp/test.png")
-#+END_SRC
+*** TODO plot options
 
+*** legends, axis, more settings
+Texts:
+- plt.xlabel()
+- plt.ylabel()
+- plt.title()
+- plt.axis()
+- plt.text()
+- plt.annotate
+- plt.grid(True)
+- plt.table(): attach a table to an axis!
 
-Subplots:
+Scale:
+- plt.xscale('linear')
+- plt.yscale('log')
+
+*** Subplots
 
 #+BEGIN_SRC python
 plt.ioff()
@@ -1463,9 +1413,55 @@ for x in range(height):
 plt.savefig(filename)
 #+END_SRC
 
+Or better, create figure and axis, and plot for each axis:
+
+#+BEGIN_SRC python
+import matplotlib.pyplot as plt
+import numpy as np
+
+np.random.seed(19680801)
+data = np.random.randn(2, 100)
+
+fig, axs = plt.subplots(2, 2, figsize=(5, 5))
+axs[0, 0].hist(data[0])
+axs[1, 0].scatter(data[0], data[1])
+axs[0, 1].plot(data[0], data[1])
+axs[1, 1].hist2d(data[0], data[1])
+
+plt.show()
+#+END_SRC
 
 
-** Deep Learning Framework
+
+*** export to files
+Visualize using OS GUI toolkit:
+#+BEGIN_SRC python
+plt.show()
+#+END_SRC
+
+Plot to a file:
+#+BEGIN_SRC python
+pylab.ioff()
+plot([1, 2, 3])
+savefig("/tmp/test.png")
+#+END_SRC
+
+
+** imsave
+=imsave= is deprecated, change from
+
+#+BEGIN_SRC python
+from scipy.misc import imsave
+#+END_SRC
+
+to
+
+#+BEGIN_SRC python
+from imageio import imwrite as imsave
+#+END_SRC
+
+
+** Nvidia GPU setting
 Select visible GPU in a multi-GPU setting:
 #+BEGIN_SRC py
 os.environ['CUDA_VISIBLE_DEVICES'] = '3'
