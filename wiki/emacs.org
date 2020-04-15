@@ -31,8 +31,14 @@ solution, run the command C-x RET f (set-buffer-file-coding-system)
 and type unix.
 #+END_QUOTE
 
+** electric-indent-mode
 
+Disabling this to yank raw content
 
+** emacs-common-non-dfsg
+In debian/ubuntu, emacs and elisp info pages are not installed by default with
+=emacs= package. You need to install =emacs-common-non-dfsg= to get them. Not
+sure why and not sure what does "dfsg" mean.
 
 * buffer
   - =list-face-displays=
