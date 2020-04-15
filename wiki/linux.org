@@ -1,6 +1,119 @@
 #+TITLE: Linux
 
 * Tmp
+** chinese input method
+
+In ubuntu, you install =ibus-pinyin= and run =ibus-setup=, run =ibus restart=,
+logout and login. In setting, adding "Chinese" as input source is not
+enough. You need to add "Chinese - Pinyin", see [[https://www.pinyinjoe.com/linux/ubuntu-18-gnome-chinese-setup.htm][this post]].
+
+This would not work in Emacs. You need to start emacs, according to [[https://mollermara.com/blog/ibus-emacs/][this post]]:
+
+#+begin_example
+LC_CTYPE="zh_CN.UTF-8" emacs
+#+end_example
+
+** RedmiBook wifi Atheros QCA6174 driver
+
+Actually [[https://askubuntu.com/questions/607707/ath10k-installation][this post]] solved my problem. You need:
+1. https://github.com/kvalo/ath10k-firmware, put it into
+   /lib/firmware/ath10k/QCA6174 and rename necessary files accordingly. hw2.1 is
+   not important.
+2. The comment 2 in [[https://bugzilla.redhat.com/show_bug.cgi?id=1294263#c2][this post]] attached a windows binary. THIS IS IMPORTANT. Put
+   it to *both* =hw3.0/board.bin= and =hw3.0/board-2.bin=
+
+I was about to help [[https://bbs.deepin.org/forum.php?mod=viewthread&tid=184723&page=2][this post]] but I have to wait 5 hours to post anything
+because of newly created account. This is stupid, this probably won't come back
+to my mind.
+
+** expose local machine without public IP
+Tunneling services (Dynamic DNS service):
+- https://ngrok.com/: this does not seem to work without a proxy on both local
+  server and client
+  - 1.X source code: https://github.com/inconshreveable/ngrok
+- https://www.noip.com/
+- DynDNS https://account.dyn.com, no free account, not obvious pricing model
+
+I'm not sure if the speed or stability of these international providers. For
+chinese providers:
+
+- https://www.aliyun.com/product/dns
+- https://hsk.oray.com/
+
+Some other chinese providers:
+- https://natapp.cn/: 基于ngrok的国内内网穿透服务
+- http://ngrok.ciqiuwl.cn/: 小米球ngrok
+- https://www.natfrp.com/: a free frc service provider
+  - This looks very good. You basically choose a server on their console, and
+    run local client and choose the same console.
+
+
+However, I'm not sure the performance of all these models. All traffic has to go
+through public server? The public server should really just act as a lookup service.
+
+But even though I got assigned a public IP, all the ports do not seem to be
+open. Thus, even if the DDNS services got the IP correct and up-to-date, that is
+not supposed to work still.
+
+UPDATE: actually china mobile did not assign me a public IP. The IP seen on my
+router is 100.99.240.168, while my public IP in whatismyipaddress and is ip138
+is 36.161.131.36. Thus, I don't even has a public IP, not to say a statis public IP.
+
+They must be doing tunneling and traffic forwarding.
+
+*** VPN solutions
+I found OpenVPN rather business oriented.
+
+*** SSH tunneling
+That keeps alive a SSH connection between your local machine and a public
+server, and forward all traffic to public server to your local machine.
+
+On public server =/etc/ssh/sshd_config=:
+
+#+begin_example
+AllowTcpForwarding yes
+GatewayPorts yes
+#+end_example
+
+Initiate the connection from local machine:
+
+#+begin_example
+ssh -nN -R 8888:localhost:8889 remoteuser@public-server.com
+#+end_example
+
+Here, the 8888 port on public server will be forwarded to localhost 8889.
+
+However, there are problems:
+1. The SSH connection must be kept alive. If it broke for any reason, we have to
+   setup a logic to restart it.
+2. This only setup one port at a time. We'll need to run it multiple times for
+   more ports.
+3. There's no redirection based on domain name.
+
+But overall, this is clearly doable.
+
+*** reverse proxy
+
+Tool:
+- https://github.com/fatedier/frp: reverse proxy
+
+Looks like this is very promising, it can even work in P2P mode for large data
+transfer, and it has a dashboard.
+
+Now the problem is still how to find a cheap and stable VPS.
+
+*** VPS
+- https://www.vultr.com/: seems to be more stable and cheaper than Digital Ocean
+- Aliyun is soooo expensive
+
+*** proxy service
+- v2aky.com
+- neoproxy.com
+- shadowsocks.nl
+
+Client:
+- qv2ray (linux)
+- v2rayng (android)
 
 ** sudo
 =sudo -i= will drop you to root shell, even if you don't know root
@@ -85,8 +198,19 @@ Or actually tf.Session() will output the information, e.g. run this:
 sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
 #+END_EXAMPLE
 
+** Docker in China
 
+From https://lug.ustc.edu.cn/wiki/mirrors/help/docker:
 
+In =/etc/docker/daemon.json=:
+
+#+begin_example
+{
+  "registry-mirrors": ["https://docker.mirrors.ustc.edu.cn"]
+}
+#+end_example
+
+=docker.io= is the ubuntu package of docker
 
 * V2Ray
 - offical document: https://www.v2ray.com/
@@ -800,6 +924,24 @@ sudo guix package -i glibc-utf8-locales
 
 Reference: https://lists.gnu.org/archive/html/help-guix/2019-01/msg00211.html
 
+* Other Package Managers
+
+- flatpak: https://flathub.org/home, and this respect system proxy
+- snap: https://snapcraft.io/, but this does NOT respect system proxy
+- AppImage: https://appimage.org/: runs directly
+
+TODO: create gnome desktop:
+
+=~/.local/share/applications/test.desktop= with following:
+
+#+begin_example
+[Desktop Entry]
+Name=My App
+Exec=executable args
+Icon=xxx
+Terminal=false
+Type=Application
+#+end_example
 
 * Git
 
