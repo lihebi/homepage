@@ -1,7 +1,6 @@
 #+TITLE: Julia
 
-* Julia
-
+* Julia Lang
 ** Macros
 Julia macros are hygienic:
 
@@ -32,6 +31,185 @@ for op = (:sin, :cos, :tan, :log, :exp)
 end
 #+END_SRC
 
+
+* Standard library
+
+** string
+interpolation:
+#+BEGIN_SRC julia
+var = 5
+"$var-$(now())"
+#+END_SRC
+
+concatenation:
+#+BEGIN_SRC julia
+"hello" * "world"
+#+END_SRC
+
+#+BEGIN_SRC julia
+findfirst(isequal('c'), "abcdc")
+findnext(isequal('c'), "abcdc", 3)
+occursin("world", "hello world")
+startswith(s, prefix)
+endswith(s, suffix)
+strip(s)
+#+END_SRC
+
+regular expression:
+
+#+BEGIN_SRC julia
+occursin(r"^\s*(?:#|$)", "# a comment")
+m = match(r"(a|b)(c)?(d)", "acd")
+m.match
+m.captures
+m.offset
+m.offsets
+
+replace("a", r"." => s"\g<0>1")
+# => "a1"
+#+END_SRC
+
+parse:
+
+#+BEGIN_SRC julia
+parse("123", Int)
+#+END_SRC
+
+** I/O
+IO descriptors
+- Base.stdout
+- Base.stderr
+- Base.stdin
+
+Open file:
+
+#+BEGIN_SRC julia
+open("myfile.txt", "w") do io
+    write(io, "Hello world!")
+end
+#+END_SRC
+
+Read and write:
+- write(io, x)
+- flush(io)
+- read(io, String): read all content
+- read(io, Char): read a char
+- readline(io)
+- readlines(io)
+  - eachline(io): similar to readlines, but this is iterable
+- readuntil(io, delim)
+
+seek and position:
+- position(io): return the current position
+- seek(io, pos): seek to pos
+
+To test IO functions, use =io=IOBuffer("hello world")=
+
+** FS
+In =Base.Filesystem=
+
+walking dir:
+
+#+BEGIN_SRC julia
+readdir("/path/to/dir")
+# => array of filenames and dirnames
+
+for (root, dirs, files) in walkdir(".")
+    println("Directories in $root")
+    for dir in dirs
+        println(joinpath(root, dir)) # path to directories
+    end
+    println("Files in $root")
+    for file in files
+        println(joinpath(root, file)) # path to files
+    end
+end
+
+isdir(path)
+isfile(path)
+#+END_SRC
+
+Modifying:
+#+BEGIN_SRC julia
+mkdir("/path/to/dir")
+mkpath("/this/is/mkdir/-p/")
+cp(src, dst)
+mv(src, dst)
+rm(path)
+touch(path)
+chmod()
+chown()
+#+END_SRC
+
+Tempdir
+#+BEGIN_SRC julia
+mktemp()
+# => (path, io), this is temp file
+
+mktempdir()
+# => path
+#+END_SRC
+
+pathname:
+#+BEGIN_SRC julia
+dirname(path)
+basename(path)
+joinpath(parts...)
+splitpath(path)
+# remove . and ..
+normpath(path)
+expanduser(path)
+#+END_SRC
+
+** random numbers
+
+basic:
+#+BEGIN_SRC julia
+rand()
+# N(0,1)
+randn()
+randstring('a':'z', len=8)
+randperm()
+shuffle()
+seed!(1234)
+#+END_SRC
+
+use a custom generator:
+#+BEGIN_SRC julia
+using Distributions
+dist = MvNormal(11, 1)
+rand(dist, 100)
+#+END_SRC
+
+
+
+
+
+** network
+#+BEGIN_SRC julia
+download(url, localfile)
+#+END_SRC
+
+
+
+
+
+
+
+** Useful functions
+- =sortperm(v)=: Return a permutation vector I that puts v[I] in sorted order.
+- =findfirst(predicate::Function, A)=: Return the index or key of the first
+  element of A for which predicate returns true.
+- =mapreduce(f, op, itrs...; [init])=: Apply function f to each element(s) in
+  itrs, and then reduce the result using the binary function op
+
+intuitive ones:
+- reverse
+- abs
+- median
+
+* Tools
+
 ** profiling
 - manual: https://docs.julialang.org/en/v1/manual/profile/
 - graphical viewer: [[https://github.com/timholy/ProfileView.jl][timholy/ProfileView.jl]]
@@ -44,82 +222,6 @@ Profile.clear()
 
 Profile.print()
 #+END_SRC
-
-
-
-** Julia Libraries
-
-*** Tmp
-- [[https://github.com/timholy/Revise.jl][timholy/Revise.jl]]
-
-*** reference
-- juliastats: https://juliastats.org/
-
-- [[https://github.com/kmsquire/Match.jl][kmsquire/Match.jl]]
-- [[https://github.com/JuliaStats/RDatasets.jl][JuliaStats/RDatasets.jl]]: Interface to the [[https://github.com/vincentarelbundock/Rdatasets][vincentarelbundock/Rdatasets]]
-
-*** ML library
-- [[https://github.com/cstjean/ScikitLearn.jl][cstjean/ScikitLearn.jl]]
-- [[https://github.com/mpastell/LIBSVM.jl][mpastell/LIBSVM.jl]]: Interface to [[https://www.csie.ntu.edu.tw/~cjlin/libsvm/][libsvm]]
-
-*** Optimizers
-- [[https://github.com/JuliaNLSolvers/Optim.jl][Optim.jl]]: optimization
-- [[https://github.com/JuliaOpt/JuMP.jl][JuMP.jl]]: another optimizer with more solvers
-
-*** GPU computing
-
-- CuArrays.jl: https://github.com/JuliaGPU/CuArrays.jl
-- CUDAapi.jl: https://github.com/JuliaGPU/CUDAapi.jl
-- CUDAdrv.jl: https://github.com/JuliaGPU/CUDAdrv.jl
-- CUDAnative.jl: https://github.com/JuliaGPU/CUDAnative.jl
-
-*** Plots
-- [[https://github.com/JuliaPlots/Plots.jl][JuliaPlots/Plots.jl]]
-- [[https://github.com/JuliaPlots/StatsPlots.jl][JuliaPlots/StatsPlots.jl]]
-- [[https://github.com/JuliaPlots/RecipesBase.jl][JuliaPlots/RecipesBase.jl]]
-
-*** Datasets
-- [[https://github.com/JuliaLang/METADATA.jl][METADATA.jl]]: Used for [[https://pkg.julialang.org/docs/][official package registry]]
-- [[https://github.com/FluxML/Metalhead.jl][Metalhead.jl]]: Some vision models and dataset
-- [[https://github.com/JuliaData/DataFrames.jl][DataFrames.jl]]
-
-*** Images
-- [[https://github.com/JuliaGraphics/ColorTypes.jl][ColorTypes.jl]]
-- [[https://github.com/JuliaImages/ImageFiltering.jl][ImageFiltering.jl]]
-- [[https://github.com/JuliaImages/Images.jl][Images.jl]]
-
-colorview, channelview, RGB
-*** Graph
-**** [[https://github.com/JuliaGraphs/LightGraphs.jl][LightGraphs.jl]]
-A great package for
-- just the graph
-- generate different random graphs
-- traversal
-- plotting
-- algorithms:
-  - shortest path
-  - minimum spanning tree
-- distance metrics
-**** [[https://github.com/JuliaGraphs/MetaGraphs.jl][MetaGraphs.jl]]
-LightGraphs with arbitrary data on nodes.
-
-**** [[https://github.com/GiovineItalia/Compose.jl][Compose.jl]]
-
-The racket/pict for Julia.
-
-**** [[https://github.com/IainNZ/GraphLayout.jl][GraphLayout.jl]]
-Alternatives:
-- [[https://github.com/Keno/GraphViz.jl][GraphViz.jl]]
-- [[https://github.com/sisl/TikzGraphs.jl][TikzGraphs.jl]]
-
-
-*** Compiler tools
-- [[https://github.com/MikeInnes/MacroTools.jl][MacroTools.jl]]
-- [[https://github.com/JuliaLang/PackageCompiler.jl][PackageCompiler.jl]]: To remove JIT compile overhead
-
-*** Probablistic packages
-- [[https://github.com/JuliaStats/Distributions.jl][Distributions.jl]]
-- [[https://github.com/JuliaStats/GLM.jl][GLM.jl]] (!!!)
 
 ** Using Pkg
 
@@ -146,14 +248,97 @@ You will see:
 EmacsREPL v0.1.0 [`~/.julia/dev/EmacsREPL`]
 #+END_SRC
 
-** Useful functions
-- =sortperm(v)=: Return a permutation vector I that puts v[I] in sorted order.
-- =findfirst(predicate::Function, A)=: Return the index or key of the first
-  element of A for which predicate returns true.
-- =mapreduce(f, op, itrs...; [init])=: Apply function f to each element(s) in
-  itrs, and then reduce the result using the binary function op
 
-intuitive ones:
-- reverse
-- abs
-- median
+* Third-party Libraries
+
+** Tmp
+- [[https://github.com/timholy/Revise.jl][timholy/Revise.jl]]
+- [[https://github.com/JuliaMath/Interpolations.jl][JuliaMath/Interpolations.jl]]
+- [[https://github.com/JuliaMath/Calculus.jl][JuliaMath/Calculus.jl]]
+
+** web & servers
+- [[https://github.com/JuliaWeb/JuliaWebAPI.jl][JuliaWeb/JuliaWebAPI.jl]]: this is interesting, it wraps a julia function as a
+  remote callable API.
+- [[https://github.com/GenieFramework/Genie.jl][GenieFramework/Genie.jl]]: this is a MVC framework, for building web apps with
+  sophiscated routing. It should work but probably too complex for my purpose.
+- [[https://github.com/JuliaWeb/HTTP.jl][JuliaWeb/HTTP.jl]]: seems to be more mature.
+
+** Static compilation
+[[https://github.com/JuliaLang/PackageCompiler.jl][JuliaLang/PackageCompiler.jl]]: it has two modes:
+- build a sysimage, still requires juila to run, but is faster to start. When
+  running it seems to be a regular julia session.
+- app. This can be run without julia.
+
+** reference
+- juliastats: https://juliastats.org/
+
+- [[https://github.com/kmsquire/Match.jl][kmsquire/Match.jl]]
+- [[https://github.com/JuliaStats/RDatasets.jl][JuliaStats/RDatasets.jl]]: Interface to the [[https://github.com/vincentarelbundock/Rdatasets][vincentarelbundock/Rdatasets]]
+
+** ML library
+- [[https://github.com/cstjean/ScikitLearn.jl][cstjean/ScikitLearn.jl]]
+- [[https://github.com/mpastell/LIBSVM.jl][mpastell/LIBSVM.jl]]: Interface to [[https://www.csie.ntu.edu.tw/~cjlin/libsvm/][libsvm]]
+
+** Data Representation
+- [[https://github.com/JuliaMath/FixedPointNumbers.jl][JuliaMath/FixedPointNumbers.jl]]
+
+** Optimizers
+- [[https://github.com/JuliaNLSolvers/Optim.jl][Optim.jl]]: optimization
+- [[https://github.com/JuliaOpt/JuMP.jl][JuMP.jl]]: another optimizer with more solvers
+- [[https://github.com/JuliaMath/IterativeSolvers.jl][JuliaMath/IterativeSolvers.jl]]: CG method for solving linear equations
+
+** GPU computing
+
+- CuArrays.jl: https://github.com/JuliaGPU/CuArrays.jl
+- CUDAapi.jl: https://github.com/JuliaGPU/CUDAapi.jl
+- CUDAdrv.jl: https://github.com/JuliaGPU/CUDAdrv.jl
+- CUDAnative.jl: https://github.com/JuliaGPU/CUDAnative.jl
+
+** Plots
+- [[https://github.com/JuliaPlots/Plots.jl][JuliaPlots/Plots.jl]]
+- [[https://github.com/JuliaPlots/StatsPlots.jl][JuliaPlots/StatsPlots.jl]]
+- [[https://github.com/JuliaPlots/RecipesBase.jl][JuliaPlots/RecipesBase.jl]]
+
+** Datasets
+- [[https://github.com/JuliaLang/METADATA.jl][METADATA.jl]]: Used for [[https://pkg.julialang.org/docs/][official package registry]]
+- [[https://github.com/FluxML/Metalhead.jl][Metalhead.jl]]: Some vision models and dataset
+- [[https://github.com/JuliaData/DataFrames.jl][DataFrames.jl]]
+
+** Images
+- [[https://github.com/JuliaGraphics/ColorTypes.jl][ColorTypes.jl]]
+- [[https://github.com/JuliaImages/ImageFiltering.jl][ImageFiltering.jl]]
+- [[https://github.com/JuliaImages/Images.jl][Images.jl]]
+
+colorview, channelview, RGB
+** Graph
+*** [[https://github.com/JuliaGraphs/LightGraphs.jl][LightGraphs.jl]]
+A great package for
+- just the graph
+- generate different random graphs
+- traversal
+- plotting
+- algorithms:
+  - shortest path
+  - minimum spanning tree
+- distance metrics
+*** [[https://github.com/JuliaGraphs/MetaGraphs.jl][MetaGraphs.jl]]
+LightGraphs with arbitrary data on nodes.
+
+*** [[https://github.com/GiovineItalia/Compose.jl][Compose.jl]]
+
+The racket/pict for Julia.
+
+*** [[https://github.com/IainNZ/GraphLayout.jl][GraphLayout.jl]]
+Alternatives:
+- [[https://github.com/Keno/GraphViz.jl][GraphViz.jl]]
+- [[https://github.com/sisl/TikzGraphs.jl][TikzGraphs.jl]]
+
+
+** Compiler tools
+- [[https://github.com/MikeInnes/MacroTools.jl][MacroTools.jl]]
+- [[https://github.com/JuliaLang/PackageCompiler.jl][PackageCompiler.jl]]: To remove JIT compile overhead
+
+** Probablistic packages
+- [[https://github.com/JuliaStats/Distributions.jl][Distributions.jl]]
+- [[https://github.com/JuliaStats/GLM.jl][GLM.jl]] (!!!)
+
