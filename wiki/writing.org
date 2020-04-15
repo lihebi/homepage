@@ -166,6 +166,13 @@ bibliography:/home/hebi/github/bibliography/hebi/tools.bib
 
 It remains to be seen how to put a set of default bib file instead of specifying this ugly file.
 
+I can use =hebi-gen-bib= to generate a =bibliography:xxx= for used
+citations. Then, in generated =.tex= file, execute =tex-bibtex-file= to generate
+bib cache. Then, regenerate pdf will have citations.
+
+To export the used citations to a separate bib file, remove the
+=bibliography:xxx= line and run =org-ref-extract-bibtex-to-file=.
+
 *** Latex Exporting
 **** doc class & options
 
