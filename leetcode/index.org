@@ -329,6 +329,34 @@ def test():
     Solution().maxProfit(100, l)
 #+END_SRC
 
+*** FROM take 1 TO how many to take
+[[https://leetcode.com/problems/pizza-with-3n-slices/][1388. Pizza With 3n Slices]]
+
+
+From [[https://leetcode.com/problems/pizza-with-3n-slices/discuss/546474/Python-Robber-n3-Houses-in-Cycle][this post]].  The trick is, not thinking about the process of taking slices,
+but the process of how many slices *to take*. Here, dp(i,j,k) means from i to j,
+take k slices, what's the max. There are some additional tricks for this problem:
+
+1. use a invalid condition. The invalid condition is =j - i + 1 < k * 2 - 1=,
+   =k*2= instead of =k*3=, because we can pick every 2 nodes without problems.
+2. the initial is cycle, the that is indicated by cycle variable. Only the
+   initial one is 1, all other are non-cycles (i.e. i and j can be taken at the
+   same time)
+3. we only have two branches, to take j or not
+
+#+BEGIN_SRC python
+class Solution:
+    def maxSizeSlices(self, A):
+        def dp(i, j, k, cycle=0):
+            if k == 1: return max(A[i:j + 1])
+            if j - i + 1 < k * 2 - 1: return -float('inf')
+            return max(dp(i + cycle, j - 2, k - 1) + A[j], dp(i, j - 1, k))
+        return dp(0, len(A) - 1, len(A) // 3, 1)
+#+END_SRC
+
+
+
+
 *** Other (easy) DP problems
 
 **** [[https://leetcode.com/problems/number-of-music-playlists/][(920) number of playlists]]
@@ -368,6 +396,42 @@ Solution().numMusicPlaylists(1,1,0)  # 1
 Solution().numMusicPlaylists(16, 16, 4)  # 789741546
 Solution().numMusicPlaylists(25, 28, 5)  # 906368459
 #+END_SRC
+
+**** [[https://leetcode.com/contest/biweekly-contest-22/problems/cinema-seat-allocation/][1386. Cinema Seat Allocation]]
+
+This is not hard but worth looking at:
+1. use 1<<c trick to mark the position
+2. use dictionary to record dp solutions
+3. for each key not listed, simply +2 for the final solution, to save
+   computation instead of putting inside loop
+
+#+BEGIN_SRC python
+class Solution:
+    def maxNumberOfFamilies(self, n: int, reservedSeats: List[List[int]]) -> int:
+        # 1. sort reserved seats (index by row index)
+        groups = defaultdict(lambda:[])
+        for (row, col) in seats:
+            groups[row].append(col)
+        def foo(cols):
+            # 2. calculate: a. (2,3), (4,5), (6,7), (8,9)
+            gene = sum([1 << col for col in cols])
+            one = sum(1<<c for c in [2,3,4,5])
+            two = sum(1<<c for c in [4,5,6,7])
+            three = sum(1<<c for c in [6,7,8,9])
+            a = gene & one == 0
+            b = gene & two == 0
+            c = gene & three == 0
+            if a and c: return 2
+            elif a or b or c: return 1
+            else: return 0
+        res = 0
+        for key in groups:
+            res += foo(groups[key])
+        # for all other, +2
+        return res + (n - len(groups)) * 2
+#+END_SRC
+
+
 
 
 ** TODO [[https://leetcode.com/tag/recursion/][recursion]]
@@ -878,7 +942,7 @@ current engineer).
 Then, swap out the lowest speed with current engineer. Record the max result
 each time.
 
-Another point is keep an eye on the =heapq= python library.
+Another point is keep an eye on the [[https://docs.python.org/3.8/library/heapq.html][heapq]] python library.
 
 #+BEGIN_SRC python
 import heapq
@@ -900,4 +964,19 @@ class Solution:
         return result % (10 ** 9 + 7)
 #+END_SRC
 
+
+** [[https://leetcode.com/problems/longest-happy-prefix/][1392. Longest Happy Prefix]]
+This seems to be just KMP (TODO).
+
+An interesting hashing solution in [[https://leetcode.com/problems/longest-happy-prefix/discuss/547237/Python-Rolling-Hash][this post]]:
+
+#+BEGIN_SRC python
+def longestPrefix(self, s):
+    res, l, r, mod = 0, 0, 0, 10**9 + 7
+    for i in xrange(len(s) - 1):
+        l = (l * 128 + ord(s[i])) % mod
+        r = (r + pow(128, i, mod) * ord(s[~i])) % mod
+        if l == r: res = i + 1
+    return s[:res]
+#+END_SRC
 
