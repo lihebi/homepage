@@ -7,8 +7,8 @@
 # - or my plan-B for lisp
 
 #+begin_quote
-Bisp is a lisp, with a little less parenthesis, infix/postfix-notation when
-it makes sense, Julia-like optional static typing and multi-dispatching.
+Bisp is a typed lisp, with a little less parenthesis, infix/postfix-notation
+when it makes sense, Julia-like optional static typing and multi-dispatching.
 #+end_quote
 
 

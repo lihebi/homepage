@@ -501,6 +501,9 @@ Some of the useful commands:
 
 * Racket
 ** Basic
+*** evaluation model
+To get the "ID" of an object, use =eq-hash-code=.
+
 *** Local binding
 The local binding is established by =let= family. Apart from normal
 =let=, racket has a second form, known as *named let*.
@@ -2310,6 +2313,10 @@ and close the port on return. The connect is a procedure,
 e.g. =get-pure-port=.
 
 
+
+*** Parsec
+- https://docs.racket-lang.org/megaparsack/index.html
+- https://docs.racket-lang.org/parsack/index.html
 
 * Common Lisp
 

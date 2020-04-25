@@ -13,6 +13,11 @@ This would not work in Emacs. You need to start emacs, according to [[https://mo
 LC_CTYPE="zh_CN.UTF-8" emacs
 #+end_example
 
+** SwitchyOmega
+- default: socks5, localhost, 1088
+- http: http, localhost, 8888
+- https: http, localhost, 8888
+
 ** RedmiBook wifi Atheros QCA6174 driver
 
 Actually [[https://askubuntu.com/questions/607707/ath10k-installation][this post]] solved my problem. You need:
