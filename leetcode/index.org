@@ -359,6 +359,41 @@ class Solution:
 
 *** Other (easy) DP problems
 
+**** (5391) build-array-where-you-can-find-the-maximum-exactly-k-comparisons
+https://leetcode-cn.com/contest/weekly-contest-185/problems/build-array-where-you-can-find-the-maximum-exactly-k-comparisons/
+
+The problem is straight forward. I was using peak position and peak value
+formulation, and it turned out to be complicated. A simpler "prev" just works.
+
+Some tricks:
+- the =lru_cache(None)= is really magick for speeding up
+
+
+#+BEGIN_SRC python
+# by minz-2 
+from functools import lru_cache
+class Solution:
+    def numOfArrays(self, n: int, m: int, k: int) -> int:
+        return dp(-1, n, m, k)
+
+@lru_cache(None)
+def dp(prev, n, m, k):
+    mod = 10**9+7
+    if n == 0:
+        if k == 0: return 1
+        else: return 0
+    if k < 0: return 0
+    res = 0
+    for mi in range(1,m+1):
+        if prev >= mi:
+            res += dp(prev, n-1, m, k)
+        else:
+            res += dp(mi, n-1, m, k-1)
+    return res % mod
+#+END_SRC
+
+
+
 **** [[https://leetcode.com/problems/number-of-music-playlists/][(920) number of playlists]]
 
 The second requirement is ambigious. Other than that, the DP equation is pretty
