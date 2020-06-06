@@ -14,6 +14,19 @@
 - =search()= see the list of loaded packages.
 - =install.packages()= and =update.packages()= install and update packages.
 
+If a library is "not available", you probably should add the repository:
+
+- =setRepositories()= and select something like =bioc*= or =R-Forge=. If that
+  still doesn't work, you can download and install from source:
+
+#+BEGIN_SRC R
+install.packages("/path/to/file.tar.gz", repos=NULL)
+#+END_SRC
+
+But seems that you need to install the dependencies manually.
+
+
+
 *** Emacs ESS
 To start ESS session, run command =S=.
 ESS will create a command interface as a buffer.

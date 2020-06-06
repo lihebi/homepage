@@ -1,5 +1,9 @@
 #+TITLE: Julia
 
+* Random tricks
+
+- =collect(Set(1,2))= returns Array
+
 * Julia Lang
 ** Macros
 Julia macros are hygienic:
@@ -269,6 +273,38 @@ EmacsREPL v0.1.0 [`~/.julia/dev/EmacsREPL`]
   running it seems to be a regular julia session.
 - app. This can be run without julia.
 
+I'm interested in the sysimage one. Specifically, you can do this:
+
+#+BEGIN_SRC julia
+create_sysimage([:CuArrays, :Zygote,
+                 :Distributions,
+                 :LightGraphs, :MetaGraphs,
+                 :CSV, :Plots, :DataFrames, :HDF5,
+                 :TensorOperations],
+                sysimage_path="myimage.so",
+                replace_default=true)
+#+END_SRC
+
+
+And start =julia= like this:
+
+#+begin_example
+julia --sysimage myimage.so
+#+end_example
+
+The =replace_default= argument, if set to =true=, will replace julia's default
+image, thus you don't need to specify the sysimage anymore. To restore to
+default, use
+
+#+BEGIN_SRC julia
+restore_default_sysimage()
+#+END_SRC
+
+
+
+
+It seems also possible to precompile only some functions.
+
 ** reference
 - juliastats: https://juliastats.org/
 
@@ -276,8 +312,12 @@ EmacsREPL v0.1.0 [`~/.julia/dev/EmacsREPL`]
 - [[https://github.com/JuliaStats/RDatasets.jl][JuliaStats/RDatasets.jl]]: Interface to the [[https://github.com/vincentarelbundock/Rdatasets][vincentarelbundock/Rdatasets]]
 
 ** ML library
-- [[https://github.com/cstjean/ScikitLearn.jl][cstjean/ScikitLearn.jl]]
 - [[https://github.com/mpastell/LIBSVM.jl][mpastell/LIBSVM.jl]]: Interface to [[https://www.csie.ntu.edu.tw/~cjlin/libsvm/][libsvm]]
+
+- [[https://github.com/willtebbutt/Stheno.jl][willtebbutt/Stheno.jl]]: Gaussian Process
+- [[https://github.com/STOR-i/GaussianProcesses.jl][STOR-i/GaussianProcesses.jl]]: Gaussian Process
+- [[https://github.com/alan-turing-institute/MLJ.jl][alan-turing-institute/MLJ.jl]]
+*** TODO [[https://github.com/cstjean/ScikitLearn.jl][cstjean/ScikitLearn.jl]]
 
 ** Data Representation
 - [[https://github.com/JuliaMath/FixedPointNumbers.jl][JuliaMath/FixedPointNumbers.jl]]
@@ -302,7 +342,70 @@ EmacsREPL v0.1.0 [`~/.julia/dev/EmacsREPL`]
 ** Datasets
 - [[https://github.com/JuliaLang/METADATA.jl][METADATA.jl]]: Used for [[https://pkg.julialang.org/docs/][official package registry]]
 - [[https://github.com/FluxML/Metalhead.jl][Metalhead.jl]]: Some vision models and dataset
-- [[https://github.com/JuliaData/DataFrames.jl][DataFrames.jl]]
+- [[https://github.com/JuliaIO/HDF5.jl][JuliaIO/HDF5.jl]]
+
+*** [[https://github.com/JuliaData/DataFrames.jl][DataFrames.jl]]
+This is actually pretty easy to use.
+
+Construction:
+#+BEGIN_SRC julia
+df = DataFrame(A = 1:4, B = ["M", "F", "F", "M"])
+#+END_SRC
+
+Colum-by-column construction:
+#+BEGIN_SRC julia
+df = DataFrame()
+df.A = 1:8
+df.B = ["M", "F", "F", "M", "F", "M", "M", "F"]
+#+END_SRC
+
+Row-by-row construction:
+#+BEGIN_SRC julia
+df = DataFrame(A = Int[], B = String[])
+push!(df, (1, "M"))
+push!(df, [2, "N"])
+push!(df, Dict(:B => "F", :A => 3))
+#+END_SRC
+
+Data can be accessed using dot-notation. e.g. =df.A=. You can also pass selector
+expressions to filter data out.
+
+#+BEGIN_SRC julia
+df[df.A .> 1, :]
+#+END_SRC
+
+sorting:
+#+BEGIN_SRC julia
+sort(df, [:A, :B])
+#+END_SRC
+
+
+
+
+
+*** [[https://github.com/JuliaData/CSV.jl][CSV.jl]]
+Reading
+
+=CSV.read()= reads a file into data frames. The columns can be accessed using
+=$= syntax.
+
+#+BEGIN_SRC julia
+df = CSV.read(fname)
+df$a
+df$b
+#+END_SRC
+
+=CSV.Rows()= returns, well, =CSV.Rows=, you can access the column by =dot= notation.
+
+#+BEGIN_SRC julia
+for row in CSV.Rows(fname)
+    @show row.a row.b
+end
+#+END_SRC
+
+Writing. =CSV.write(fname, table)=. The interface seems to be [[https://github.com/JuliaData/Tables.jl][Tables.jl]]. It
+could be just =DataFrame=.
+
 
 ** Images
 - [[https://github.com/JuliaGraphics/ColorTypes.jl][ColorTypes.jl]]
@@ -334,9 +437,19 @@ Alternatives:
 - [[https://github.com/sisl/TikzGraphs.jl][TikzGraphs.jl]]
 
 
-** Compiler tools
+** Language & Compiler tools
 - [[https://github.com/MikeInnes/MacroTools.jl][MacroTools.jl]]
-- [[https://github.com/JuliaLang/PackageCompiler.jl][PackageCompiler.jl]]: To remove JIT compile overhead
+- [[https://github.com/kmsquire/Match.jl][kmsquire/Match.jl]]
+- [[https://github.com/SciML/RecursiveArrayTools.jl][SciML/RecursiveArrayTools.jl]]: this is to solve array of array
+  problem. Specifically, the splitting syntax in =cat= can cause stack overflow
+  if the array is to large. Some discussions:
+  - [[https://stackoverflow.com/questions/47021821/julia-flattening-array-of-array-tuples][stack overflow link]]
+  - [[https://stackoverflow.com/questions/37476815/julia-converting-vector-of-arrays-to-array-for-arbitrary-dimensions/37488453#37488453][stack overflow link]]
+  - [[https://stackoverflow.com/questions/28539382/julia-is-slow-with-cat-command][stack overflow link]]
+  - [[https://github.com/JuliaLang/julia/issues/21672][github issue]]
+  - or iterator.flatten may work
+    - =collect(Iterators.flatten([[1, 2, 3], [4, 5, 6]]))=
+
 
 ** Probablistic packages
 - [[https://github.com/JuliaStats/Distributions.jl][Distributions.jl]]

@@ -812,6 +812,18 @@ Some interesting APIs that don't have counterparts:
 - =Path.parts= gives a list of string
 
 *** TODO tempfile
+- =mkstemp= creates temp file, but this file is opened. The return value is the
+  file descriptor (int) of the opened file, the same as that gets returned by
+  =os.open=, thus not easy to work with
+- =mkdtemp= creates temp dir. I would just use this when creating temporary files.
+
+#+BEGIN_SRC python
+folder = tempfile.mkdtemp()
+fd, fname = tempfile.mkstemp()
+#+END_SRC
+
+
+
 
 ** unittest
 
