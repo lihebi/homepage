@@ -46,6 +46,125 @@ produced, but as lines spend.
 You can't get to the moon by piling up chairs.
 #+END_QUOTE
 
+
+* Chinese
+
+张一鸣 in [[https://www.youtube.com/watch?v=LnvUU3kAioI&t=45s][an interview]]
+
+#+begin_quote
+CEO做决断的话，那么我觉得你至少要做到不要让大家不敢说话，不然你就没有信息吸收了。
+理想情况下，你可能能够让，不仅你自己有学习机会和试错成本，你可以把这个机会和成本
+分摊给团队成员，让他们也有学习机会和试错成本，让他们能做更多决断。
+#+end_quote
+
+In [[https://www.youtube.com/watch?v=_PufBTmWbc8][another interview]]:
+
+#+begin_quote
+如果你的效率比对手高很多的话，其实通过单纯的烧钱能产生的竞争力是很小的。规模越大，
+亏损越大。所以无论是烧钱还是不烧钱，都应该在效率的前提之下。
+#+end_quote
+
+from an investor:
+#+begin_quote
+他的心和表是一致的，所以呢，对于合作伙伴，对于投资人，都是一样的看法，大家都认为
+一鸣说的,说什么就是什么。那么让这些东西都是表里如一的，这对于投资人是非常非常重
+要的。
+#+end_quote
+
+沈南鹏 in [[https://www.youtube.com/watch?v=ibihbj8zVD8][an interview]] and it's 红杉's investing principle:
+
+#+begin_quote
+我们希望做一个高成长的企业，他的最早和最重要的投资人。
+#+end_quote
+
+in [[https://www.youtube.com/watch?v=JF1DMJzTt_k][another interview]]:
+
+#+begin_quote
+投资，在早期，更多的是艺术，不是科学，不是数据。八年以前，有多少人中午晚上吃外卖
+的，多少人现在会去吃外卖，现在很多餐厅自己都在做外卖。什么叫艺术呢？就是你对这个
+行业的想象力。你说这个团购行业有多大，咱们能不能量化一下，是两百亿呢还是两千亿呢，
+还是两万亿？我感觉在当时你还真的很难去把它量化。
+#+end_quote
+
+马东 in [[https://www.youtube.com/watch?v=s8MtzIeeozs][an interview]]
+#+begin_quote
+焦虑是常态，如果焦虑是人生的底色，那每一个阶段焦虑的东西不太一样，不是一个很享受
+的事吗，总比你一辈焦虑一件事要舒服一点吧
+#+end_quote
+
+he says it is from 陈丹青:
+#+begin_quote
+有的人到35岁以后，就不喜欢年轻人了，那这样的人就是老人;有的人到了70岁还喜欢年轻
+人，那这样的人就是年轻人。
+#+end_quote
+
+胡玮炜 in [[https://www.youtube.com/watch?v=jpYSBo1vLdA][an interview]]:
+
+#+begin_quote
+连总理都说，这个时代，不是大鱼吃小鱼，而是快鱼吃慢鱼，你的生存的本能让你跑得非常
+非常快。
+#+end_quote
+
+#+begin_quote
+不是说有两大悲剧吗，一个是你永远都实现不了你想要实现的，一个是你已经实现了你想要
+实现的。
+#+end_quote
+
+米雯娟 in [[https://www.youtube.com/watch?v=gyNflShy2nQ][an interview]]:
+
+#+begin_quote
+数学课上经常看英语书，然后看科幻世界，数学老师把我的书都撕掉了，然后扔到我脸上，
+然后说你给我滚出去，你是全世界最差的学生。我后来想了想那个老师其实也挺无奈的，他
+也很想帮助每个孩子，但是他没有这样的精力，和所谓的这样一个工具。
+#+end_quote
+
+#+begin_quote
+女性会给自己铁标签，就像胖子会觉得自己很胖，没信心，我从小就很胖，所以我是个胖子；
+我原来这个高中没读完对吧，辍学这也是个标签。其实我觉得更多的是，我们自己不要给自
+己贴标签，不要给自己设一个局限。可能创业这个事情，的确是有很大的冒险，运气成分在，
+真正去做且做成的人，可能他们都需要一些共同的特质，这个特质其实不一定是男女的区别。
+#+end_quote
+
+#+begin_quote
+我未来的梦想是可以去帮助成千上万的小朋友，更好的学习和成长，然后这个事情没有头。
+我们团队里面经常自己讲说，今天做到了几分，如果满分是一百分的话，我们觉得只做到了
+一分。
+#+end_quote
+
+戴琨 in [[https://www.youtube.com/watch?v=44tq84K9tdA][an interview]]:
+
+#+begin_quote
+德州扑克里面其实最关键的问题就是，你其实真真正正你可能打二十把，能赢钱的就那两把。
+就15分钟。这15分钟你是不是把注打够了。当你只有一点点的chips的时候，你如果不下注，
+你光打底就死了。那在这个时候呢，我觉得是搏大的。就是需要在有胜算的时候all in进去。
+我们在第6个月的时候，账面上就剩两三百万美元了。但是到那个位置了你不可能停下来嘛。
+你补了5个月，你停下来，你不就证明自己错了吗。于情于理死撑也得撑着。晚上睡不着觉
+我就不睡，我就起来跑步，我去跑一个小时，跑到筋疲力尽，我可以把自己累晕过去，但是
+我在这种状态下我会保证一个好的睡眠。
+#+end_quote
+
+by the interviewer himself:
+
+#+begin_quote
+百人以下的公司靠愿景，一千人的团队靠规章制度，一万人的公司靠文化。
+#+end_quote
+
+汪建国 in [[https://www.youtube.com/watch?v=8jM54v5EqK8][an interview]]:
+
+#+begin_quote
+人的成长过程中会有瓶颈，企业发展过程中会有瓶颈。解决瓶颈的唯一办法实际上是放弃。
+这个时候你就像一个抛物线，当你意识到你已经走向了抛物线的顶端的时候，应该大胆去寻
+找第二条抛物线。
+#+end_quote
+
+韩坤 in [[https://www.youtube.com/watch?v=zNJ32_iYWcA][an interview]]:
+#+begin_quote
+每一个创业者，每一天都是非常焦虑的，我们特别担心我们在这里高高兴兴的在数我们用户
+有多少的时候，旁边有几个特别牛的人，在一个小屋子里面，正在思考怎么来去超越你。那
+我希望那个小屋子里的人全部都是我们的人，这样才能降低我们的焦虑。
+#+end_quote
+
+
 * Education
 
 Michael Seibel
