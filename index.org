@@ -51,12 +51,29 @@ Spring 2018 - Present
 # Square Bracket Close ]
 #+MACRO: BC @@latex:\char93@@@@html:&#93;@@
 
+*Li, Hebi*, Qi Xiao, and Jin Tian. 
+"*Supervised Whole DAG Causal Discovery*."  arXiv preprint arXiv:2006.04697
+(2020).
+
+[[https://arxiv.org/abs/2006.04697][{{{BO}}}arXiv{{{BC}}}]]
+[[https://arxiv.org/pdf/2006.04697.pdf][{{{BO}}}pdf{{{BC}}}]]
+[[https://github.com/lihebi/DAG-EQ][{{{BO}}}code{{{BC}}}]]
+
+Bao, Forrest Sheng, *Hebi Li*, Ge Luo, Cen Chen, Yinfei Yang, and Minghui Qiu.
+"*End-to-end Semantics-based Summary Quality Assessment for Single-document
+Summarization*." arXiv preprint arXiv:2005.06377 (2020).
+
+[[https://arxiv.org/abs/2005.06377][{{{BO}}}arXiv{{{BC}}}]]
+[[https://arxiv.org/pdf/2005.06377.pdf][{{{BO}}}pdf{{{BC}}}]]
+
+*Li, Hebi*, Qi Xiao, Shixin Tian, and Jin Tian.
+"*Purifying Adversarial Perturbation with Adversarially Trained Auto-encoders*."
+arXiv preprint arXiv:1905.10729 (2019).
+
 [[https://arxiv.org/abs/1905.10729][{{{BO}}}arXiv{{{BC}}}]]
 [[https://arxiv.org/pdf/1905.10729.pdf][{{{BO}}}pdf{{{BC}}}]]
 [[https://github.com/lihebi/AdvAE][{{{BO}}}code{{{BC}}}]]
-Li, Hebi, Qi Xiao, Shixin Tian, and Jin Tian. "Purifying Adversarial
-Perturbation with Adversarially Trained Auto-encoders." arXiv preprint
-arXiv:1905.10729 (2019).
+
 
 ** Program Analysis
 
