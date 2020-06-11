@@ -1,0 +1,6 @@
+#+TITLE: Startup
+
+#+begin_quote
+世界如此之新，一切尚未命名
+#+end_quote
+

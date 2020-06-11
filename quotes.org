@@ -164,6 +164,42 @@ by the interviewer himself:
 我希望那个小屋子里的人全部都是我们的人，这样才能降低我们的焦虑。
 #+end_quote
 
+周鸿祎 in [[https://www.youtube.com/watch?v=N66EQp59w90&list=PLrybf3rp9BTv77LrkACe-1QH8A7GsLrra&index=23][an interview]]:
+#+begin_quote
+其实勇士和懦夫在战场上都会感到恐惧，唯一的差别就是勇士能控制这种恐惧，不要让恐惧
+控制你。
+#+end_quote
+
+曹德旺 in [[https://youtu.be/XBbybKpz6Go][《十年二十人》]]:
+# #+begin_quote
+# 一个成功的企业家必须有四个自信.
+# #+end_quote
+
+#+begin_quote
+商道倡导的就是义利兼济。义就是勇于挑战天下，勇于承担责任，勇于挑战未来，作有责任
+的企业家。做完了，你不要忘记你要赚钱，因为你是做生意的，商道。你义做得很好，利我
+没有关照到，没有后劲了你也活不下去。因此它倡导的是义利相济，这就是信仰。
+#+end_quote
+
+程维 in [[https://youtu.be/A2YV8_8nL1U][《十年二十人》]]:
+
+#+begin_quote
+努力到无能为力，上天就会给你开一扇窗
+#+end_quote
+
+[[http://about.sinosig.com/common/about_sinosig/html/wenhua.shtml][阳光五十字箴言]]:
+
+#+begin_quote
+集众家之长 取自我之道
+
+聚业内人才 纳业外贤士
+
+高起点组建 远战略发展
+
+风雨中做事 阳光下做人
+
+走精英之路 创阳光品牌
+#+end_quote
 
 * Education
 

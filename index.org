@@ -14,9 +14,9 @@ and so miss the moon. --- a 1956 letter from Maugham
 #+end_quote
 
 
-#+begin_quote
-Do the right thing, in the right way.
-#+end_quote
+# #+begin_quote
+# Do the right thing, in the right way.
+# #+end_quote
 
 # *@@html:<font color = "red">@@
 # If you like collaboration, please do NOT collaborate with me.
@@ -181,6 +181,8 @@ great minds.
 * Misc
 
 - [[file:vehicle.org][vehicle]]
+- [[file:startup.org][startup]]
+- [[file:leetcode/index.org][leetcode notes]]
 
 I run full marathon in [[file:assets/finisher_certificate_2017.pdf][2017 (4h
  35m) (pdf)]], [[file:assets/finisher_certificate_2018.pdf][2018 (4h 59m)
@@ -188,8 +190,6 @@ I run full marathon in [[file:assets/finisher_certificate_2017.pdf][2017 (4h
  (pdf)]].
 
 The site has a full [[file:sitemap.org][site-map]].
-
-[[file:leetcode/index.org][leetcode notes]]
 
 # #+BEGIN_CENTER
 # #+ATTR_HTML: :width 200px
