@@ -6,11 +6,16 @@
 
 #+TOC: headlines
 
-#+begin_quote
-# so busy yearning for the moon that he never saw the sixpence at his feet
+# #+begin_quote
+# # so busy yearning for the moon that he never saw the sixpence at his feet
 
-If you look on the ground in search of a sixpence, you don't look up,
-and so miss the moon. --- a 1956 letter from Maugham
+# If you look on the ground in search of a sixpence, you don't look up,
+# and so miss the moon. --- a 1956 letter from Maugham
+# #+end_quote
+
+#+begin_quote
+Two possibilities exist: either we are alone in the Universe or we are not. Both
+are equally terrifying.  --- Arthur C. Clarke
 #+end_quote
 
 
@@ -33,6 +38,10 @@ My research interests:
 - Artificial Intelligence
 - Operating System
 - Embedded system
+
+# My current entrepreneur goal: free human from repetitive work, by automating it.
+
+# My moon-shot goal: one-way trip to the deep Universe.
 
 Links:
 - [[file:hn.org][My favorite HN articles]]
