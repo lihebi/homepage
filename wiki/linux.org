@@ -1,6 +1,13 @@
 #+TITLE: Linux
 
 * Tmp
+** git checkout from multiple remotes
+From [[https://stackoverflow.com/questions/1783405/how-do-i-check-out-a-remote-git-branch][this stack-overflow question]]:
+
+#+begin_example
+git checkout -b test other-remote/test
+#+end_example
+
 ** chinese input method
 
 In ubuntu, you install =ibus-pinyin= and run =ibus-setup=, run =ibus restart=,
@@ -2008,6 +2015,30 @@ some random settings in =xstartup=:
 #+END_EXAMPLE
 
 
+*** enable service
+From [[https://wiki.archlinux.org/index.php/TigerVNC][this reference on archwiki]], add =/etc/systemd/system/vncserver@.service=:
+
+#+begin_example conf
+[Unit]
+Description=Remote desktop service (VNC)
+After=syslog.target network.target
+
+[Service]
+Type=forking
+User=foo
+WorkingDirectory=/home/foo
+ExecStartPre=/bin/sh -c '/usr/bin/vncserver -kill %i > /dev/null 2>&1 || :'
+ExecStart=/usr/bin/vncserver %i -geometry 1440x900 -alwaysshared
+ExecStop=/usr/bin/vncserver -kill %i
+
+[Install]
+WantedBy=multi-user.target
+#+end_example
+
+Change the user name accordingly. When using tigervnc, I intend to leave
+geometry unspecified, and the client and server seems to be able to change that
+dynamically, which is super nice. On Ubuntu, the server must have =-localhost
+no= option.
 
 * System Management
 The hardware beep sound is known as PC Speaker. To disable, simply
