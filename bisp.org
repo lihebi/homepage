@@ -11,8 +11,71 @@ Bisp is a typed lisp, with a little less parenthesis, infix/postfix-notation
 when it makes sense, Julia-like optional static typing and multi-dispatching.
 #+end_quote
 
+* Zen
 
-* Rationale
+** The essense of programming
+The most important 4 aspects of programming in my opinion are:
+1. awareness of purely functional programming, i.e. write side effect free
+   functions
+2. interactive development driven by REPL
+3. multiple dispatch. The gradual typing is useful for annotation purpose as
+   well as enabling multiple dispatching, and typing should be annotated
+   natually, right after the variable and inside function def (instead of before
+   as in typed racket)
+4. syntactic abstraction in the form of DSLs. The zen of Python states that
+   there should be one way to do one thing, the obvious way. Well, that way is
+   the best language for the domain, which is not very obvious to support in Python.
+
+I didn't write serious Haskell and OCaml, but I did not find that sophisticated
+typing very necessary, and Monads and Lazyness did not manifest loud enough to me.
+
+1 and 2 are operational techniques, while 3 and 4 are features of
+language. Although almost all new languages provide meta-programming (the basic
+of syntactic abstraction) of varing levels, racket provides the most
+comprehensive syntactic abstraction toolkit, far beyond all others, and I think
+it is not very possible to achieve the same level of support on non-lispy
+languages. E.g. it is not very natural to create DSLs using Julia.
+
+However, racket does not have proper and natural multiple dispatch. The
+Haskell-style typing annotation in [[https://docs.racket-lang.org/ts-reference/index.html][typed racket]] is not as natural, the typing
+did not appear at the best location. The [[https://docs.racket-lang.org/reference/struct-generics.html][racket/generics]] library provides single
+dispatch, and the usage is quite cumbersome: users should just define the
+function without worrying about the gen:XXX interface and fallback
+implementation staff. The [[https://docs.racket-lang.org/multimethod/index.html][multimethod]] package has multiple dispatch. However,
+the typing annotation is even weirder, and there's no proper typing system and
+dispatching strategy in this little package.
+
+Modern languages all have a proper module system. However, all languages are
+based on files, except the [[https://www.unisonweb.org/][unison]] language. But the hash is not too useful other
+than the fact that the renaming is painless. OK, back to the module and file, my
+core idea is that there should not be file at all! And making the module and
+file system collaborate is most likely the most confusing thing in a language's
+module system. In BISP, you just write function defs under some module
+namespace. One of the reason for uisng a file system was that Unix has it, and
+there's only one way to write code: to open a file in an (CMD-based) text
+editor. BISP will provide some better way to write your program, a visual way
+with some features such as proper server/client separation. Another issue is
+that inside a file, existing languages typically do not distinguish internal
+functions and external APIs very well. Not to say that I want a system that have
+(HEBI: internal helper functions and APIs at arbitrary granularity).
+
+# This design also allows the seamless integration of code and document: you no
+# longer need to write a separate document file, or use javadoc in comment string,
+# it is a doc block associated with whatever granularity you want.
+
+One more thing, I would love to use BISP on microcontrollers too. This would
+require some thinking regarding racket's backend to satisfy the small memory
+footprint as well as a proper and native REPL and front-end interface, the bisp
+notebook maybe?. Besides microcontrollers, I would want to extend the usage
+landscape to all low-level scenarios, e.g. the once used to be C, to remove the
+\#ifdefs (i.e. ir-elegant machine-dependence check) and \#defines
+(i.e. macros-done-wrong).
+
+If everything goes well, I should provide a (HEBI: serverless cloud computing
+infra)! To abstract over the OS/VM/container and language runtime.
+
+
+** Rationale
 
 Parenthesis is a good thing, as always, because:
 - easy to parse, thus easy for syntax extension
@@ -92,7 +155,7 @@ afore-mentioned cons.
 # - *multi-dispatch generic methods*, by default
 
 
-* Implementation
+** Implementation
 The semantic is mostly identical to that of Julia. Thus, it is probably best to
 implement the syntax atop Julia or Julia's IR.
 
@@ -116,6 +179,34 @@ In summary, implementing Bisp on top of Julia gives:
 - Julia's JIT compiler, optimization, LLVM backend provides a solid performance
   fundation.
 - access to all those Julia libraries, thus this might be the first lisp-for-statistics
+
+*** UPDATE 1
+
+I found syntactic abstraction harder to reimplement than multiple dispatch, thus
+it seems quite easy to implement the rough BISP on top of racket, and I should
+be able to use all racket's amazing libraries. However, naive multiple
+dispatching might produce inefficient code, thus I probably need to look into
+optimization at some point.
+
+And I still want to use Julia's library and all other language's libraries. But
+instead of native foreign function interface, I prefer something that I coined
+(HEBI: "source-level FFI"). This is a HUGE idea. For Julia, I will need to
+implement a syntactic expander for Julia's macros, and a Julia syntac
+transformer to load Julia's code directly into racket. Julia code might make
+base library calls or C FFIs. In this case, I would need to map Julia base
+library call to racket, and make corresponding C native FFI. I'm not sure how
+possible it is to map the entire Julia base library.
+
+Actually, I don't need to really implement the subtyping and union type.  That
+is needed, but not urgently useful, I can live without it for now.  This will
+make the dispatching much simpler, because the ordering of methods based on
+specificity is easier, I just need to order all custom types before non-typed
+ones. And I need to properly mix the primitive types and user-defined
+types. Most likely I need to have a wrapper name (via syntax) for each of the
+primitive types. See https://docs.racket-lang.org/ts-reference/type-ref.html for
+a list.
+
+Importantly, the struct field access should be converted to generic methods.
 
 
 * The Language
