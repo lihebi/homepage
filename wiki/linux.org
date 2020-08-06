@@ -38,95 +38,6 @@ I was about to help [[https://bbs.deepin.org/forum.php?mod=viewthread&tid=184723
 because of newly created account. This is stupid, this probably won't come back
 to my mind.
 
-** expose local machine without public IP
-Tunneling services (Dynamic DNS service):
-- https://ngrok.com/: this does not seem to work without a proxy on both local
-  server and client
-  - 1.X source code: https://github.com/inconshreveable/ngrok
-- https://www.noip.com/
-- DynDNS https://account.dyn.com, no free account, not obvious pricing model
-
-I'm not sure if the speed or stability of these international providers. For
-chinese providers:
-
-- https://www.aliyun.com/product/dns
-- https://hsk.oray.com/
-
-Some other chinese providers:
-- https://natapp.cn/: 基于ngrok的国内内网穿透服务
-- http://ngrok.ciqiuwl.cn/: 小米球ngrok
-- https://www.natfrp.com/: a free frc service provider
-  - This looks very good. You basically choose a server on their console, and
-    run local client and choose the same console.
-
-
-However, I'm not sure the performance of all these models. All traffic has to go
-through public server? The public server should really just act as a lookup service.
-
-But even though I got assigned a public IP, all the ports do not seem to be
-open. Thus, even if the DDNS services got the IP correct and up-to-date, that is
-not supposed to work still.
-
-UPDATE: actually china mobile did not assign me a public IP. The IP seen on my
-router is 100.99.240.168, while my public IP in whatismyipaddress and is ip138
-is 36.161.131.36. Thus, I don't even has a public IP, not to say a statis public IP.
-
-They must be doing tunneling and traffic forwarding.
-
-*** VPN solutions
-I found OpenVPN rather business oriented.
-
-*** SSH tunneling
-That keeps alive a SSH connection between your local machine and a public
-server, and forward all traffic to public server to your local machine.
-
-On public server =/etc/ssh/sshd_config=:
-
-#+begin_example
-AllowTcpForwarding yes
-GatewayPorts yes
-#+end_example
-
-Initiate the connection from local machine:
-
-#+begin_example
-ssh -nN -R 8888:localhost:8889 remoteuser@public-server.com
-#+end_example
-
-Here, the 8888 port on public server will be forwarded to localhost 8889.
-
-However, there are problems:
-1. The SSH connection must be kept alive. If it broke for any reason, we have to
-   setup a logic to restart it.
-2. This only setup one port at a time. We'll need to run it multiple times for
-   more ports.
-3. There's no redirection based on domain name.
-
-But overall, this is clearly doable.
-
-*** reverse proxy
-
-Tool:
-- https://github.com/fatedier/frp: reverse proxy
-
-Looks like this is very promising, it can even work in P2P mode for large data
-transfer, and it has a dashboard.
-
-Now the problem is still how to find a cheap and stable VPS.
-
-*** VPS
-- https://www.vultr.com/: seems to be more stable and cheaper than Digital Ocean
-- Aliyun is soooo expensive
-
-*** proxy service
-- v2aky.com
-- neoproxy.com
-- shadowsocks.nl
-
-Client:
-- qv2ray (linux)
-- v2rayng (android)
-
 ** sudo
 =sudo -i= will drop you to root shell, even if you don't know root
 password!
@@ -1408,7 +1319,6 @@ wpa_supplicant -B -i wlp4s0 -c /path/to/wifi.conf
 #+end_example
 
 
-
 ** VPN
 *** L2tp, IPSec
 #+BEGIN_EXAMPLE
@@ -1521,6 +1431,154 @@ down /etc/openvpn/update-resolv-conf
 
 For ubuntu the openvpn package already contains the file. Just modify
 the conf file.
+
+** setup frp reverse proxy
+Use https://natfrp.com, create tunnels, note the IDs and your token. Download
+their specialized frpc client, and start the service on the machine behind NAS:
+
+#+begin_example
+frpc-xxx -f token:ID,ID,ID
+#+end_example
+
+To run it at startup, create a service file with:
+
+#+begin_example conf
+[Unit]
+Description=FRP Client Daemon
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=root
+ExecStart=/path/to/bin/frpc_linux_amd64 -f <token>:<ID>
+# LimitNOFILE=infinity
+
+[Install]
+WantedBy=multi-user.target
+#+end_example
+
+For example, I would love to expose several ports, thus I'm creating one for
+each port:
+- =/etc/systemd/system/frpc-8000.service=: for 8000 port used by jupyter hub
+- =/etc/systemd/system/frpc-22.service=
+- =/etc/systemd/system/frpc-5901.service=
+
+Enable on boot:
+#+begin_example
+systemctl enable frpc-8000 frpc-22 frpc-5901
+#+end_example
+
+The list of servers of http://natfrp.com:
+
+|     | HTTP? |                       |                              | l.com | current port | ping from Huaibei | ping from Shenzhen |
+|-----+-------+-----------------------+------------------------------+-------+--------------+-------------------+--------------------|
+| #7  |       | 福州电信              | (cn-fz-dx.sakurafrp.com)     |       |              |               300 |                    |
+| #8  | Y     | 俄勒冈AWS             | (us-or-aws.sakurafrp.com)    |       |              |               300 |                    |
+| #13 | Y     | 洛杉矶CN2             | (us-la-kr.sakurafrp.com)     |       |              |               280 |                    |
+| #23 | Y     | 日本东京IIJ-2         | (jp-tyo-dvm-2.sakurafrp.com) |       |              |    150 (unstable) |                    |
+| #24 | Y     | 镇江多线2             | (cn-zj-bgp-3.sakurafrp.com)  |       |              |                20 |                    |
+| #28 |       | 枣庄多线3             | (cn-zz-bgp-3.sakurafrp.com)  |       |              |                35 |                    |
+|-----+-------+-----------------------+------------------------------+-------+--------------+-------------------+--------------------|
+| #3  | Y     | [VIP]香港DMIT         | (cn-hk-dmit.sakurafrp.com)   |       |              |                75 |                    |
+| #14 | Y     | [VIP]上海多线         | (cn-sh-bgp.sakurafrp.com)    | frpsh |   5901:39574 |                27 |                    |
+| #25 |       | [VIP]杭州多线         | (cn-hz-bgp.sakurafrp.com)    | frphz |     22:43632 |                25 |                    |
+|-----+-------+-----------------------+------------------------------+-------+--------------+-------------------+--------------------|
+| #17 | Y     | [VIP][高级]深圳多线   | (cn-sz-bgp.sakurafrp.com)    |       |              |                37 |                    |
+| #19 | Y     | [VIP][高级]香港阿里云 | (cn-hk-ali.sakurafrp.com)    |       |              |                65 |                    |
+
+
+*** previous writing reference: expose local machine without public IP
+Tunneling services (Dynamic DNS service):
+- https://ngrok.com/: this does not seem to work without a proxy on both local
+  server and client
+  - 1.X source code: https://github.com/inconshreveable/ngrok
+- https://www.noip.com/
+- DynDNS https://account.dyn.com, no free account, not obvious pricing model
+
+I'm not sure if the speed or stability of these international providers. For
+chinese providers:
+
+- https://www.aliyun.com/product/dns
+- https://hsk.oray.com/
+
+Some other chinese providers:
+- https://natapp.cn/: 基于ngrok的国内内网穿透服务
+- http://ngrok.ciqiuwl.cn/: 小米球ngrok
+- https://www.natfrp.com/: a free frc service provider
+  - This looks very good. You basically choose a server on their console, and
+    run local client and choose the same console.
+
+
+However, I'm not sure the performance of all these models. All traffic has to go
+through public server? The public server should really just act as a lookup service.
+
+But even though I got assigned a public IP, all the ports do not seem to be
+open. Thus, even if the DDNS services got the IP correct and up-to-date, that is
+not supposed to work still.
+
+UPDATE: actually china mobile did not assign me a public IP. The IP seen on my
+router is 100.99.240.168, while my public IP in whatismyipaddress and is ip138
+is 36.161.131.36. Thus, I don't even has a public IP, not to say a statis public IP.
+
+They must be doing tunneling and traffic forwarding.
+
+**** VPN solutions
+I found OpenVPN rather business oriented.
+
+**** SSH tunneling
+That keeps alive a SSH connection between your local machine and a public
+server, and forward all traffic to public server to your local machine.
+
+On public server =/etc/ssh/sshd_config=:
+
+#+begin_example
+AllowTcpForwarding yes
+GatewayPorts yes
+#+end_example
+
+Initiate the connection from local machine:
+
+#+begin_example
+ssh -nN -R 8888:localhost:8889 remoteuser@public-server.com
+#+end_example
+
+Here, the 8888 port on public server will be forwarded to localhost 8889.
+
+However, there are problems:
+1. The SSH connection must be kept alive. If it broke for any reason, we have to
+   setup a logic to restart it.
+2. This only setup one port at a time. We'll need to run it multiple times for
+   more ports.
+3. There's no redirection based on domain name.
+
+But overall, this is clearly doable.
+
+**** reverse proxy
+
+Tool:
+- https://github.com/fatedier/frp: reverse proxy
+
+Looks like this is very promising, it can even work in P2P mode for large data
+transfer, and it has a dashboard.
+
+Now the problem is still how to find a cheap and stable VPS.
+
+**** VPS
+- https://www.vultr.com/: seems to be more stable and cheaper than Digital Ocean
+- Aliyun is soooo expensive
+
+**** proxy service
+- v2aky.com
+- neoproxy.com
+- shadowsocks.nl
+
+Client:
+- qv2ray (linux)
+- v2rayng (android)
+
 
 
 * App
@@ -2724,6 +2782,15 @@ To manage a volume:
 - =docker volume ls=
 - =docker volume prune=: # remove all unused volumes
 
+** The docker manager, Portainer
+This is actually great:
+https://www.portainer.io/documentation/quick-start/, run via:
+
+#+begin_quote
+docker run -d -p 9000:9000 -p 8000:8000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer
+#+end_quote
+
+And go to https://localhost:9000 for UI. It seems to be even able to manage remote containers.
 
 
 
