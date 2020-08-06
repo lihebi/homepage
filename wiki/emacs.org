@@ -40,6 +40,112 @@ In debian/ubuntu, emacs and elisp info pages are not installed by default with
 =emacs= package. You need to install =emacs-common-non-dfsg= to get them. Not
 sure why and not sure what does "dfsg" mean.
 
+* Jupyter
+
+I'm moving from Emacs to JupyterLab. There are several good reasons:
+- Jupyter is implemented as server-client model. I have to use remote server
+  because I don't want to bring a desktop with me. Emacs-with-tramp and VScode
+  does not feel right, and it is confusing of whehter you are on local or
+  remote. The jupyter model is server only.
+- Multiple users.
+- Literal programming. The jupyter notebook's way of mixing docs/code/results is
+  so much cleaner than org-mode.
+- last but no least, scalability
+
+** Jupyterlab editor experience
+*** Use jupyter Emacs bindings with Chrome
+*** syntax highlight for racket in editor
+*** auto-completion
+*** doc accessibility
+
+** racket kernel
+https://github.com/rmculpepper/iracket
+
+Install
+#+begin_example
+raco pkg install iracket
+raco iracket install
+#+end_example
+
+Then you will find the racket kernel in
+#+begin_example
+jupyter notebook
+#+end_example
+
+Problems:
+- [ ] I actually can install the kernel, and run a console (associated with a
+  file) to an open file.
+- [ ] But the #lang is not supported, and there's a PR for that. But the console
+  seems to be associating with one file.
+- [ ] Also, the writing to tmp folder (and seems all writings to any folders are
+  denied) seems to be not smooth. I also need to figure out how to do
+  visualization.
+
+And for BHDL project, the freerouting actually opens GUI window. How should I
+appraoch that?
+
+And I want to open KiCAD for results, then I'll need to access the remote
+disk. How should I set that up? I can of course download it from jupyterlab or
+retrieve it via SSH. But I would love a seemless experience, like showing a link
+in jupyter notebook.
+
+I probably want to use only native notebook functionality.
+
+Actually I can still code in Emacs, and evaluate some visualization staff in
+notebook. That way, I can just program in Emacs via SSH. But that would be
+sensitive to network connectivity, and I have to deal with Tmux session
+management.
+
+**** ZeroMQ
+- https://zeromq.org/: ZeroMQ An open-source universal messaging library. This
+  is pretty interesting.
+- and the racket binding is pretty amazing piece of code:
+  https://github.com/jeapostrophe/zeromq It uses at-exp lang?? Anyway.
+
+ZeroMQ in a Hundred Words:
+
+#+begin_quote
+ZeroMQ (also known as ØMQ, 0MQ, or zmq) looks like an embeddable networking
+library but acts like a concurrency framework. It gives you sockets that carry
+atomic messages across various transports like in-process, inter-process, TCP,
+and multicast. You can connect sockets N-to-N with patterns like fan-out,
+pub-sub, task distribution, and request-reply. It's fast enough to be the fabric
+for clustered products. Its asynchronous I/O model gives you scalable multicore
+applications, built as asynchronous message-processing tasks. It has a score of
+language APIs and runs on most operating systems. ZeroMQ is from iMatix and is
+LGPLv3 open source.
+#+end_quote
+
+
+** Setting up jupyterhub
+
+Follow [[https://jupyterhub.readthedocs.io/en/latest/installation-guide-hard.html][this guide]].
+
+
+
+** jupyter notebook external availability
+
+by default jupyter notebook is only available localhost.
+
+Following https://jupyter-notebook.readthedocs.io/en/stable/public_server.html:
+
+#+begin_example
+jupyter lab --port=8888 --no-browser --ip=0.0.0.0
+#+end_example
+
+But I'll need to have the token, and it did not seem to be the most secure. It
+is possible to setup password according to that doc.
+
+** TODO HTTPS and other security implication
+** Other things
+*** binder
+https://mybinder.org/
+
+#+begin_quote
+Turn a Git repo into a collection of interactive notebooks
+#+end_quote
+
+
 * buffer
   - =list-face-displays=
   - =fill-region=
