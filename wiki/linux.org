@@ -1475,19 +1475,20 @@ The list of servers of http://natfrp.com:
 
 |     | HTTP? |                       |                              | l.com | current port | ping from Huaibei | ping from Shenzhen |
 |-----+-------+-----------------------+------------------------------+-------+--------------+-------------------+--------------------|
-| #7  |       | 福州电信              | (cn-fz-dx.sakurafrp.com)     |       |              |               300 |                    |
-| #8  | Y     | 俄勒冈AWS             | (us-or-aws.sakurafrp.com)    |       |              |               300 |                    |
-| #13 | Y     | 洛杉矶CN2             | (us-la-kr.sakurafrp.com)     |       |              |               280 |                    |
-| #23 | Y     | 日本东京IIJ-2         | (jp-tyo-dvm-2.sakurafrp.com) |       |              |    150 (unstable) |                    |
-| #24 | Y     | 镇江多线2             | (cn-zj-bgp-3.sakurafrp.com)  |       |              |                20 |                    |
-| #28 |       | 枣庄多线3             | (cn-zz-bgp-3.sakurafrp.com)  |       |              |                35 |                    |
+| #7  |       | 福州电信              | (cn-fz-dx.sakurafrp.com)     |       |              |               300 |                 22 |
+| #8  | Y     | 俄勒冈AWS             | (us-or-aws.sakurafrp.com)    |       |              |               300 |                200 |
+| #13 | Y     | 洛杉矶CN2             | (us-la-kr.sakurafrp.com)     |       |              |               280 |                200 |
+| #23 | Y     | 日本东京IIJ-2         | (jp-tyo-dvm-2.sakurafrp.com) |       |              |    150 (unstable) |                200 |
+| #24 | Y     | 镇江多线2             | (cn-zj-bgp-3.sakurafrp.com)  |       |              |                20 |                 30 |
+| #28 |       | 枣庄多线3             | (cn-zz-bgp-3.sakurafrp.com)  |       |              |                35 |                 40 |
 |-----+-------+-----------------------+------------------------------+-------+--------------+-------------------+--------------------|
-| #3  | Y     | [VIP]香港DMIT         | (cn-hk-dmit.sakurafrp.com)   |       |              |                75 |                    |
-| #14 | Y     | [VIP]上海多线         | (cn-sh-bgp.sakurafrp.com)    | frpsh |   5901:39574 |                27 |                    |
-| #25 |       | [VIP]杭州多线         | (cn-hz-bgp.sakurafrp.com)    | frphz |     22:43632 |                25 |                    |
+| #3  | Y     | [VIP]香港DMIT         | (cn-hk-dmit.sakurafrp.com)   |       |              |                75 |                 80 |
+| #14 | Y     | [VIP]上海多线         | (cn-sh-bgp.sakurafrp.com)    | frpsh |   5901:39574 |                27 |                 35 |
+| #25 |       | [VIP]杭州多线         | (cn-hz-bgp.sakurafrp.com)    | frphz |     22:43632 |                25 |                 35 |
 |-----+-------+-----------------------+------------------------------+-------+--------------+-------------------+--------------------|
-| #17 | Y     | [VIP][高级]深圳多线   | (cn-sz-bgp.sakurafrp.com)    |       |              |                37 |                    |
-| #19 | Y     | [VIP][高级]香港阿里云 | (cn-hk-ali.sakurafrp.com)    |       |              |                65 |                    |
+| #17 | Y     | [VIP][高级]深圳多线   | (cn-sz-bgp.sakurafrp.com)    |       |              |                37 |                 10 |
+| #19 | Y     | [VIP][高级]香港阿里云 | (cn-hk-ali.sakurafrp.com)    |       |              |                65 |                 15 |
+
 
 
 *** previous writing reference: expose local machine without public IP
