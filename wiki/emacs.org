@@ -4,6 +4,8 @@
 - [[file:elisp-emacs.org][Emacs Part of Elisp]]
 
 
+
+
 * Tmp
 - =toggle-truncate-lines=: some file format, e.g. txt, will have a
   line wrap at the end of the screen. This might be annoying, and
@@ -53,74 +55,78 @@ I'm moving from Emacs to JupyterLab. There are several good reasons:
 - last but no least, scalability
 
 ** Jupyterlab editor experience
+
 *** Use jupyter Emacs bindings with Chrome
-*** syntax highlight for racket in editor
-*** auto-completion
+
+- [X] Ctrl-n: this can be solved by running chrome in app mode
+- [X] ctrl-p: this can be solved by adding some custom shortcuts:
+
+#+begin_example json
+{"shortcuts": [
+    {
+            "command": "apputils:print",
+            "keys":["Accel P"],
+            "selector": "body",
+            "disabled": true
+        },
+        {
+            "command": "documentsearch:start",
+            "keys": [
+                "Accel F"
+                    ],
+            "selector": ".jp-mod-searchable",
+            "disabled": true
+        },
+    
+]}
+#+end_example
+
+*** TODO syntax highlight for racket in editor
+How to tell the editor to use scheme syntax for .rkt files?
+*** TODO auto indent
+- [ ] no auto-reindent functionality, and I rely on that a lot. This is going to
+  be too hard. I'm turning to just use SSH+Emacs + jupyter notebook for simple
+  high-level visualization. Also the boards should be written in notebooks, and
+  I'll be manually indenting them probably.
+
 *** doc accessibility
 
-** racket kernel
-https://github.com/rmculpepper/iracket
+*** lab extensions
 
-Install
+I have trouble to use web extension manager, most likely due to permission. I
+cannot set up admin user account no matter the confiuguration file.
+
+
+I have to install via command line.
+
 #+begin_example
-raco pkg install iracket
-raco iracket install
+jupyter labextension install my-extension
+jupyter labextension enable my-extension
+jupyter labextension list
 #+end_example
 
-Then you will find the racket kernel in
+and you seem to need to restart jupyterlab.
+
+This actually requires the specific jupyter binary:
+
 #+begin_example
-jupyter notebook
+sudo /opt/jupyterhub/bin/jupyter install ...
 #+end_example
 
-Problems:
-- [ ] I actually can install the kernel, and run a console (associated with a
-  file) to an open file.
-- [ ] But the #lang is not supported, and there's a PR for that. But the console
-  seems to be associating with one file.
-- [ ] Also, the writing to tmp folder (and seems all writings to any folders are
-  denied) seems to be not smooth. I also need to figure out how to do
-  visualization.
+Many times, you will have to install some pip packages. E.g. for installing
+@jupyterlab/git, I'll need:
 
-And for BHDL project, the freerouting actually opens GUI window. How should I
-appraoch that?
-
-And I want to open KiCAD for results, then I'll need to access the remote
-disk. How should I set that up? I can of course download it from jupyterlab or
-retrieve it via SSH. But I would love a seemless experience, like showing a link
-in jupyter notebook.
-
-I probably want to use only native notebook functionality.
-
-Actually I can still code in Emacs, and evaluate some visualization staff in
-notebook. That way, I can just program in Emacs via SSH. But that would be
-sensitive to network connectivity, and I have to deal with Tmux session
-management.
-
-**** ZeroMQ
-- https://zeromq.org/: ZeroMQ An open-source universal messaging library. This
-  is pretty interesting.
-- and the racket binding is pretty amazing piece of code:
-  https://github.com/jeapostrophe/zeromq It uses at-exp lang?? Anyway.
-
-ZeroMQ in a Hundred Words:
-
-#+begin_quote
-ZeroMQ (also known as ØMQ, 0MQ, or zmq) looks like an embeddable networking
-library but acts like a concurrency framework. It gives you sockets that carry
-atomic messages across various transports like in-process, inter-process, TCP,
-and multicast. You can connect sockets N-to-N with patterns like fan-out,
-pub-sub, task distribution, and request-reply. It's fast enough to be the fabric
-for clustered products. Its asynchronous I/O model gives you scalable multicore
-applications, built as asynchronous message-processing tasks. It has a score of
-language APIs and runs on most operating systems. ZeroMQ is from iMatix and is
-LGPLv3 open source.
-#+end_quote
+#+begin_example
+sudo /opt/jupyterhub/bin/jupyter install @jupyterlab/git
+sudo /opt/jupyterhub/bin/python3 -m pip install jupyterlab-git
+sudo /opt/jupyterhub/bin/jupyter lab build
+sudo systemctl restart jupyterhub
+#+end_example
 
 
 ** Setting up jupyterhub
 
 Follow [[https://jupyterhub.readthedocs.io/en/latest/installation-guide-hard.html][this guide]].
-
 
 
 ** jupyter notebook external availability
