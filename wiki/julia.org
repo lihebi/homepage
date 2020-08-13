@@ -4,6 +4,14 @@
 
 - =collect(Set(1,2))= returns Array
 
+** Install library behind proxy
+
+#+begin_example
+export HTTP_PROXY=127.0.0.1:8888
+export HTTPS_PROXY=127.0.0.1:8888
+julia
+#+end_example
+
 * Julia Lang
 ** Macros
 Julia macros are hygienic:
