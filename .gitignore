@@ -4,6 +4,8 @@
 *.pdf
 *.out
 
+*-checkpoint.*
+
 ltximg
 
 *.tex
