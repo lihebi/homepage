@@ -13,10 +13,19 @@
 # and so miss the moon. --- a 1956 letter from Maugham
 # #+end_quote
 
+Thanks for visiting my page! I'm actively looking for amazing people to
+pursue startup ideas together. I'll be writing an essay about "who am I" and
+"where am I going". If you think we should know each other, we probably should!
+Please drop me a message at hebi@lihebi.com, and let's rock the world!
+
+-----
+
+
 #+begin_quote
 Two possibilities exist: either we are alone in the Universe or we are not. Both
 are equally terrifying.  --- Arthur C. Clarke
 #+end_quote
+
 
 
 # #+begin_quote
@@ -60,7 +69,13 @@ Spring 2018 - Present
 # Square Bracket Close ]
 #+MACRO: BC @@latex:\char93@@@@html:&#93;@@
 
-*Li, Hebi*, Qi Xiao, and Jin Tian. 
+*[new]* *Hebi Li*, Youbiao He, Qi Xiao, Jin Tian and Forrest Sheng Bao.
+"*BHDL: A Lucid, Expressive, and Embedded Programming Language and System for PCB Designs*" accepted to IEEE/ACM DAC 2021
+
+*[new]* Qi Xiao, *Hebi Li*, Jin Tian and Zhengdao Wang.
+"*Supervision-Aware Clustering using Instance-wise Feature Selection*" preprint (2020 Oct) in submission
+
+*[new]* *Hebi Li*, Qi Xiao, and Jin Tian.
 "*Supervised Whole DAG Causal Discovery*."  arXiv preprint arXiv:2006.04697
 (2020).
 [[https://arxiv.org/abs/2006.04697][{{{BO}}}arXiv{{{BC}}}]]
@@ -72,6 +87,10 @@ Bao, Forrest Sheng, *Hebi Li*, Ge Luo, Cen Chen, Yinfei Yang, and Minghui Qiu.
 Summarization*." arXiv preprint arXiv:2005.06377 (2020).
 [[https://arxiv.org/abs/2005.06377][{{{BO}}}arXiv{{{BC}}}]]
 [[https://arxiv.org/pdf/2005.06377.pdf][{{{BO}}}pdf{{{BC}}}]]
+
+Shixin Tian, Ying Cai, *Hebi Li*, and Jin Tian.
+"*Making Images Resilient to Adversarial Example Attacks*",
+preprint, in submission.
 
 *Li, Hebi*, Qi Xiao, Shixin Tian, and Jin Tian.
 "*Purifying Adversarial Perturbation with Adversarially Trained Auto-encoders*."
@@ -133,7 +152,7 @@ concepts. Instead, these articles document highly integrated and
 hierarchical knowledge, typically one big page per-topic. In this
 sense it is more like a reference. There are many benefits of writing
 a personal reference instead of using official ones:
-1. I can control the granularity and focus on the topic 
+1. I can control the granularity and focus on the topic
 2. possibly add my thoughts, and
 3. a consistent writing style
 
